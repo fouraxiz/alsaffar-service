@@ -23,7 +23,7 @@
   "services": {
     "title": "Our Services",
     "subtitle": "Comprehensive manpower recruitment solutions tailored for Saudi Arabia",
-    "domestic": {"title": "Domestic Workers", "desc": "Housemaids, cooks, nannies, and home care workers from trusted source countries."},
+    "domestic": {"title": "Maid Services", "desc": "Housemaids, cooks, nannies, and home care workers from trusted source countries."},
     "drivers": {"title": "Drivers", "desc": "Licensed and experienced personal and family drivers."},
     "skilled": {"title": "Skilled Workers", "desc": "Technicians, electricians, plumbers, and construction professionals."},
     "corporate": {"title": "Corporate Staffing", "desc": "Office staff, security guards, and complete corporate workforce solutions."},
@@ -102,8 +102,8 @@
     }
   },
   "domesticWorkers": {
-    "title": "Domestic Workers",
-    "subtitle": "Trained, vetted, and ready-to-work domestic helpers from trusted source countries",
+    "title": "Maid Services",
+    "subtitle": "Trained, vetted, and ready-to-work household staff from trusted source countries",
     "whatsappLabel": "Enquire via WhatsApp",
     "items": {
       "housemaid": {"title": "Housemaid", "desc": "General household cleaning, cooking, and maintenance."},
@@ -201,8 +201,8 @@
     "title": "Our Recruitment Services",
     "subtitle": "Comprehensive solutions for all your manpower needs",
     "domestic": {
-      "title": "Domestic Workers", "subtitle": "Housemaids, Nannies & Home Helpers",
-      "desc": "We recruit experienced and trained domestic workers from Philippines, Indonesia, Ethiopia, Sri Lanka, and other trusted countries.",
+      "title": "Maid Services", "subtitle": "Housemaids, Nannies & Home Helpers",
+      "desc": "We recruit experienced and trained household staff from Philippines, Indonesia, Ethiopia, Sri Lanka, and other trusted countries.",
       "features": ["Background checked", "Medical cleared", "Skills tested", "Document verified", "Insurance covered"]
     },
     "drivers": {

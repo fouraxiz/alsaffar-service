@@ -42,7 +42,7 @@ export default function DomesticWorkers() {
             <p className="text-gray-500 mt-2 max-w-lg">{t('subtitle')}</p>
           </div>
           <a
-            href="https://wa.me/966XXXXXXXXXX?text=Hello! I need a domestic worker. Please provide details."
+            href="https://wa.me/966XXXXXXXXXX?text=Hello! I need a maid service. Please provide details."
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 bg-[#25D366] hover:bg-[#1ebe5d] text-white px-5 py-3 rounded-xl font-bold text-sm transition-colors flex-shrink-0"
