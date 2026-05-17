@@ -1,0 +1,185 @@
+import {setRequestLocale} from 'next-intl/server';
+import {useTranslations, useLocale} from 'next-intl';
+import {Target, Eye, Award, MapPin, Clock, FileText, Shield, Zap, Heart} from 'lucide-react';
+import Image from 'next/image';
+import type {Metadata} from 'next';
+
+type Props = {params: Promise<{locale: string}>};
+
+export async function generateMetadata({params}: Props): Promise<Metadata> {
+  const {locale} = await params;
+  return {
+    title: locale === 'ar' ? 'من نحن' : 'About Us',
+  };
+}
+
+function AboutContent() {
+  const t = useTranslations('about');
+  const locale = useLocale();
+
+  const credentials = [
+    {icon: <FileText size={22} />, label: t('crNumber'), value: '1010XXXXXX'},
+    {icon: <FileText size={22} />, label: t('licenseNumber'), value: 'XXXXXXX'},
+    {icon: <Award size={22} />, label: t('musanedId'), value: 'XXXXXXX'},
+    {icon: <MapPin size={22} />, label: t('officeAddress'), value: locale === 'ar' ? 'الرياض، المملكة العربية السعودية' : 'Riyadh, Saudi Arabia'},
+    {icon: <Clock size={22} />, label: t('officeHours'), value: t('hoursValue')},
+  ];
+
+  const stats = [
+    {number: '15+', label: locale === 'ar' ? 'سنة خبرة' : 'Years Experience'},
+    {number: '5,000+', label: locale === 'ar' ? 'عامل تم توظيفه' : 'Workers Placed'},
+    {number: '12+', label: locale === 'ar' ? 'دولة مصدر' : 'Source Countries'},
+    {number: '98%', label: locale === 'ar' ? 'رضا العملاء' : 'Client Satisfaction'},
+  ];
+
+  const values = [
+    {icon: <Shield size={30} />, key: 'integrity', color: 'text-brand-orange bg-brand-orange/10', title: locale === 'ar' ? 'النزاهة' : 'Integrity', desc: locale === 'ar' ? 'نلتزم بالشفافية والأمانة في كل ما نقدمه' : 'Transparency and honesty in everything we do'},
+    {icon: <Award size={30} />, key: 'quality', color: 'text-violet-600 bg-violet-50', title: locale === 'ar' ? 'الجودة' : 'Quality', desc: locale === 'ar' ? 'نختار فقط العمالة المؤهلة والمدربة' : 'Only qualified, screened, and trained workers'},
+    {icon: <Zap size={30} />, key: 'speed', color: 'text-sky-600 bg-sky-50', title: locale === 'ar' ? 'السرعة' : 'Speed', desc: locale === 'ar' ? 'نسرّع عمليات الاستقدام لتوفير وقتك' : 'Fast-tracked processes to save your time'},
+    {icon: <Heart size={30} />, key: 'support', color: 'text-rose-600 bg-rose-50', title: locale === 'ar' ? 'الدعم' : 'Support', desc: locale === 'ar' ? 'خدمة ما بعد التوظيف ودعم مستمر' : 'After-placement service and ongoing care'},
+  ];
+
+  return (
+    <>
+      {/* Hero banner */}
+      <section className="relative bg-brand-dark pt-32 pb-24 overflow-hidden">
+        <Image
+          src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1600&q=80"
+          alt="Team"
+          fill
+          className="object-cover opacity-20"
+          priority
+        />
+        <div className="relative max-w-7xl mx-auto px-4">
+          <div className="text-white/50 text-sm mb-4 font-medium">Alsaffar / {t('title')}</div>
+          <h1 className="text-5xl sm:text-6xl font-black text-white mb-6 leading-tight">{t('title')}</h1>
+          <p className="text-white/70 text-xl max-w-2xl leading-relaxed">{t('subtitle')}</p>
+        </div>
+      </section>
+
+      {/* Stats bar */}
+      <section className="bg-brand-orange">
+        <div className="max-w-7xl mx-auto px-4 py-7">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-white">
+            {stats.map((stat) => (
+              <div key={stat.label}>
+                <div className="text-4xl font-black">{stat.number}</div>
+                <div className="text-white/80 text-sm font-medium mt-1">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Story section */}
+      <section className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
+            <div>
+              <div className="inline-block bg-brand-orange/10 text-brand-orange text-sm font-bold px-4 py-1.5 rounded-full mb-5">
+                {locale === 'ar' ? 'قصتنا' : 'Our Story'}
+              </div>
+              <h2 className="text-4xl font-black text-brand-dark mb-6 leading-tight">
+                {locale === 'ar' ? 'رائدون في استقدام العمالة منذ أكثر من 15 عامًا' : 'Leading Recruitment Excellence for 15+ Years'}
+              </h2>
+              <p className="text-gray-500 text-lg leading-relaxed">{t('story')}</p>
+            </div>
+            <div className="relative min-h-[400px] rounded-2xl overflow-hidden shadow-2xl">
+              <Image
+                src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80"
+                alt="Recruitment office"
+                fill
+                className="object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Mission & Vision */}
+      <section className="py-24 bg-brand-gray">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-14">
+            <h2 className="text-4xl font-black text-brand-dark">
+              {locale === 'ar' ? 'مهمتنا ورؤيتنا' : 'Mission & Vision'}
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="bg-white rounded-2xl p-10 shadow-sm border-b-4 border-brand-orange">
+              <div className="w-16 h-16 bg-brand-orange/10 rounded-2xl flex items-center justify-center mb-6">
+                <Target size={34} className="text-brand-orange" />
+              </div>
+              <h3 className="text-2xl font-black text-brand-dark mb-4">{t('mission')}</h3>
+              <p className="text-gray-500 text-lg leading-relaxed">{t('missionText')}</p>
+            </div>
+            <div className="bg-brand-dark rounded-2xl p-10 shadow-sm">
+              <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6">
+                <Eye size={34} className="text-white" />
+              </div>
+              <h3 className="text-2xl font-black text-white mb-4">{t('vision')}</h3>
+              <p className="text-white/70 text-lg leading-relaxed">{t('visionText')}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Values */}
+      <section className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-14">
+            <div className="inline-block bg-brand-orange/10 text-brand-orange text-sm font-bold px-4 py-1.5 rounded-full mb-4">
+              {locale === 'ar' ? 'قيمنا' : 'Our Values'}
+            </div>
+            <h2 className="text-4xl font-black text-brand-dark">
+              {locale === 'ar' ? 'ما الذي يميزنا' : 'What Sets Us Apart'}
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {values.map((val) => (
+              <div key={val.key} className="text-center p-8 rounded-2xl bg-brand-gray hover:shadow-md transition-shadow">
+                <div className={`w-16 h-16 ${val.color} rounded-2xl flex items-center justify-center mx-auto mb-5`}>
+                  {val.icon}
+                </div>
+                <h3 className="text-xl font-black text-brand-dark mb-3">{val.title}</h3>
+                <p className="text-gray-500 leading-relaxed">{val.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Credentials */}
+      <section className="py-24 bg-brand-dark">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-14">
+            <div className="inline-block bg-white/10 text-white text-sm font-bold px-4 py-1.5 rounded-full mb-4">
+              {locale === 'ar' ? 'ترخيص رسمي' : 'Officially Licensed'}
+            </div>
+            <h2 className="text-4xl font-black text-white">{t('credentials')}</h2>
+          </div>
+          <div className="max-w-2xl mx-auto space-y-4">
+            {credentials.map((cred, i) => (
+              <div key={i} className="flex items-start gap-5 bg-white/5 hover:bg-white/10 rounded-2xl p-6 transition-colors">
+                <div className="w-14 h-14 bg-brand-orange/20 rounded-xl flex items-center justify-center text-brand-orange flex-shrink-0">
+                  {cred.icon}
+                </div>
+                <div>
+                  <div className="text-white/40 text-xs uppercase tracking-wider font-medium mb-1.5">
+                    {cred.label}
+                  </div>
+                  <div className="font-bold text-white text-xl">{cred.value}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+
+export default async function AboutPage({params}: Props) {
+  const {locale} = await params;
+  setRequestLocale(locale);
+  return <AboutContent />;
+}

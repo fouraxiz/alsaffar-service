@@ -1,0 +1,246 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About Us",
+    "services": "Services",
+    "whyUs": "Why Us",
+    "contact": "Contact"
+  },
+  "hero": {
+    "badge": "Saudi Arabia's Trusted Recruitment Partner",
+    "title": "Professional Manpower",
+    "titleHighlight": "Recruitment Solutions",
+    "subtitle": "Connecting Saudi families and businesses with qualified, vetted workers. Fully licensed by the Ministry of Human Resources.",
+    "ctaMain": "Request Free Consultation",
+    "ctaWhatsApp": "WhatsApp Us Now"
+  },
+  "stats": {
+    "workers": "Workers Placed",
+    "clients": "Happy Clients",
+    "years": "Years Experience",
+    "countries": "Source Countries"
+  },
+  "services": {
+    "title": "Our Services",
+    "subtitle": "Comprehensive manpower recruitment solutions tailored for Saudi Arabia",
+    "domestic": {"title": "Domestic Workers", "desc": "Housemaids, cooks, nannies, and home care workers from trusted source countries."},
+    "drivers": {"title": "Drivers", "desc": "Licensed and experienced personal and family drivers."},
+    "skilled": {"title": "Skilled Workers", "desc": "Technicians, electricians, plumbers, and construction professionals."},
+    "corporate": {"title": "Corporate Staffing", "desc": "Office staff, security guards, and complete corporate workforce solutions."},
+    "visa": {"title": "Visa Processing", "desc": "End-to-end visa application, MOFA attestation, and documentation."},
+    "followUp": {"title": "After-Placement Support", "desc": "Ongoing support and replacement guarantee for our valued clients."},
+    "learnMore": "Learn More",
+    "whatsapp": "WhatsApp"
+  },
+  "packages": {
+    "title": "Service Packages",
+    "subtitle": "Transparent, all-inclusive packages — no hidden fees",
+    "popular": "Most Popular",
+    "bestValue": "Best Value",
+    "viewDetails": "View Details",
+    "requestCallback": "Request a Callback",
+    "whatsappUs": "WhatsApp Us",
+    "close": "Close",
+    "includesLabel": "Package Includes:",
+    "items": {
+      "maid2yr": {
+        "title": "2 Year Maid / Nanny Visa",
+        "subtitle": "Full Sponsorship with 2 Year Insurance",
+        "desc": "Our most comprehensive domestic worker package with full government sponsorship, dedicated PRO officer, and 2-year insurance coverage for complete peace of mind.",
+        "badge": "Most Popular",
+        "features": [
+          "Fast Track Process & Dedicated PRO Officer",
+          "MOFA Attestation Included",
+          "2 Year Insurance Coverage",
+          "Medical Clearance & Tests",
+          "Replacement Guarantee"
+        ],
+        "whatsappMsg": "Hello! I'm interested in the 2 Year Maid/Nanny Visa package. Please provide more details."
+      },
+      "maid1yr": {
+        "title": "1 Year Domestic Worker Visa",
+        "subtitle": "Standard Domestic Worker Package",
+        "desc": "A reliable standard package for families looking to hire a domestic worker with all essential government processing handled for you.",
+        "badge": "Best Value",
+        "features": [
+          "Standard Processing Time",
+          "Medical Clearance Included",
+          "Contract Preparation",
+          "MOFA Processing",
+          "Airport Assistance"
+        ],
+        "whatsappMsg": "Hello! I'm interested in the 1 Year Domestic Worker Visa package. Please provide more details."
+      },
+      "driver": {
+        "title": "Driver Visa Package",
+        "subtitle": "Personal & Family Driver Recruitment",
+        "desc": "Professional driver recruitment with thorough license and traffic record verification. We source experienced, family-oriented drivers for your household.",
+        "badge": null,
+        "features": [
+          "License & Record Verification",
+          "Traffic History Check",
+          "Experience Assessment",
+          "Family-Oriented Selection",
+          "Fast Track Processing"
+        ],
+        "whatsappMsg": "Hello! I'm interested in the Driver Visa Package. Please provide more details."
+      },
+      "corporate": {
+        "title": "Corporate Workforce Package",
+        "subtitle": "Business Staffing Solution",
+        "desc": "Complete corporate staffing solutions for businesses of all sizes — from office staff and receptionists to security personnel and facility workers.",
+        "badge": null,
+        "features": [
+          "Office Staff Recruitment",
+          "Security Personnel",
+          "Bulk Processing Available",
+          "Contract Management",
+          "Dedicated Account Manager"
+        ],
+        "whatsappMsg": "Hello! I'm interested in the Corporate Workforce Package. Please provide more details."
+      }
+    }
+  },
+  "domesticWorkers": {
+    "title": "Domestic Workers",
+    "subtitle": "Trained, vetted, and ready-to-work domestic helpers from trusted source countries",
+    "whatsappLabel": "Enquire via WhatsApp",
+    "items": {
+      "housemaid": {"title": "Housemaid", "desc": "General household cleaning, cooking, and maintenance."},
+      "cook": {"title": "Cook", "desc": "Experienced cooks for families of all sizes, any cuisine."},
+      "nanny": {"title": "Nanny / Babysitter", "desc": "Child care specialists — trained and gentle."},
+      "elderly": {"title": "Elderly Care Worker", "desc": "Compassionate care professionals for your elderly family members."},
+      "cleaner": {"title": "Home Cleaner", "desc": "Part-time or full-time deep cleaning professionals."},
+      "laundry": {"title": "Laundry & Ironing", "desc": "Fabric care and laundry management specialists."}
+    }
+  },
+  "visaServices": {
+    "title": "Visa Services",
+    "subtitle": "Complete government visa processing — from application to stamping",
+    "whatsappLabel": "Enquire via WhatsApp",
+    "items": {
+      "newVisa": {"title": "New Domestic Worker Visa", "desc": "Fresh visa issuance for new domestic workers — fast and fully compliant."},
+      "naqal": {"title": "Transfer of Sponsorship (Naqal)", "desc": "Hassle-free Naqal Kafala processing with all documentation."},
+      "exitReentry": {"title": "Exit & Re-entry Visa", "desc": "Quick exit and re-entry processing for existing workers."},
+      "iqama": {"title": "Iqama Renewal", "desc": "Residency permit renewal — we handle all paperwork."},
+      "workPermit": {"title": "Work Permit / Labor Card", "desc": "MOHRE work permit issuance and renewal assistance."},
+      "mofa": {"title": "MOFA Attestation", "desc": "Ministry of Foreign Affairs document authentication and attestation."}
+    }
+  },
+  "valueAdded": {
+    "title": "Value Added Services",
+    "subtitle": "Extra services to make the entire process seamless for you",
+    "items": {
+      "pro": {"title": "PRO Services", "desc": "Government liaison and document processing on your behalf — we handle everything."},
+      "mofa": {"title": "MOFA Attestation", "desc": "Ministry of Foreign Affairs document authentication — fast and reliable."},
+      "medical": {"title": "Medical Coordination", "desc": "Medical test booking, follow-up, and clearance certificate collection."},
+      "airport": {"title": "Airport Pickup", "desc": "Welcome and transfer service for your newly arrived worker."},
+      "training": {"title": "Worker Orientation", "desc": "Pre-arrival training and cultural orientation for workers."},
+      "contract": {"title": "Contract Translation", "desc": "Certified Arabic-English translation of all employment contracts."}
+    }
+  },
+  "trust": {
+    "title": "Licensed & Certified",
+    "subtitle": "Fully accredited by Saudi government authorities",
+    "musaned": "Musaned Platform",
+    "mol": "Ministry of Human Resources",
+    "chamber": "Chamber of Commerce"
+  },
+  "whyUs": {
+    "title": "Why Choose Alsaffar?",
+    "subtitle": "We go beyond recruitment — we build lasting workforce partnerships",
+    "fast": {"title": "Fast Processing", "desc": "Streamlined process to get your workers placed within the shortest time possible."},
+    "vetted": {"title": "Pre-Vetted Workers", "desc": "All candidates undergo background checks, medical tests, and skills assessment."},
+    "legal": {"title": "Fully Legal", "desc": "Every placement is done through official channels — no illegal recruitment."},
+    "support": {"title": "24/7 Support", "desc": "Our team is always available to resolve issues after placement."},
+    "guarantee": {"title": "Replacement Guarantee", "desc": "If a placed worker doesn't work out, we replace them at no extra cost."},
+    "transparent": {"title": "Transparent Pricing", "desc": "Clear, upfront pricing with no hidden fees or surprises."}
+  },
+  "cta": {
+    "title": "Ready to Find Your Perfect Worker?",
+    "subtitle": "Get a free consultation with our recruitment specialists today.",
+    "button": "Contact Us Now",
+    "whatsapp": "WhatsApp Us"
+  },
+  "footer": {
+    "tagline": "Your trusted manpower recruitment partner in Saudi Arabia.",
+    "quickLinks": "Quick Links",
+    "contact": "Contact Info",
+    "cr": "CR Number",
+    "license": "Labor License No.",
+    "address": "Address",
+    "phone": "Phone",
+    "email": "Email",
+    "rights": "All rights reserved.",
+    "musanedText": "Registered on Musaned",
+    "molText": "Licensed by Ministry of HR",
+    "followUs": "Follow Us"
+  },
+  "floating": {
+    "whatsapp": "WhatsApp",
+    "callback": "Request Callback",
+    "location": "Our Location"
+  },
+  "about": {
+    "title": "About Alsaffar Manpower Recruitment",
+    "subtitle": "A legacy of trust and excellence in recruitment",
+    "story": "Founded with a mission to bridge the gap between skilled workers from across the world and households and businesses in Saudi Arabia, Alsaffar Manpower Recruitment has grown to become one of the Kingdom's most trusted recruitment agencies.",
+    "mission": "Our Mission",
+    "missionText": "To provide ethical, transparent, and reliable manpower recruitment services that empower families and businesses across Saudi Arabia.",
+    "vision": "Our Vision",
+    "visionText": "To be the leading recruitment partner in Saudi Arabia, recognized for integrity, quality, and excellence in every placement.",
+    "credentials": "Our Credentials",
+    "crNumber": "CR Number",
+    "licenseNumber": "Labor Ministry License",
+    "musanedId": "Musaned Platform ID",
+    "officeAddress": "Office Address",
+    "officeHours": "Office Hours",
+    "hoursValue": "Sunday – Thursday: 8:00 AM – 6:00 PM"
+  },
+  "servicesPage": {
+    "title": "Our Recruitment Services",
+    "subtitle": "Comprehensive solutions for all your manpower needs",
+    "domestic": {
+      "title": "Domestic Workers", "subtitle": "Housemaids, Nannies & Home Helpers",
+      "desc": "We recruit experienced and trained domestic workers from Philippines, Indonesia, Ethiopia, Sri Lanka, and other trusted countries.",
+      "features": ["Background checked", "Medical cleared", "Skills tested", "Document verified", "Insurance covered"]
+    },
+    "drivers": {
+      "title": "Professional Drivers", "subtitle": "Personal & Family Drivers",
+      "desc": "Experienced personal and family drivers with valid licenses from countries known for disciplined driving standards.",
+      "features": ["Valid license holders", "Traffic record cleared", "Experienced", "Trustworthy", "Family-oriented"]
+    },
+    "skilled": {
+      "title": "Skilled Tradespeople", "subtitle": "Technical & Construction Workers",
+      "desc": "Qualified technicians, electricians, plumbers, welders, carpenters for projects of any scale.",
+      "features": ["Certified tradespeople", "Project-ready", "Safety trained", "Quality assured", "Reference checked"]
+    },
+    "corporate": {
+      "title": "Corporate & Security", "subtitle": "Office & Security Workforce",
+      "desc": "Office staff, receptionists, security guards, and facility workers for corporate environments.",
+      "features": ["Professional demeanor", "Security cleared", "Team-oriented", "Reliable", "Adaptable"]
+    },
+    "visa": {
+      "title": "Visa & Documentation", "subtitle": "End-to-End Processing",
+      "desc": "Complete visa processing, MOFA attestation, medical coordination, and all documentation for Saudi Arabia.",
+      "features": ["MOFA attestation", "Medical coordination", "Contract preparation", "Immigration support", "Fast processing"]
+    },
+    "support": {
+      "title": "After-Placement Support", "subtitle": "Post-Arrival Assistance",
+      "desc": "We don't stop after placement. Replacement guarantee, mediation, and renewal assistance.",
+      "features": ["Replacement guarantee", "Mediation support", "Contract renewal", "24/7 helpline", "Legal assistance"]
+    }
+  },
+  "contactPage": {
+    "title": "Contact Us",
+    "subtitle": "We're here to help — reach out through any channel",
+    "form": {
+      "name": "Your Name", "phone": "Phone Number", "service": "Service Needed", "message": "Your Message",
+      "submit": "Send Message", "success": "Message sent! We'll get back to you shortly.",
+      "namePlaceholder": "Enter your full name", "phonePlaceholder": "+966 5X XXX XXXX",
+      "messagePlaceholder": "Tell us what you need..."
+    },
+    "office": "Our Office", "hours": "Office Hours", "hoursValue": "Sunday – Thursday: 8AM – 6PM",
+    "whatsappCta": "Chat on WhatsApp", "callCta": "Call Now"
+  }
+}
