@@ -37,7 +37,7 @@ export default function Hero() {
               {t('badge')}
             </div>
 
-            <h1 className="text-4xl sm:text-5xl xl:text-6xl font-black text-white leading-tight mb-5">
+            <h1 className="text-3xl sm:text-4xl xl:text-5xl font-black text-white leading-tight mb-5">
               {t('title')}{' '}
               <span className="text-brand-orange block mt-1">{t('titleHighlight')}</span>
             </h1>
