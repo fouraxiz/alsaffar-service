@@ -1,5 +1,13 @@
 import './globals.css';
 import type {ReactNode} from 'react';
+import type {Metadata} from 'next';
+
+export const metadata: Metadata = {
+  icons: {
+    icon: '/alsaffar-favicon.png',
+    apple: '/alsaffar-favicon.png',
+  },
+};
 
 export default function RootLayout({children}: {children: ReactNode}) {
   return (
