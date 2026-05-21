@@ -14,7 +14,7 @@ export default function FloatingSidebar() {
 
   const buttons = [
     {
-      href: 'https://wa.me/966XXXXXXXXXX',
+      href: 'https://wa.me/966547123180',
       label: t('whatsapp'),
       icon: <WhatsAppIcon />,
       bg: 'bg-[#25D366]',
@@ -22,7 +22,7 @@ export default function FloatingSidebar() {
       external: true,
     },
     {
-      href: 'tel:+966XXXXXXXXXX',
+      href: 'tel:+966547123180',
       label: t('callback'),
       icon: <Phone size={20} />,
       bg: 'bg-brand-orange',

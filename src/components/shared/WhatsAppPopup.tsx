@@ -81,7 +81,7 @@ export default function WhatsAppPopup() {
           </p>
 
           <a
-            href={`https://wa.me/966XXXXXXXXXX?text=${encodeURIComponent(waMsg)}`}
+            href={`https://wa.me/966547123180?text=${encodeURIComponent(waMsg)}`}
             target="_blank"
             rel="noopener noreferrer"
             onClick={handleClose}

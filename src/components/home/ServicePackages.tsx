@@ -158,14 +158,14 @@ export default function ServicePackages() {
               {/* Action buttons — matches the screenshot exactly */}
               <div className="flex gap-3">
                 <a
-                  href="tel:+966XXXXXXXXXX"
+                  href="tel:+966547123180"
                   className="flex-1 flex items-center justify-center gap-2 bg-brand-orange hover:bg-brand-orange-dark text-white font-bold py-3 rounded-xl text-sm transition-colors"
                 >
                   <Phone size={16} />
                   {t('requestCallback')}
                 </a>
                 <a
-                  href={`https://wa.me/966XXXXXXXXXX?text=${encodeURIComponent(selectedPkg.whatsappMsg)}`}
+                  href={`https://wa.me/966547123180?text=${encodeURIComponent(selectedPkg.whatsappMsg)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1 flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold py-3 rounded-xl text-sm transition-colors"

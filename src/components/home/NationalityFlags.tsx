@@ -122,7 +122,7 @@ export default function NationalityFlags() {
         {/* WhatsApp CTA */}
         <div className="text-center mt-10">
           <a
-            href="https://wa.me/966XXXXXXXXXX"
+            href="https://wa.me/966547123180"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-3 bg-[#25D366] hover:bg-[#1ebe5d] text-white px-8 py-4 rounded-2xl font-bold text-base transition-all duration-200 hover:scale-105 shadow-lg shadow-green-200"

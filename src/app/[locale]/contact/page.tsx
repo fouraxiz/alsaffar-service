@@ -36,9 +36,9 @@ export default function ContactPage() {
       <section className="bg-brand-orange">
         <div className="max-w-7xl mx-auto px-4 py-5">
           <div className="flex flex-wrap justify-center gap-6 text-white">
-            <a href="tel:+966XXXXXXXXXX" className="flex items-center gap-2 font-bold hover:text-white/80 transition-colors">
+            <a href="tel:+966547123180" className="flex items-center gap-2 font-bold hover:text-white/80 transition-colors">
               <Phone size={18} />
-              <span dir="ltr">+966 XX XXX XXXX</span>
+              <span dir="ltr">+966 54 712 3180</span>
             </a>
             <span className="text-white/30 hidden sm:block self-center">|</span>
             <a href="mailto:info@alsaffar.com.sa" className="flex items-center gap-2 font-bold hover:text-white/80 transition-colors">
@@ -172,7 +172,7 @@ export default function ContactPage() {
               </div>
 
               <a
-                href="tel:+966XXXXXXXXXX"
+                href="tel:+966547123180"
                 className="flex items-start gap-4 bg-brand-gray hover:bg-brand-orange/5 rounded-2xl p-6 transition-colors group"
               >
                 <div className="w-14 h-14 bg-brand-orange/10 group-hover:bg-brand-orange rounded-xl flex items-center justify-center text-brand-orange group-hover:text-white flex-shrink-0 transition-colors">
@@ -182,7 +182,7 @@ export default function ContactPage() {
                   <div className="text-xs text-gray-400 uppercase tracking-wider font-medium mb-1.5">
                     {locale === 'ar' ? 'الهاتف' : 'Phone'}
                   </div>
-                  <div className="font-bold text-brand-dark text-lg" dir="ltr">+966 XX XXX XXXX</div>
+                  <div className="font-bold text-brand-dark text-lg" dir="ltr">+966 54 712 3180</div>
                 </div>
               </a>
 
@@ -213,7 +213,7 @@ export default function ContactPage() {
 
               <div className="pt-2 space-y-3">
                 <a
-                  href="https://wa.me/966XXXXXXXXXX"
+                  href="https://wa.me/966547123180"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 w-full bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold py-4 rounded-xl transition-colors duration-200 text-lg"
@@ -222,7 +222,7 @@ export default function ContactPage() {
                   {t('whatsappCta')}
                 </a>
                 <a
-                  href="tel:+966XXXXXXXXXX"
+                  href="tel:+966547123180"
                   className="flex items-center justify-center gap-2 w-full border-2 border-brand-orange text-brand-orange hover:bg-brand-orange hover:text-white font-bold py-4 rounded-xl transition-colors duration-200 text-lg"
                 >
                   <Phone size={20} />
