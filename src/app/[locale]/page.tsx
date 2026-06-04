@@ -5,6 +5,7 @@ import Stats from '@/components/home/Stats';
 import NationalityFlags from '@/components/home/NationalityFlags';
 import CTABanner from '@/components/home/CTABanner';
 import WhatsAppPopup from '@/components/shared/WhatsAppPopup';
+import GuaranteeInfo from '@/components/home/GuaranteeInfo';
 
 type Props = {params: Promise<{locale: string}>};
 
@@ -18,6 +19,7 @@ export default async function HomePage({params}: Props) {
       <Hero />
       <TrustBadgesTop />
       <Stats />
+      <GuaranteeInfo />
       <NationalityFlags />
       <CTABanner />
     </>

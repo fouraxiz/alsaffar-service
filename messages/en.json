@@ -242,5 +242,47 @@
     },
     "office": "Our Office", "hours": "Office Hours", "hoursValue": "Sunday – Thursday: 8AM – 6PM",
     "whatsappCta": "Chat on WhatsApp", "callCta": "Call Now"
+  },
+  "liveChat": {
+    "title": "Free Consultation",
+    "subtitle": "Chat with our recruitment specialist",
+    "teamName": "Alsaffar Team",
+    "teamRole": "Recruitment Specialist",
+    "online": "Online Now",
+    "cta": "Speak now",
+    "ctaMobile": "Speak now",
+    "placeholder": "Type your message...",
+    "chatToggle": "Chat"
+  },
+  "guarantee": {
+    "badge": "Our Promise",
+    "title": "Your Peace of Mind, Guaranteed",
+    "subtitle": "We stand behind every placement with clear, written guarantees",
+    "replacement": {
+      "title": "Replacement Guarantee",
+      "desc": "If your placed worker isn't the right fit, we'll replace them at no additional cost — no questions asked."
+    },
+    "legal": {
+      "title": "100% Legal Compliance",
+      "desc": "Every placement is processed through official government channels — Musaned, MOFA, and Ministry of HR."
+    },
+    "support": {
+      "title": "After-Care Support",
+      "desc": "Our team is available 24/7 post-placement for mediation, contract issues, or any concerns."
+    }
+  },
+  "nationalityModal": {
+    "title": "Request CVs",
+    "subtitle": "Get qualified candidate profiles for",
+    "workerTypes": "Available worker types",
+    "domestic": "Housemaid · Nanny · Cook · Cleaner",
+    "driver": "Personal Driver · Family Driver",
+    "skilled": "Technician · Electrician · Plumber",
+    "priceRange": "Typical Price Range",
+    "requestWhatsApp": "Request CVs via WhatsApp",
+    "callUs": "Call Us Instead",
+    "close": "Close",
+    "requestCVs": "Request CVs",
+    "requestCVsDesc": "Browse workers by nationality and request profiles"
   }
 }

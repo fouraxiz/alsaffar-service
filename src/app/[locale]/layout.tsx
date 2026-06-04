@@ -7,6 +7,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import FloatingSidebar from '@/components/layout/FloatingSidebar';
 import DirectionProvider from '@/components/DirectionProvider';
+import LiveChatBar from '@/components/shared/LiveChatBar';
 import type {Metadata} from 'next';
 
 const cairo = Cairo({
@@ -58,11 +59,12 @@ export default async function LocaleLayout({children, params}: Props) {
   return (
     <NextIntlClientProvider messages={messages} locale={locale}>
       <DirectionProvider />
-      <div style={{fontFamily: cairo.style.fontFamily}} className="flex flex-col min-h-screen">
+      <div style={{fontFamily: cairo.style.fontFamily}} className="flex flex-col min-h-screen relative pb-[70px]">
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
         <FloatingSidebar />
+        <LiveChatBar />
       </div>
     </NextIntlClientProvider>
   );
