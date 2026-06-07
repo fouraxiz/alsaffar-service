@@ -1,8 +1,8 @@
 'use client';
 
-import {useTranslations, useLocale} from 'next-intl';
-import {useState, useRef, useEffect, useCallback} from 'react';
-import {X, MessageCircle, Sparkles} from 'lucide-react';
+import { useTranslations, useLocale } from 'next-intl';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { X, MessageCircle, Sparkles } from 'lucide-react';
 
 interface ChatMessage {
   id: string;
@@ -13,7 +13,7 @@ interface ChatMessage {
 
 const getBotResponse = (userText: string, isAr: boolean): string => {
   const query = userText.toLowerCase().trim();
-  
+
   if (isAr) {
     if (query.includes('سعر') || query.includes('تكلف') || query.includes('اسعار') || query.includes('فلوس') || query.includes('بكم') || query.includes('كم')) {
       return "تعتمد تكلفة الاستقدام على جنسية العامل والمهنة المطلوبة. تبدأ تكلفة استقدام العمالة المنزلية من 8,000 ريال سعودي. يرجى تزويدنا بالجنسية أو المهنة التي تهمك لنعطيك تفاصيل أدق!";
@@ -55,7 +55,7 @@ export default function LiveChatBar() {
   const t = useTranslations('liveChat');
   const locale = useLocale();
   const isAr = locale === 'ar';
-  
+
   const [isOpen, setIsOpen] = useState(true);
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -67,7 +67,7 @@ export default function LiveChatBar() {
     setMessages([
       {
         id: 'welcome',
-        text: isAr 
+        text: isAr
           ? "🎉 مرحباً بك في الصفار للاستقدام! نقدّم استشارة مجانية لجميع خدمات الاستقدام. أخبرنا بما تحتاجه — سواء عمالة منزلية، سائقين، عمالة ماهرة، أو تأشيرات — وسيساعدك فريقنا فوراً!"
           : "🎉 Welcome to Alsaffar Recruitment! We offer FREE consultation for all recruitment services. Tell us what you need — housemaids, drivers, skilled workers, or visa processing — and our team will assist you immediately!",
         sender: 'bot',
@@ -94,7 +94,7 @@ export default function LiveChatBar() {
       sender: 'user',
       timestamp: new Date()
     };
-    
+
     setMessages(prev => [...prev, userMsg]);
     setMessage('');
     setIsTyping(true);
@@ -141,7 +141,7 @@ export default function LiveChatBar() {
       `}</style>
 
       {/* Floating Toggle Button */}
-      <button 
+      <button
         onClick={() => setIsOpen(!isOpen)}
         className={`fixed bottom-6 z-50 w-[60px] h-[60px] bg-[#0ea5e9] hover:bg-[#0284c7] text-white rounded-full flex items-center justify-center shadow-xl transition-all duration-300 chat-toggle-pulse ${isAr ? 'left-6' : 'right-6'} ${isOpen ? 'scale-0 opacity-0 pointer-events-none' : 'scale-100 opacity-100'}`}
         aria-label="Open Chat"
@@ -150,7 +150,7 @@ export default function LiveChatBar() {
       </button>
 
       {/* Chat Window */}
-      <div 
+      <div
         className={`fixed bottom-6 z-50 w-[370px] max-w-[calc(100vw-32px)] bg-[#111827] rounded-xl shadow-2xl overflow-hidden origin-bottom flex flex-col border border-gray-800 ${isAr ? 'left-6' : 'right-6'} ${isOpen ? 'chat-enter' : 'opacity-0 scale-95 translate-y-4 pointer-events-none transition-all duration-300'}`}
         dir={isAr ? 'rtl' : 'ltr'}
       >
@@ -168,8 +168,8 @@ export default function LiveChatBar() {
               </div>
             </div>
           </div>
-          <button 
-            onClick={() => setIsOpen(false)} 
+          <button
+            onClick={() => setIsOpen(false)}
             className="text-gray-400 hover:text-white hover:bg-white/10 rounded-lg p-1.5 transition-all"
           >
             <X size={18} />
@@ -185,18 +185,18 @@ export default function LiveChatBar() {
         </div>
 
         {/* Chat Body */}
-        <div 
-          ref={chatBodyRef} 
+        <div
+          ref={chatBodyRef}
           className="bg-[#0f172a] h-[260px] p-4 flex flex-col gap-3.5 overflow-y-auto"
         >
           {messages.map((msg) => {
             const isUser = msg.sender === 'user';
-            const alignmentClass = isAr 
-              ? (isUser ? 'self-start' : 'self-end') 
+            const alignmentClass = isAr
+              ? (isUser ? 'self-start' : 'self-end')
               : (isUser ? 'self-end' : 'self-start');
             const roundedClass = isUser ? 'rounded-br-none' : 'rounded-bl-none';
-            const bgClass = isUser 
-              ? 'bg-[#0ea5e9] text-white border-[#0284c7]' 
+            const bgClass = isUser
+              ? 'bg-[#0ea5e9] text-white border-[#0284c7]'
               : 'bg-[#1e293b] text-gray-200 border-gray-700';
 
             return (
@@ -218,7 +218,7 @@ export default function LiveChatBar() {
         </div>
 
         {/* Footer / Input Area */}
-        <form 
+        <form
           onSubmit={(e) => {
             e.preventDefault();
             handleSend();
@@ -226,7 +226,7 @@ export default function LiveChatBar() {
           className="p-3.5 bg-[#111827] border-t border-gray-800"
         >
           <div className="flex gap-2">
-            <input 
+            <input
               type="text"
               placeholder={t('placeholder')}
               value={message}
