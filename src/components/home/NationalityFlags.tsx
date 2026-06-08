@@ -3,6 +3,7 @@
 import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { X, Phone } from 'lucide-react';
 
 type Nationality = {
@@ -100,11 +101,12 @@ export default function NationalityFlags() {
               : 'We provide workers from top certified nationalities at competitive prices. Browse and request CVs.'}
           </p>
 
-          <button
+          <Link
+            href={`/${locale}/request-cv`}
             className="inline-flex items-center gap-2 bg-brand-orange hover:bg-brand-orange-dark text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-all duration-200 hover:scale-105 shadow-md shadow-orange-200"
           >
             {t('requestCVs')}
-          </button>
+          </Link>
         </div>
 
         {/* Filter tabs */}

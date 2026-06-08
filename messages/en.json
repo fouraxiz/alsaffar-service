@@ -285,5 +285,75 @@
     "close": "Close",
     "requestCVs": "Request CVs",
     "requestCVsDesc": "Browse workers by nationality and request profiles"
+  },
+  "requestCV": {
+    "title": "Browse Available Workers",
+    "subtitle": "Find the perfect candidate for your home or business",
+    "filters": {
+      "title": "Filters",
+      "clearAll": "Clear All",
+      "nationality": "Nationality",
+      "gender": "Gender",
+      "male": "Male",
+      "female": "Female",
+      "age": "Age",
+      "jobType": "Job Type",
+      "salary": "Salary (SAR)",
+      "experience": "Experience",
+      "visaType": "Visa Type"
+    },
+    "gallery": {
+      "showing": "Showing {count} workers",
+      "noResults": "No workers match your filters.",
+      "tryAdjusting": "Try adjusting your criteria or contact us directly.",
+      "viewFullCV": "View Full CV"
+    },
+    "detail": {
+      "videoAvailable": "Video Available",
+      "downloadPDF": "Download PDF",
+      "age": "years old",
+      "salary": "SAR/month",
+      "experience": "years exp.",
+      "languages": "Languages",
+      "skills": "Skills",
+      "religion": "Religion",
+      "maritalStatus": "Marital Status",
+      "about": "About",
+      "selectWorker": "Select This Worker",
+      "backToBrowse": "Back to Browse"
+    },
+    "actions": {
+      "title": "How would you like to proceed?",
+      "whatsapp": "Contact via WhatsApp",
+      "whatsappDesc": "Our team will assist you immediately",
+      "recommended": "Recommended",
+      "call": "Call Us Directly",
+      "callDesc": "Speak with a recruitment specialist",
+      "continue": "Continue to Recruit",
+      "continueDesc": "Upload documents to reserve this CV"
+    },
+    "upload": {
+      "step1": "Your Info",
+      "step2": "Upload Documents",
+      "step3": "Confirm",
+      "fullName": "Full Name",
+      "phone": "Phone Number",
+      "email": "Email (Optional)",
+      "next": "Next",
+      "back": "Back",
+      "visaCopy": "Upload Visa Copy",
+      "idCopy": "Upload National ID",
+      "dragDrop": "Drag & drop files here or click to browse",
+      "acceptedFormats": "Accepted: PDF, JPG, PNG",
+      "address": "Full Address",
+      "city": "City",
+      "submit": "Submit Request",
+      "successTitle": "Request Submitted Successfully!",
+      "successDesc": "Our team has received your documents and reserved this CV. We will contact you within 24 hours to complete the process."
+    },
+    "specialist": {
+      "title": "Need help choosing?",
+      "subtitle": "Talk to a recruitment specialist"
+    }
   }
 }
