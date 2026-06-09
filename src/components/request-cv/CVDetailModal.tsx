@@ -1,5 +1,8 @@
 'use client';
 
+import { useState, useRef } from 'react';
+import { useReactToPrint } from 'react-to-print';
+
 import { useTranslations, useLocale } from 'next-intl';
 import { WorkerCV } from '@/data/cvData';
 import { X, Download, PlayCircle, MapPin, CheckCircle2 } from 'lucide-react';
@@ -15,6 +18,14 @@ export default function CVDetailModal({ worker, onClose, onProceed }: Props) {
   const t = useTranslations('requestCV.detail');
   const locale = useLocale();
   const isAr = locale === 'ar';
+
+  const [isDownloading, setIsDownloading] = useState(false);
+  const cvRef = useRef<HTMLDivElement>(null);
+
+  const handleDownloadPDF = useReactToPrint({
+    contentRef: cvRef,
+    documentTitle: `${worker.name.replace(/\s+/g, '_')}_CV`,
+  });
 
   return (
     <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 pointer-events-auto">
@@ -38,7 +49,7 @@ export default function CVDetailModal({ worker, onClose, onProceed }: Props) {
           <X size={18} />
         </button>
 
-        <div className="flex flex-col md:flex-row h-full overflow-y-auto">
+        <div ref={cvRef} className="flex flex-col md:flex-row h-full overflow-y-auto bg-white">
           {/* Left Panel: Media */}
           <div className="w-full md:w-2/5 bg-gray-50 flex flex-col">
             <div className="relative aspect-[3/4] w-full bg-gray-200">
@@ -51,7 +62,7 @@ export default function CVDetailModal({ worker, onClose, onProceed }: Props) {
               
               {/* Video Overlay if available */}
               {worker.hasVideo && (
-                <div className="absolute inset-0 bg-black/20 flex items-center justify-center group cursor-pointer hover:bg-black/40 transition-colors">
+                <div className="absolute inset-0 bg-black/20 flex items-center justify-center group cursor-pointer hover:bg-black/40 transition-colors print:hidden">
                   <div className="flex flex-col items-center gap-2 text-white">
                     <PlayCircle size={48} className="group-hover:scale-110 transition-transform" />
                     <span className="font-bold text-sm tracking-wide bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm">
@@ -62,10 +73,17 @@ export default function CVDetailModal({ worker, onClose, onProceed }: Props) {
               )}
             </div>
 
-            <div className="p-4 md:p-6 mt-auto">
-              <button className="w-full flex items-center justify-center gap-2 bg-white border-2 border-brand-orange text-brand-orange hover:bg-orange-50 py-3 rounded-xl font-bold transition-colors">
-                <Download size={18} />
-                {t('downloadPDF')}
+            <div className="p-4 md:p-6 mt-auto print:hidden">
+              <button 
+                onClick={() => handleDownloadPDF()}
+                disabled={isDownloading}
+                className="w-full flex items-center justify-center gap-2 bg-white border-2 border-brand-orange text-brand-orange hover:bg-orange-50 py-3 rounded-xl font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                {isDownloading ? (
+                  <span className="animate-spin border-2 border-brand-orange border-t-transparent rounded-full w-4 h-4"></span>
+                ) : (
+                  <Download size={18} />
+                )}
+                {isDownloading ? 'Preparing PDF...' : t('downloadPDF')}
               </button>
             </div>
           </div>
@@ -156,7 +174,7 @@ export default function CVDetailModal({ worker, onClose, onProceed }: Props) {
             </div>
 
             {/* Action Buttons */}
-            <div className="mt-auto pt-4 border-t border-gray-100 flex flex-col sm:flex-row gap-3">
+            <div className="mt-auto pt-4 border-t border-gray-100 flex flex-col sm:flex-row gap-3 print:hidden">
               <button 
                 onClick={onProceed}
                 className="flex-1 bg-brand-orange hover:bg-brand-orange-dark text-white py-3.5 rounded-xl font-bold text-lg shadow-lg shadow-orange-200 transition-all duration-200 hover:-translate-y-0.5"
