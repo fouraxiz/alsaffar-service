@@ -4,7 +4,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { 
   NATIONALITIES_LIST, 
   JOB_TYPES, 
-  VISA_TYPES, 
+  SERVICE_TYPES, 
   EXPERIENCE_RANGES 
 } from '@/data/cvData';
 import { ChevronDown, ChevronUp, X } from 'lucide-react';
@@ -17,7 +17,7 @@ export type FilterState = {
   jobType: string[];
   salaryRange: [number, number];
   experience: string | null;
-  visaType: string[];
+  serviceType: string[];
 };
 
 type Props = {
@@ -50,12 +50,12 @@ export default function CVFilterPanel({ filters, setFilters }: Props) {
     }));
   };
 
-  const toggleVisaType = (key: string) => {
+  const toggleServiceType = (key: string) => {
     setFilters(prev => ({
       ...prev,
-      visaType: prev.visaType.includes(key)
-        ? prev.visaType.filter(v => v !== key)
-        : [...prev.visaType, key]
+      serviceType: prev.serviceType.includes(key)
+        ? prev.serviceType.filter(v => v !== key)
+        : [...prev.serviceType, key]
     }));
   };
 
@@ -67,7 +67,7 @@ export default function CVFilterPanel({ filters, setFilters }: Props) {
       jobType: [],
       salaryRange: [1000, 5000],
       experience: null,
-      visaType: [],
+      serviceType: [],
     });
   };
 
@@ -76,7 +76,7 @@ export default function CVFilterPanel({ filters, setFilters }: Props) {
     (filters.gender ? 1 : 0) + 
     filters.jobType.length + 
     (filters.experience ? 1 : 0) + 
-    filters.visaType.length;
+    filters.serviceType.length;
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -218,7 +218,7 @@ export default function CVFilterPanel({ filters, setFilters }: Props) {
                       type="radio" 
                       name="experience" 
                       checked={filters.experience === range.key}
-                      onChange={() => setFilters(prev => ({ ...prev, experience: range.key }))}
+                      onChange={() => setFilters(prev => ({ ...prev, experience: prev.experience === range.key ? null : range.key }))}
                       className="peer sr-only"
                     />
                     <div className="w-5 h-5 rounded-full border-2 border-gray-300 peer-checked:border-brand-orange transition-colors" />
@@ -234,17 +234,17 @@ export default function CVFilterPanel({ filters, setFilters }: Props) {
 
           <div className="h-px bg-gray-100" />
 
-          {/* Visa Type */}
+          {/* Service Type (formerly Visa Type) */}
           <div>
-            <h4 className="text-sm font-bold text-gray-700 mb-3">{t('visaType')}</h4>
+            <h4 className="text-sm font-bold text-gray-700 mb-3">{t('serviceType')}</h4>
             <div className="flex flex-col gap-2">
-              {VISA_TYPES.map((visa) => (
-                <label key={visa.key} className="flex items-center gap-3 cursor-pointer group">
+              {SERVICE_TYPES.map((svc) => (
+                <label key={svc.key} className="flex items-center gap-3 cursor-pointer group">
                   <div className="relative flex items-center justify-center w-5 h-5">
                     <input 
                       type="checkbox"
-                      checked={filters.visaType.includes(visa.key)}
-                      onChange={() => toggleVisaType(visa.key)}
+                      checked={filters.serviceType.includes(svc.key)}
+                      onChange={() => toggleServiceType(svc.key)}
                       className="peer sr-only"
                     />
                     <div className="w-5 h-5 rounded border-2 border-gray-300 peer-checked:border-brand-orange peer-checked:bg-brand-orange transition-colors flex items-center justify-center">
@@ -254,7 +254,7 @@ export default function CVFilterPanel({ filters, setFilters }: Props) {
                     </div>
                   </div>
                   <span className="text-sm font-medium text-gray-600 group-hover:text-gray-900 transition-colors">
-                    {isAr ? visa.ar : visa.en}
+                    {isAr ? svc.ar : svc.en}
                   </span>
                 </label>
               ))}

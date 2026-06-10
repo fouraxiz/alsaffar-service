@@ -10,6 +10,7 @@ import CVDetailModal from './CVDetailModal';
 import CVActionSelection from './CVActionSelection';
 import DocumentUploadWizard from './DocumentUploadWizard';
 import SpecialistBar from './SpecialistBar';
+import NoMatchForm from './NoMatchForm';
 
 export type FlowState = 'browsing' | 'viewing' | 'action' | 'upload' | 'success';
 
@@ -29,7 +30,7 @@ export default function CVBrowser() {
     jobType: [],
     salaryRange: [1000, 5000],
     experience: null,
-    visaType: [],
+    serviceType: [],
   });
 
   // Filter logic
@@ -46,19 +47,29 @@ export default function CVBrowser() {
     if (worker.salaryExpectation < filters.salaryRange[0] || worker.salaryExpectation > filters.salaryRange[1]) return false;
     // Experience
     if (filters.experience) {
-      const [min, max] = filters.experience.split('-').map(Number);
-      if (max) {
-        if (worker.experience < min || worker.experience > max) return false;
-      } else {
-        // e.g. "10+"
-        if (worker.experience < parseInt(filters.experience)) return false;
+      if (filters.experience === 'fresh') {
+        if (worker.experience > 2) return false;
+      } else if (filters.experience === 'experienced') {
+        if (worker.experience <= 2) return false;
       }
     }
-    // Visa Type
-    if (filters.visaType.length > 0 && !filters.visaType.includes(worker.visaType)) return false;
+    // Service Type
+    if (filters.serviceType.length > 0 && !filters.serviceType.includes(worker.serviceType)) return false;
 
     return true;
   });
+
+  const handleClearFilters = () => {
+    setFilters({
+      nationality: [],
+      gender: null,
+      ageRange: [20, 55],
+      jobType: [],
+      salaryRange: [1000, 5000],
+      experience: null,
+      serviceType: [],
+    });
+  };
 
   // Handlers
   const handleSelectWorker = (worker: WorkerCV) => {
@@ -132,10 +143,16 @@ export default function CVBrowser() {
                 </button>
               </div>
             </div>
-            <CVGallery workers={filteredWorkers} onSelect={handleSelectWorker} viewMode={viewMode} />
+            {filteredWorkers.length > 0 ? (
+              <CVGallery workers={filteredWorkers} onSelect={handleSelectWorker} viewMode={viewMode} />
+            ) : (
+              <NoMatchForm filters={filters} onClose={handleClearFilters} />
+            )}
           </div>
         </div>
       </div>
+
+      {/* No Match Mandatory Form removed from here as it's now inline */}
 
       {/* Specialist Consultation Sticky Bar */}
       {/* <SpecialistBar /> */}

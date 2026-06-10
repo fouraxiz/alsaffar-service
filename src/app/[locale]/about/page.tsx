@@ -167,7 +167,7 @@ function AboutContent() {
                   <div className="text-white/40 text-xs uppercase tracking-wider font-medium mb-1.5">
                     {cred.label}
                   </div>
-                  <div className="font-bold text-white text-xl">{cred.value}</div>
+                  <div className="font-bold text-white text-xl whitespace-pre-line">{cred.value}</div>
                 </div>
               </div>
             ))}

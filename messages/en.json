@@ -195,7 +195,7 @@
     "musanedId": "Musaned Platform ID",
     "officeAddress": "Office Address",
     "officeHours": "Office Hours",
-    "hoursValue": "Sunday – Thursday: 8:00 AM – 6:00 PM"
+    "hoursValue": "Saturday to Thursday\n9:00 AM – 12:00 PM\n3:00 PM – 9:00 PM"
   },
   "servicesPage": {
     "title": "Our Recruitment Services",
@@ -240,7 +240,7 @@
       "namePlaceholder": "Enter your full name", "phonePlaceholder": "+966 5X XXX XXXX",
       "messagePlaceholder": "Tell us what you need..."
     },
-    "office": "Our Office", "hours": "Office Hours", "hoursValue": "Sunday – Thursday: 8AM – 6PM",
+    "office": "Our Office", "hours": "Office Hours", "hoursValue": "Saturday to Thursday\n9:00 AM – 12:00 PM\n3:00 PM – 9:00 PM",
     "whatsappCta": "Chat on WhatsApp", "callCta": "Call Now"
   },
   "liveChat": {
@@ -300,7 +300,21 @@
       "jobType": "Job Type",
       "salary": "Salary (SAR)",
       "experience": "Experience",
-      "visaType": "Visa Type"
+      "serviceType": "Service Type"
+    },
+    "noMatch": {
+      "title": "Can't Find What You're Looking For?",
+      "description": "Please provide your details and what you need, and our team will find the right candidate for you.",
+      "descLabel": "What are you looking for?",
+      "descPlaceholder": "Describe the ideal worker, specific skills, or requirements...",
+      "phoneLabel": "Phone Number",
+      "phonePlaceholder": "+966 5X XXX XXXX",
+      "idLabel": "ID Number",
+      "idPlaceholder": "Enter Your ID number",
+      "submit": "Submit Request",
+      "successTitle": "Request Received",
+      "successDesc": "We have received your requirements. Our recruitment specialist will contact you shortly with suitable profiles.",
+      "backToBrowse": "Back to Browsing"
     },
     "gallery": {
       "showing": "Showing {count} workers",

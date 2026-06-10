@@ -46,7 +46,7 @@ export default function ContactPage() {
               info@alsaffar.com.sa
             </a>
             <span className="text-white/30 hidden sm:block self-center">|</span>
-            <span className="flex items-center gap-2 font-bold">
+            <span className="flex items-center gap-2 font-bold whitespace-pre-line text-sm sm:text-base leading-tight">
               <Clock size={18} />
               {t('hoursValue')}
             </span>
@@ -207,7 +207,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <div className="text-xs text-gray-400 uppercase tracking-wider font-medium mb-1.5">{t('hours')}</div>
-                  <div className="font-bold text-brand-dark text-lg">{t('hoursValue')}</div>
+                  <div className="font-bold text-brand-dark text-lg whitespace-pre-line leading-tight">{t('hoursValue')}</div>
                 </div>
               </div>
 
@@ -234,22 +234,18 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* Map placeholder */}
-      <section className="h-64 bg-brand-gray flex items-center justify-center border-t border-gray-200">
-        <div className="text-center">
-          <MapPin size={48} className="text-brand-orange mx-auto mb-3" />
-          <div className="font-bold text-brand-dark text-xl mb-2">
-            {locale === 'ar' ? 'الرياض، المملكة العربية السعودية' : 'Riyadh, Saudi Arabia'}
-          </div>
-          <a
-            href="https://maps.google.com/?q=Riyadh,Saudi+Arabia"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-brand-orange font-semibold hover:underline"
-          >
-            {locale === 'ar' ? 'افتح في خرائط جوجل' : 'Open in Google Maps'}
-          </a>
-        </div>
+      {/* Embedded Google Map */}
+      <section className="h-96 w-full bg-gray-100 border-t border-gray-200 relative">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1m3!1d115980.25052957134!2d46.67490069999999!3d24.7135517!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e2f03890d489399%3A0xba974d1c98e79fd5!2sRiyadh%20Saudi%20Arabia!5e0!3m2!1sen!2s!4v1701234567890!5m2!1sen!2s"
+          width="100%"
+          height="100%"
+          style={{ border: 0 }}
+          allowFullScreen
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          title="Alsaffar Location"
+        />
       </section>
     </>
   );

@@ -96,9 +96,9 @@ export default function Footer() {
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2 text-white/60">
                 <MapPin size={14} className="mt-0.5 text-brand-orange flex-shrink-0" />
-                <span>
+                <a href="https://maps.google.com/?q=24.7136,46.6753" target="_blank" rel="noopener noreferrer" className="hover:text-brand-orange transition-colors">
                   {locale === 'ar' ? 'الرياض، المملكة العربية السعودية' : 'Riyadh, Saudi Arabia'}
-                </span>
+                </a>
               </li>
               <li>
                 <a
@@ -129,8 +129,8 @@ export default function Footer() {
               </li>
               <li className="flex items-start gap-2 text-white/60">
                 <Clock size={14} className="mt-0.5 text-brand-orange flex-shrink-0" />
-                <span>
-                  {locale === 'ar' ? 'الأحد – الخميس: 8 ص – 6 م' : 'Sun – Thu: 8AM – 6PM'}
+                <span className="whitespace-pre-line leading-tight">
+                  {locale === 'ar' ? 'السبت إلى الخميس\n9:00 صباحاً – 12:00 مساءً\n3:00 مساءً – 9:00 مساءً' : 'Saturday to Thursday\n9:00 AM – 12:00 PM\n3:00 PM – 9:00 PM'}
                 </span>
               </li>
             </ul>

@@ -30,7 +30,7 @@ export default function FloatingSidebar() {
       external: false,
     },
     {
-      href: 'https://maps.google.com/?q=Riyadh+Saudi+Arabia',
+      href: 'https://maps.google.com/?q=24.7136,46.6753',
       label: t('location'),
       icon: <MapPin size={20} />,
       bg: 'bg-sky-500',
