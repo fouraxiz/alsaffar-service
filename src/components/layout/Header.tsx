@@ -80,14 +80,15 @@ export default function Header() {
     {href: `/${locale}/about`, label: t('about')},
     {href: `/${locale}/services`, label: t('services')},
     {href: `/${locale}/request-cv`, label: locale === 'ar' ? 'تصفح العمالة' : 'Browse CVs'},
-    {href: `/${locale}#why-us`, label: t('whyUs')},
+    {href: `/${locale}/why-us`, label: t('whyUs')},
     {href: `/${locale}/contact`, label: t('contact')},
   ];
 
   const isActive = (href: string) => {
-    const clean = href.split('#')[0];
-    if (clean === `/${locale}`) return pathname === '/';
-    return pathname.startsWith(clean.replace(`/${locale}`, ''));
+    if (href.includes('#')) return false; // Do not highlight hash links as active pages
+    
+    if (href === `/${locale}`) return pathname === '/';
+    return pathname.startsWith(href.replace(`/${locale}`, ''));
   };
 
   return (
@@ -151,6 +152,17 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
+                onClick={(e) => {
+                  if (link.href.includes('#')) {
+                    const targetId = link.href.split('#')[1];
+                    const elem = document.getElementById(targetId);
+                    if (elem) {
+                      e.preventDefault();
+                      elem.scrollIntoView({ behavior: 'smooth' });
+                      window.history.pushState(null, '', link.href);
+                    }
+                  }
+                }}
                 className={`px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors duration-200 ${
                   isActive(link.href)
                     ? 'text-brand-orange bg-brand-light'
@@ -193,6 +205,18 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
+                onClick={(e) => {
+                  if (link.href.includes('#')) {
+                    const targetId = link.href.split('#')[1];
+                    const elem = document.getElementById(targetId);
+                    if (elem) {
+                      e.preventDefault();
+                      elem.scrollIntoView({ behavior: 'smooth' });
+                      window.history.pushState(null, '', link.href);
+                    }
+                  }
+                  setMobileOpen(false);
+                }}
                 className={`px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${
                   isActive(link.href)
                     ? 'text-brand-orange bg-brand-light'
