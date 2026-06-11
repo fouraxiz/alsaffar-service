@@ -81,14 +81,14 @@ function ServicesContent() {
   ];
 
   const countries = [
-    {flag: '🇵🇭', name: 'Philippines'},
-    {flag: '🇮🇩', name: 'Indonesia'},
-    {flag: '🇮🇳', name: 'India'},
-    {flag: '🇱🇰', name: 'Sri Lanka'},
-    {flag: '🇪🇹', name: 'Ethiopia'},
-    {flag: '🇧🇩', name: 'Bangladesh'},
-    {flag: '🇳🇵', name: 'Nepal'},
-    {flag: '🇵🇰', name: 'Pakistan'},
+    {code: 'ph', name: 'Philippines'},
+    {code: 'id', name: 'Indonesia'},
+    {code: 'in', name: 'India'},
+    {code: 'lk', name: 'Sri Lanka'},
+    {code: 'et', name: 'Ethiopia'},
+    {code: 'bd', name: 'Bangladesh'},
+    {code: 'np', name: 'Nepal'},
+    {code: 'pk', name: 'Pakistan'},
   ];
 
   return (
@@ -277,9 +277,16 @@ function ServicesContent() {
             {countries.map((c) => (
               <div
                 key={c.name}
-                className="bg-white/10 hover:bg-white/20 border border-white/10 rounded-2xl px-6 py-4 transition-colors"
+                className="bg-white/10 hover:bg-white/20 border border-white/10 rounded-2xl px-6 py-4 transition-colors flex flex-col items-center justify-center gap-3 min-w-[120px]"
               >
-                <div className="text-3xl mb-1">{c.flag}</div>
+                <div className="w-12 h-9 relative rounded overflow-hidden shadow-sm">
+                  <Image
+                    src={`https://flagcdn.com/w80/${c.code}.png`}
+                    alt={c.name}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
                 <div className="text-white font-semibold text-sm">{c.name}</div>
               </div>
             ))}
