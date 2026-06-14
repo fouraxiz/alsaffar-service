@@ -46,7 +46,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-1">
             <Link href={`/${locale}`} className="inline-flex mb-4">
               <div className="bg-white rounded-xl px-4 py-2.5">
                 <img
@@ -96,8 +96,8 @@ export default function Footer() {
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2 text-white/60">
                 <MapPin size={14} className="mt-0.5 text-brand-orange flex-shrink-0" />
-                <a href="https://maps.google.com/?q=24.7136,46.6753" target="_blank" rel="noopener noreferrer" className="hover:text-brand-orange transition-colors">
-                  {locale === 'ar' ? 'الرياض، المملكة العربية السعودية' : 'Riyadh, Saudi Arabia'}
+                <a href="https://maps.google.com/?q=26.5823804,50.0407788" target="_blank" rel="noopener noreferrer" className="hover:text-brand-orange transition-colors">
+                  {locale === 'ar' ? 'المنطقة الشرقية، المملكة العربية السعودية' : 'Eastern Province, Saudi Arabia'}
                 </a>
               </li>
               <li>
@@ -134,6 +134,21 @@ export default function Footer() {
                 </span>
               </li>
             </ul>
+          </div>
+
+          {/* Map */}
+          <div className="h-48 lg:h-full w-full min-h-[200px] rounded-xl overflow-hidden border border-white/10 relative">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3570.089853907742!2d50.04077887640822!3d26.58238047214697!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e4a0092c0a2a67b%3A0xae97e0b280d49791!2sAlsaffar%20Recruitment%20Manpower!5e0!3m2!1sen!2sus!4v1718338167823!5m2!1sen!2sus"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Alsaffar Location"
+              className="absolute inset-0"
+            />
           </div>
         </div>
       </div>

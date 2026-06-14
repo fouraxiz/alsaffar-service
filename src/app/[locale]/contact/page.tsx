@@ -237,7 +237,7 @@ export default function ContactPage() {
       {/* Embedded Google Map */}
       <section className="h-96 w-full bg-gray-100 border-t border-gray-200 relative">
         <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1m3!1d115980.25052957134!2d46.67490069999999!3d24.7135517!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e2f03890d489399%3A0xba974d1c98e79fd5!2sRiyadh%20Saudi%20Arabia!5e0!3m2!1sen!2s!4v1701234567890!5m2!1sen!2s"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3570.089853907742!2d50.04077887640822!3d26.58238047214697!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e4a0092c0a2a67b%3A0xae97e0b280d49791!2sAlsaffar%20Recruitment%20Manpower!5e0!3m2!1sen!2sus!4v1718338167823!5m2!1sen!2sus"
           width="100%"
           height="100%"
           style={{ border: 0 }}
