@@ -116,8 +116,8 @@ export default function NationalityFlags() {
               key={key}
               onClick={() => setActiveFilter(key as typeof activeFilter)}
               className={`px-5 py-2 rounded-full text-sm font-bold border-2 transition-all duration-200 ${activeFilter === key
-                  ? 'bg-brand-orange border-brand-orange text-white shadow-lg shadow-orange-200'
-                  : 'bg-white border-gray-200 text-gray-600 hover:border-brand-orange hover:text-brand-orange'
+                ? 'bg-brand-orange border-brand-orange text-white shadow-lg shadow-orange-200'
+                : 'bg-white border-gray-200 text-gray-600 hover:border-brand-orange hover:text-brand-orange'
                 }`}
             >
               {isAr ? categoryLabels[key].ar : categoryLabels[key].en}
@@ -128,16 +128,16 @@ export default function NationalityFlags() {
         {/* Flags grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {filtered.map((nat) => (
-            <div
+            <Link
+              href={`/${locale}/request-cv?nationality=${nat.code}${activeFilter !== 'all' ? `&category=${activeFilter}` : ''}`}
               key={nat.code}
               onMouseEnter={() => setHovered(nat.code)}
               onMouseLeave={() => setHovered(null)}
-              onClick={() => setSelectedNationality(nat)}
-              className="relative group cursor-pointer"
+              className="relative group cursor-pointer block"
             >
-              <div className={`flex flex-col items-center gap-3 bg-white border-2 rounded-2xl p-5 transition-all duration-200 ${hovered === nat.code
-                  ? 'border-brand-orange shadow-xl shadow-orange-100 -translate-y-1.5'
-                  : 'border-gray-100 hover:border-orange-200'
+              <div className={`flex flex-col items-center gap-3 bg-white border-2 rounded-2xl p-5 transition-all duration-200 h-full ${hovered === nat.code
+                ? 'border-brand-orange shadow-xl shadow-orange-100 -translate-y-1.5'
+                : 'border-gray-100 hover:border-orange-200'
                 }`}>
                 {/* Flag Image from CDN */}
                 <div className="w-12 h-9 relative rounded overflow-hidden shadow-sm">
@@ -163,7 +163,7 @@ export default function NationalityFlags() {
                   {nat.priceRange}
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

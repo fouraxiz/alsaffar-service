@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
+import { useSearchParams } from 'next/navigation';
 import { LayoutGrid, AlignJustify } from 'lucide-react';
 import { mockWorkers, WorkerCV } from '@/data/cvData';
 import CVFilterPanel, { FilterState } from './CVFilterPanel';
@@ -18,6 +19,7 @@ export default function CVBrowser() {
   const t = useTranslations('requestCV');
   const locale = useLocale();
   const isAr = locale === 'ar';
+  const searchParams = useSearchParams();
 
   const [flowState, setFlowState] = useState<FlowState>('browsing');
   const [selectedCV, setSelectedCV] = useState<WorkerCV | null>(null);
@@ -32,6 +34,31 @@ export default function CVBrowser() {
     experience: null,
     serviceType: [],
   });
+
+  useEffect(() => {
+    const nationalityParam = searchParams.get('nationality');
+    const categoryParam = searchParams.get('category');
+    
+    setFilters(prev => {
+      const next = { ...prev };
+      
+      if (nationalityParam) {
+        next.nationality = [nationalityParam];
+      }
+      
+      if (categoryParam) {
+        if (categoryParam === 'domestic') {
+          next.jobType = ['housemaid', 'nanny', 'cook', 'cleaner', 'elderly_care'];
+        } else if (categoryParam === 'driver') {
+          next.jobType = ['driver'];
+        } else if (categoryParam === 'skilled') {
+          next.jobType = ['technician', 'electrician', 'plumber', 'gardener'];
+        }
+      }
+      
+      return next;
+    });
+  }, [searchParams]);
 
   // Filter logic
   const filteredWorkers = mockWorkers.filter((worker) => {
