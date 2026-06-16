@@ -17,8 +17,14 @@ export default function WhatsAppPopup() {
   const [closing, setClosing] = useState(false);
 
   useEffect(() => {
+    // Show only once per browser session — the first time the site is opened
+    if (sessionStorage.getItem('alsaffar_wa_popup_shown')) return;
+
     // Appear after ~1 second — stays until user closes or clicks WhatsApp
-    const showTimer = setTimeout(() => setVisible(true), 1000);
+    const showTimer = setTimeout(() => {
+      setVisible(true);
+      sessionStorage.setItem('alsaffar_wa_popup_shown', '1');
+    }, 1000);
     return () => clearTimeout(showTimer);
   }, []);
 
