@@ -36,14 +36,14 @@ export default function ContactPage() {
       <section className="bg-brand-orange">
         <div className="max-w-7xl mx-auto px-4 py-5">
           <div className="flex flex-wrap justify-center gap-6 text-white">
-            <a href="tel:+966547123180" className="flex items-center gap-2 font-bold hover:text-white/80 transition-colors">
+            <a href="tel:+966920021201" className="flex items-center gap-2 font-bold hover:text-white/80 transition-colors">
               <Phone size={18} />
-              <span dir="ltr">+966 54 712 3180</span>
+              <span dir="ltr">+966 920 021 201</span>
             </a>
             <span className="text-white/30 hidden sm:block self-center">|</span>
-            <a href="mailto:info@alsaffar.com.sa" className="flex items-center gap-2 font-bold hover:text-white/80 transition-colors">
+            <a href="mailto:support@alsaffar.pro" className="flex items-center gap-2 font-bold hover:text-white/80 transition-colors">
               <Mail size={18} />
-              info@alsaffar.com.sa
+              support@alsaffar.pro
             </a>
             <span className="text-white/30 hidden sm:block self-center">|</span>
             <span className="flex items-center gap-2 font-bold whitespace-pre-line text-sm sm:text-base leading-tight">
@@ -166,13 +166,13 @@ export default function ContactPage() {
                 <div>
                   <div className="text-xs text-gray-400 uppercase tracking-wider font-medium mb-1.5">{t('office')}</div>
                   <div className="font-bold text-brand-dark text-lg">
-                    {locale === 'ar' ? 'الرياض، المملكة العربية السعودية' : 'Riyadh, Saudi Arabia'}
+                    {locale === 'ar' ? 'المنطقة الشرقية، المملكة العربية السعودية' : 'Eastern Province, Saudi Arabia'}
                   </div>
                 </div>
               </div>
 
               <a
-                href="tel:+966547123180"
+                href="tel:+966920021201"
                 className="flex items-start gap-4 bg-brand-gray hover:bg-brand-orange/5 rounded-2xl p-6 transition-colors group"
               >
                 <div className="w-14 h-14 bg-brand-orange/10 group-hover:bg-brand-orange rounded-xl flex items-center justify-center text-brand-orange group-hover:text-white flex-shrink-0 transition-colors">
@@ -182,12 +182,12 @@ export default function ContactPage() {
                   <div className="text-xs text-gray-400 uppercase tracking-wider font-medium mb-1.5">
                     {locale === 'ar' ? 'الهاتف' : 'Phone'}
                   </div>
-                  <div className="font-bold text-brand-dark text-lg" dir="ltr">+966 54 712 3180</div>
+                  <div className="font-bold text-brand-dark text-lg" dir="ltr">+966 920 021 201</div>
                 </div>
               </a>
 
               <a
-                href="mailto:info@alsaffar.com.sa"
+                href="mailto:support@alsaffar.pro"
                 className="flex items-start gap-4 bg-brand-gray hover:bg-brand-orange/5 rounded-2xl p-6 transition-colors group"
               >
                 <div className="w-14 h-14 bg-brand-orange/10 group-hover:bg-brand-orange rounded-xl flex items-center justify-center text-brand-orange group-hover:text-white flex-shrink-0 transition-colors">
@@ -197,7 +197,7 @@ export default function ContactPage() {
                   <div className="text-xs text-gray-400 uppercase tracking-wider font-medium mb-1.5">
                     {locale === 'ar' ? 'البريد الإلكتروني' : 'Email'}
                   </div>
-                  <div className="font-bold text-brand-dark text-lg">info@alsaffar.com.sa</div>
+                  <div className="font-bold text-brand-dark text-lg">support@alsaffar.pro</div>
                 </div>
               </a>
 
@@ -213,7 +213,7 @@ export default function ContactPage() {
 
               <div className="pt-2 space-y-3">
                 <a
-                  href="https://wa.me/966547123180"
+                  href="https://wa.me/966920021201"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 w-full bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold py-4 rounded-xl transition-colors duration-200 text-lg"
@@ -222,7 +222,7 @@ export default function ContactPage() {
                   {t('whatsappCta')}
                 </a>
                 <a
-                  href="tel:+966547123180"
+                  href="tel:+966920021201"
                   className="flex items-center justify-center gap-2 w-full border-2 border-brand-orange text-brand-orange hover:bg-brand-orange hover:text-white font-bold py-4 rounded-xl transition-colors duration-200 text-lg"
                 >
                   <Phone size={20} />
@@ -237,7 +237,7 @@ export default function ContactPage() {
       {/* Embedded Google Map */}
       <section className="h-96 w-full bg-gray-100 border-t border-gray-200 relative">
         <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3570.089853907742!2d50.04077887640822!3d26.58238047214697!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e4a0092c0a2a67b%3A0xae97e0b280d49791!2sAlsaffar%20Recruitment%20Manpower!5e0!3m2!1sen!2sus!4v1718338167823!5m2!1sen!2sus"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3570.089853907742!2d50.0433538!3d26.5823757!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e4a0092c0a2a67b%3A0xae97e0b280d49791!2sAlsaffar%20Recruitment%20Manpower!5e1!3m2!1sen!2sus!4v1718338167823!5m2!1sen!2sus"
           width="100%"
           height="100%"
           style={{ border: 0 }}

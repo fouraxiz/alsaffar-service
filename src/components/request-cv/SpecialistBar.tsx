@@ -52,7 +52,7 @@ export default function SpecialistBar() {
             
             <div className="flex items-center gap-2">
               <a 
-                href="https://wa.me/966547123180?text=Hello,%20I%20need%20help%20choosing%20a%20CV."
+                href="https://wa.me/966920021201?text=Hello,%20I%20need%20help%20choosing%20a%20CV."
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-1.5 bg-[#25D366] hover:bg-[#1ebe5d] text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-colors"
@@ -61,7 +61,7 @@ export default function SpecialistBar() {
                 WhatsApp
               </a>
               <a 
-                href="tel:+966547123180"
+                href="tel:+966920021201"
                 className="flex items-center justify-center w-8 h-8 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
               >
                 <Phone size={14} />

@@ -32,7 +32,7 @@ export default function VisaServices() {
             <p className="text-white/60 mt-2 max-w-lg">{t('subtitle')}</p>
           </div>
           <a
-            href="https://wa.me/966547123180?text=Hello! I need help with visa services."
+            href="https://wa.me/966920021201?text=Hello! I need help with visa services."
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 bg-[#25D366] hover:bg-[#1ebe5d] text-white px-5 py-3 rounded-xl font-bold text-sm transition-colors flex-shrink-0"
@@ -56,7 +56,7 @@ export default function VisaServices() {
                 <p className="text-white/50 text-xs leading-relaxed">{t(`items.${item.key}.desc`)}</p>
               </div>
               <a
-                href={`https://wa.me/966547123180?text=${encodeURIComponent(item.msg)}`}
+                href={`https://wa.me/966920021201?text=${encodeURIComponent(item.msg)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-shrink-0 w-9 h-9 bg-[#25D366] hover:bg-[#1ebe5d] rounded-lg flex items-center justify-center text-white transition-colors opacity-70 group-hover:opacity-100"

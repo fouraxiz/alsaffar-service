@@ -67,7 +67,7 @@ export default function NationalityFlags() {
     const msg = isAr
       ? 'مرحباً، أود الاستفسار عن السير الذاتية المتاحة للعمالة.'
       : 'Hello, I would like to inquire about available CVs for workers.';
-    window.open(`https://wa.me/966547123180?text=${encodeURIComponent(msg)}`, '_blank');
+    window.open(`https://wa.me/966920021201?text=${encodeURIComponent(msg)}`, '_blank');
   };
 
   const handleCloseModal = () => {
@@ -283,7 +283,7 @@ export default function NationalityFlags() {
               {/* Action Buttons */}
               <div className="flex gap-2">
                 <a
-                  href={`https://wa.me/966547123180?text=${encodeURIComponent(
+                  href={`https://wa.me/966920021201?text=${encodeURIComponent(
                     isAr
                       ? `مرحباً، أود طلب السير الذاتية المتاحة للعمالة من الجنسية ${selectedNationality.nameAr} (${categoryLabels[selectedNationality.category].ar})`
                       : `Hello, I would like to request available CVs for ${selectedNationality.nameEn} workers (${categoryLabels[selectedNationality.category].en})`
@@ -297,7 +297,7 @@ export default function NationalityFlags() {
                 </a>
 
                 <a
-                  href="tel:+966547123180"
+                  href="tel:+966920021201"
                   className="flex items-center justify-center gap-2 px-4 bg-gray-100 hover:bg-gray-200 text-brand-dark py-3 rounded-xl font-bold text-sm transition-colors duration-200"
                   title={t('callUs')}
                 >

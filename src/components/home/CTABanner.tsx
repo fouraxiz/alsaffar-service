@@ -32,7 +32,7 @@ export default function CTABanner() {
             {t('button')}
           </Link>
           <a
-            href="https://wa.me/966547123180"
+            href="https://wa.me/966920021201"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 bg-[#25D366] hover:bg-[#1ebe5d] text-white px-8 py-3.5 rounded-xl font-bold text-base transition-all duration-200 hover:scale-105"

@@ -52,7 +52,7 @@ ${formatFilters()}
 
     console.log('Sending message:', message);
     // You could also open WhatsApp directly here
-    // window.open(`https://wa.me/966547123180?text=${encodeURIComponent(message)}`, '_blank');
+    // window.open(`https://wa.me/966920021201?text=${encodeURIComponent(message)}`, '_blank');
 
     setSubmitted(true);
   };

@@ -14,7 +14,7 @@ export default function FloatingSidebar() {
 
   const buttons = [
     {
-      href: 'https://wa.me/966547123180',
+      href: 'https://wa.me/966920021201',
       label: t('whatsapp'),
       icon: <WhatsAppIcon />,
       bg: 'bg-[#25D366]',
@@ -22,7 +22,7 @@ export default function FloatingSidebar() {
       external: true,
     },
     {
-      href: 'tel:+966547123180',
+      href: 'tel:+966920021201',
       label: t('callback'),
       icon: <Phone size={20} />,
       bg: 'bg-brand-orange',
@@ -30,7 +30,7 @@ export default function FloatingSidebar() {
       external: false,
     },
     {
-      href: 'https://maps.google.com/?q=24.7136,46.6753',
+      href: 'https://maps.google.com/?q=26.5823757,50.0433538',
       label: t('location'),
       icon: <MapPin size={20} />,
       bg: 'bg-sky-500',

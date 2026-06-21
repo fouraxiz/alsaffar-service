@@ -28,9 +28,9 @@ const getBotResponse = (userText: string, isAr: boolean): string => {
       return "خطوات الاستقدام هي: 1. إصدار التأشيرة عبر منصة مساند. 2. اختيار السيرة الذاتية المناسبة. 3. توقيع العقد وسداد الرسوم. 4. إنهاء إجراءات سفر العامل. تستغرق العملية عادةً بين 30 إلى 45 يوماً.";
     }
     if (query.includes('رقم') || query.includes('تواصل') || query.includes('هاتف') || query.includes('جوال') || query.includes('واتس') || query.includes('عنوان')) {
-      return "يمكنك التواصل مع خدمة العملاء مباشرة عبر واتساب على الرقم +966 54 712 3180 أو الاتصال بنا. يسعدنا جداً خدمتك ومساعدتك!";
+      return "يمكنك التواصل مع خدمة العملاء مباشرة عبر واتساب على الرقم +966 920 021 201 أو الاتصال بنا. يسعدنا جداً خدمتك ومساعدتك!";
     }
-    return "شكراً لرسالتك! لمزيد من التفاصيل أو للحصول على سير ذاتية مخصصة، يمكنك التواصل معنا مباشرة عبر الواتساب على الرقم +966 54 712 3180 أو زيارة صفحة اتصل بنا.";
+    return "شكراً لرسالتك! لمزيد من التفاصيل أو للحصول على سير ذاتية مخصصة، يمكنك التواصل معنا مباشرة عبر الواتساب على الرقم +966 920 021 201 أو زيارة صفحة اتصل بنا.";
   } else {
     if (query.includes('price') || query.includes('cost') || query.includes('how much') || query.includes('fee') || query.includes('charge')) {
       return "Recruitment costs vary by nationality and profession. Domestic worker recruitment starts from 8,000 SAR. Let us know the nationality or profession you prefer for exact pricing!";
@@ -45,9 +45,9 @@ const getBotResponse = (userText: string, isAr: boolean): string => {
       return "Recruitment steps: 1. Issue a visa via Musaned. 2. Choose the worker's CV. 3. Sign the contract and pay the fees. 4. Complete placement and travel procedures. The process takes around 30-45 days.";
     }
     if (query.includes('contact') || query.includes('number') || query.includes('phone') || query.includes('whatsapp') || query.includes('call')) {
-      return "You can reach our team directly via WhatsApp at +966 54 712 3180 or visit our Contact page. We are online and ready to assist!";
+      return "You can reach our team directly via WhatsApp at +966 920 021 201 or visit our Contact page. We are online and ready to assist!";
     }
-    return "Thank you for your message! To get detailed assistance or customized CVs, please feel free to reach our team on WhatsApp at +966 54 712 3180 or visit our Contact page.";
+    return "Thank you for your message! To get detailed assistance or customized CVs, please feel free to reach our team on WhatsApp at +966 920 021 201 or visit our Contact page.";
   }
 };
 

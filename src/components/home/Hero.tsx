@@ -52,7 +52,7 @@ export default function Hero() {
             {/* Contact CTA buttons — prominent */}
             <div className="flex flex-wrap gap-3 mb-8">
               <a
-                href="https://wa.me/966547123180"
+                href="https://wa.me/966920021201"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 bg-[#25D366] hover:bg-[#1ebe5d] text-white px-6 py-3.5 rounded-xl font-bold text-base transition-all duration-200 hover:scale-105 shadow-lg shadow-green-200"
@@ -61,7 +61,7 @@ export default function Hero() {
                 {isAr ? 'واتساب الآن' : 'WhatsApp Now'}
               </a>
               <a
-                href="tel:+966547123180"
+                href="tel:+966920021201"
                 className="flex items-center gap-2 bg-brand-orange hover:bg-brand-orange-dark text-white px-6 py-3.5 rounded-xl font-bold text-base transition-all duration-200 hover:scale-105 shadow-lg shadow-orange-200"
               >
                 <Phone size={18} />

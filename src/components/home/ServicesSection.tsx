@@ -109,7 +109,7 @@ export default function ServicesSection() {
                     {t('learnMore')}
                   </Link>
                   <a
-                    href={`https://wa.me/966547123180?text=${encodeURIComponent(service.waMsg)}`}
+                    href={`https://wa.me/966920021201?text=${encodeURIComponent(service.waMsg)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-1.5 bg-[#25D366] hover:bg-[#1ebe5d] text-white px-3 py-2 rounded-lg text-xs font-semibold transition-colors"

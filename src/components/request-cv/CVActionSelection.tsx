@@ -70,7 +70,7 @@ export default function CVActionSelection({ worker, onClose, onBack, onContinue 
             
             {/* WhatsApp - Recommended */}
             <a 
-              href={`https://wa.me/966547123180?text=${whatsappMessage}`}
+              href={`https://wa.me/966920021201?text=${whatsappMessage}`}
               target="_blank"
               rel="noopener noreferrer"
               className="relative block bg-white border-2 border-[#25D366] rounded-2xl p-5 shadow-lg shadow-green-100 hover:-translate-y-1 transition-all duration-300 group"
@@ -92,7 +92,7 @@ export default function CVActionSelection({ worker, onClose, onBack, onContinue 
 
             {/* Call Directly */}
             <a 
-              href="tel:+966547123180"
+              href="tel:+966920021201"
               className="block bg-white border border-gray-200 hover:border-gray-300 rounded-2xl p-5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group"
             >
               <div className="flex items-center gap-5">

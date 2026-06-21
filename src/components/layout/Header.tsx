@@ -113,7 +113,7 @@ export default function Header() {
           </div>
           <div className="flex items-center gap-4">
             <a
-              href="https://wa.me/966547123180"
+              href="https://wa.me/966920021201"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 text-[#25D366] hover:text-[#1ebe5d] transition-colors font-semibold"
@@ -122,11 +122,11 @@ export default function Header() {
               <span>WhatsApp</span>
             </a>
             <a
-              href="tel:+966547123180"
+              href="tel:+966920021201"
               className="flex items-center gap-1.5 text-white/70 hover:text-brand-orange transition-colors"
             >
               <Phone size={12} />
-              <span dir="ltr">+966 54 712 3180</span>
+              <span dir="ltr">+966 920 021 201</span>
             </a>
             <a
               href="tel:+966545699929"
@@ -178,7 +178,7 @@ export default function Header() {
           <div className="flex items-center gap-3">
             <LanguageSwitcher />
             <a
-              href="https://wa.me/966547123180"
+              href="https://wa.me/966920021201"
               target="_blank"
               rel="noopener noreferrer"
               className="hidden md:flex items-center gap-2 bg-[#25D366] hover:bg-[#1ebe5d] text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors duration-200"
@@ -228,13 +228,13 @@ export default function Header() {
             ))}
             <div className="pt-2 pb-1 border-t border-gray-100 mt-1 flex gap-3">
               <a
-                href="tel:+966547123180"
+                href="tel:+966920021201"
                 className="flex-1 text-center py-2.5 rounded-lg border border-brand-orange text-brand-orange text-sm font-bold"
               >
                 {locale === 'ar' ? 'اتصل بنا' : 'Call Us'}
               </a>
               <a
-                href="https://wa.me/966547123180"
+                href="https://wa.me/966920021201"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-[#25D366] text-white text-sm font-bold"

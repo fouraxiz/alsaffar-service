@@ -96,17 +96,17 @@ export default function Footer() {
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2 text-white/60">
                 <MapPin size={14} className="mt-0.5 text-brand-orange flex-shrink-0" />
-                <a href="https://maps.google.com/?q=26.5823804,50.0407788" target="_blank" rel="noopener noreferrer" className="hover:text-brand-orange transition-colors">
+                <a href="https://maps.google.com/?q=26.5823757,50.0433538" target="_blank" rel="noopener noreferrer" className="hover:text-brand-orange transition-colors">
                   {locale === 'ar' ? 'المنطقة الشرقية، المملكة العربية السعودية' : 'Eastern Province, Saudi Arabia'}
                 </a>
               </li>
               <li>
                 <a
-                  href="tel:+966547123180"
+                  href="tel:+966920021201"
                   className="flex items-center gap-2 text-white/60 hover:text-brand-orange transition-colors"
                 >
                   <Phone size={14} className="text-brand-orange flex-shrink-0" />
-                  <span dir="ltr">+966 54 712 3180</span>
+                  <span dir="ltr">+966 920 021 201</span>
                 </a>
               </li>
               <li>
@@ -120,11 +120,11 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="mailto:info@alsaffar.com.sa"
+                  href="mailto:support@alsaffar.pro"
                   className="flex items-center gap-2 text-white/60 hover:text-brand-orange transition-colors"
                 >
                   <Mail size={14} className="text-brand-orange flex-shrink-0" />
-                  <span>info@alsaffar.com.sa</span>
+                  <span>support@alsaffar.pro</span>
                 </a>
               </li>
               <li className="flex items-start gap-2 text-white/60">
@@ -139,7 +139,7 @@ export default function Footer() {
           {/* Map */}
           <div className="h-48 lg:h-full w-full min-h-[200px] rounded-xl overflow-hidden border border-white/10 relative">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3570.089853907742!2d50.04077887640822!3d26.58238047214697!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e4a0092c0a2a67b%3A0xae97e0b280d49791!2sAlsaffar%20Recruitment%20Manpower!5e0!3m2!1sen!2sus!4v1718338167823!5m2!1sen!2sus"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3570.089853907742!2d50.0433538!3d26.5823757!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e4a0092c0a2a67b%3A0xae97e0b280d49791!2sAlsaffar%20Recruitment%20Manpower!5e1!3m2!1sen!2sus!4v1718338167823!5m2!1sen!2sus"
               width="100%"
               height="100%"
               style={{ border: 0 }}
