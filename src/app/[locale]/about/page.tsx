@@ -18,11 +18,11 @@ function AboutContent() {
   const locale = useLocale();
 
   const credentials = [
-    {icon: <FileText size={22} />, label: t('crNumber'), value: '1010XXXXXX'},
-    {icon: <FileText size={22} />, label: t('licenseNumber'), value: 'XXXXXXX'},
-    {icon: <Award size={22} />, label: t('musanedId'), value: 'XXXXXXX'},
-    {icon: <MapPin size={22} />, label: t('officeAddress'), value: locale === 'ar' ? 'الرياض، المملكة العربية السعودية' : 'Riyadh, Saudi Arabia'},
-    {icon: <Clock size={22} />, label: t('officeHours'), value: t('hoursValue')},
+    {icon: <FileText size={26} />, label: t('crNumber'), value: '1010XXXXXX'},
+    {icon: <FileText size={26} />, label: t('licenseNumber'), value: 'XXXXXXX'},
+    {icon: <Award size={26} />, label: t('musanedId'), value: 'XXXXXXX'},
+    {icon: <MapPin size={26} />, label: t('officeAddress'), value: locale === 'ar' ? 'الرياض، المملكة العربية السعودية' : 'Riyadh, Saudi Arabia'},
+    {icon: <Clock size={26} />, label: t('officeHours'), value: t('hoursValue')},
   ];
 
   const stats = [
@@ -149,28 +149,74 @@ function AboutContent() {
       </section>
 
       {/* Credentials */}
-      <section className="py-24 bg-brand-dark">
-        <div className="max-w-7xl mx-auto px-4">
+      <section className="py-28 bg-brand-dark relative overflow-hidden">
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{background: 'radial-gradient(ellipse at 75% 25%, rgba(232,135,10,0.07) 0%, transparent 60%)'}}
+        />
+        <div className="relative max-w-7xl mx-auto px-4">
           <div className="text-center mb-14">
+            <div className="w-12 h-1 bg-brand-orange mx-auto mb-4 rounded-full" />
             <div className="inline-block bg-white/10 text-white text-sm font-bold px-4 py-1.5 rounded-full mb-4">
               {locale === 'ar' ? 'ترخيص رسمي' : 'Officially Licensed'}
             </div>
             <h2 className="text-4xl font-black text-white">{t('credentials')}</h2>
+            <p className="text-white/50 mt-3 text-base max-w-md mx-auto">
+              {locale === 'ar'
+                ? 'مرخصون رسمياً للعمل في جميع أنحاء المملكة العربية السعودية'
+                : 'Fully licensed to operate across Saudi Arabia'}
+            </p>
           </div>
-          <div className="max-w-2xl mx-auto space-y-4">
-            {credentials.map((cred, i) => (
-              <div key={i} className="flex items-start gap-5 bg-white/5 hover:bg-white/10 rounded-2xl p-6 transition-colors">
-                <div className="w-14 h-14 bg-brand-orange/20 rounded-xl flex items-center justify-center text-brand-orange flex-shrink-0">
-                  {cred.icon}
-                </div>
-                <div>
-                  <div className="text-white/40 text-xs uppercase tracking-wider font-medium mb-1.5">
-                    {cred.label}
+
+          <div className="max-w-4xl mx-auto">
+            {/* License Credentials — 3 cards, 2-col grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+              {credentials.slice(0, 3).map((cred, i) => (
+                <div
+                  key={i}
+                  className={`flex items-start gap-5 bg-white/5 hover:bg-white/10 rounded-2xl p-6 transition-all duration-200 hover:scale-[1.02] hover:shadow-lg hover:shadow-brand-orange/10 border-t border-b border-white/10 ${locale === 'ar' ? 'border-l border-l-white/10 border-r-4 border-r-brand-orange' : 'border-r border-r-white/10 border-l-4 border-l-brand-orange'} ${i === 2 ? 'md:col-span-2' : ''}`}
+                >
+                  <div className="w-16 h-16 bg-brand-orange/15 ring-1 ring-brand-orange/30 rounded-xl flex items-center justify-center text-brand-orange flex-shrink-0">
+                    {cred.icon}
                   </div>
-                  <div className="font-bold text-white text-xl whitespace-pre-line">{cred.value}</div>
+                  <div>
+                    <div className="text-brand-orange/70 text-xs uppercase tracking-wider font-medium mb-1.5">
+                      {cred.label}
+                    </div>
+                    <div className="font-bold text-white text-xl whitespace-pre-line">{cred.value}</div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+
+            {/* Divider */}
+            <div className="flex items-center gap-4 mb-5">
+              <div className="flex-1 h-px bg-white/10" />
+              <span className="text-white/30 text-xs uppercase tracking-widest">
+                {locale === 'ar' ? 'معلومات التواصل' : 'Contact Details'}
+              </span>
+              <div className="flex-1 h-px bg-white/10" />
+            </div>
+
+            {/* Contact Details — 2 cards, 2-col grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {credentials.slice(3).map((cred, i) => (
+                <div
+                  key={i}
+                  className={`flex items-start gap-5 bg-white/5 hover:bg-white/10 rounded-2xl p-6 transition-all duration-200 hover:scale-[1.02] hover:shadow-lg hover:shadow-brand-orange/10 border-t border-b border-white/10 ${locale === 'ar' ? 'border-l border-l-white/10 border-r-4 border-r-brand-orange' : 'border-r border-r-white/10 border-l-4 border-l-brand-orange'}`}
+                >
+                  <div className="w-16 h-16 bg-brand-orange/15 ring-1 ring-brand-orange/30 rounded-xl flex items-center justify-center text-brand-orange flex-shrink-0">
+                    {cred.icon}
+                  </div>
+                  <div>
+                    <div className="text-brand-orange/70 text-xs uppercase tracking-wider font-medium mb-1.5">
+                      {cred.label}
+                    </div>
+                    <div className="font-bold text-white text-xl whitespace-pre-line">{cred.value}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
