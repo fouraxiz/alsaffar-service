@@ -128,13 +128,6 @@ export default function Header() {
               <Phone size={12} />
               <span dir="ltr">+966 920 021 201</span>
             </a>
-            <a
-              href="tel:+966545699929"
-              className="flex items-center gap-1.5 text-white/70 hover:text-brand-orange transition-colors"
-            >
-              <Phone size={12} />
-              <span dir="ltr">+966 54 569 9929</span>
-            </a>
           </div>
         </div>
       </div>
