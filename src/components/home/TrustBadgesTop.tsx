@@ -34,14 +34,14 @@ export default function TrustBadgesTop() {
     {
       icon: <Hash size={36} className="text-brand-orange" />,
       title: isAr ? 'السجل التجاري' : 'Commercial Registration',
-      subtitle: 'CR: 1010XXXXXX',
+      subtitle: 'CR: 2053034759',
       color: 'border-orange-200 bg-orange-50',
       textColor: 'text-brand-orange',
     },
     {
       icon: <Award size={36} className="text-purple-600" />,
       title: isAr ? 'رقم الترخيص' : 'License Number',
-      subtitle: isAr ? 'ترخيص: XXXXXXX' : 'LIC: XXXXXXX',
+      subtitle: isAr ? 'ترخيص: 3704231' : 'LIC: 3704231',
       color: 'border-purple-200 bg-purple-50',
       textColor: 'text-purple-700',
     },

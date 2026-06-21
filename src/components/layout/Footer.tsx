@@ -60,11 +60,11 @@ export default function Footer() {
             <div className="mt-4 space-y-1 text-sm">
               <div>
                 <span className="text-white/40 text-xs uppercase tracking-wider">{t('cr')}: </span>
-                <span className="font-semibold text-white/80">1010XXXXXX</span>
+                <span className="font-semibold text-white/80">2053034759</span>
               </div>
               <div>
                 <span className="text-white/40 text-xs uppercase tracking-wider">{t('license')}: </span>
-                <span className="font-semibold text-white/80">XXXXXXX</span>
+                <span className="font-semibold text-white/80">3704231</span>
               </div>
             </div>
           </div>

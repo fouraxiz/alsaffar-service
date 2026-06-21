@@ -18,9 +18,9 @@ function AboutContent() {
   const locale = useLocale();
 
   const credentials = [
-    {icon: <FileText size={26} />, label: t('crNumber'), value: '1010XXXXXX'},
-    {icon: <FileText size={26} />, label: t('licenseNumber'), value: 'XXXXXXX'},
-    {icon: <Award size={26} />, label: t('musanedId'), value: 'XXXXXXX'},
+    {icon: <FileText size={26} />, label: t('crNumber'), value: '2053034759'},
+    {icon: <FileText size={26} />, label: t('licenseNumber'), value: '3704231'},
+    {icon: <Award size={26} />, label: t('musanedId'), value: '3704231'},
     {icon: <MapPin size={26} />, label: t('officeAddress'), value: locale === 'ar' ? 'الرياض، المملكة العربية السعودية' : 'Riyadh, Saudi Arabia'},
     {icon: <Clock size={26} />, label: t('officeHours'), value: t('hoursValue')},
   ];

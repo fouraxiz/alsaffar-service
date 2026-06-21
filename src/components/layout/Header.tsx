@@ -103,12 +103,12 @@ export default function Header() {
           <div className="flex items-center gap-5 text-white/70">
             <span>
               <span className="text-white/40 me-1">{locale === 'ar' ? 'س.ت:' : 'CR:'}</span>
-              <span className="text-white font-semibold">1010XXXXXX</span>
+              <span className="text-white font-semibold">2053034759</span>
             </span>
             <span className="text-white/20">|</span>
             <span>
               <span className="text-white/40 me-1">{locale === 'ar' ? 'رخصة:' : 'License:'}</span>
-              <span className="text-white font-semibold">XXXXXXX</span>
+              <span className="text-white font-semibold">3704231</span>
             </span>
           </div>
           <div className="flex items-center gap-4">
