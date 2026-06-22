@@ -11,7 +11,6 @@ import CVDetailModal from './CVDetailModal';
 import CVActionSelection from './CVActionSelection';
 import DocumentUploadWizard from './DocumentUploadWizard';
 import NoMatchForm from './NoMatchForm';
-import CTABanner from '@/components/home/CTABanner';
 
 export type FlowState = 'browsing' | 'viewing' | 'action' | 'upload' | 'success';
 
@@ -186,11 +185,6 @@ export default function CVBrowser() {
             )}
           </div>
         </div>
-      </div>
-
-      {/* CTA Banner */}
-      <div className="max-w-7xl mx-auto px-4 mt-12">
-        <CTABanner />
       </div>
 
       {/* Request-specific-worker form: opens only when the user clicks the button */}
