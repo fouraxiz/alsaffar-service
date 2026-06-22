@@ -8,6 +8,8 @@ import Footer from '@/components/layout/Footer';
 import FloatingSidebar from '@/components/layout/FloatingSidebar';
 import DirectionProvider from '@/components/DirectionProvider';
 import LiveChatBar from '@/components/shared/LiveChatBar';
+import JsonLd from '@/components/seo/JsonLd';
+import {SITE_URL, buildAlternates, BRAND_KEYWORDS_EN, BRAND_KEYWORDS_AR} from '@/lib/seo';
 import type {Metadata} from 'next';
 
 const cairo = Cairo({
@@ -24,20 +26,33 @@ type Props = {
 export async function generateMetadata({params}: Props): Promise<Metadata> {
   const {locale} = await params;
   const isAr = locale === 'ar';
+  const siteName = isAr ? 'الصفار للاستقدام' : 'Alsaffar Manpower Recruitment';
+  const description = isAr
+    ? 'شركة الصفار للاستقدام — استقدام عمالة منزلية وسائقين وعمالة ماهرة في المملكة العربية السعودية'
+    : 'Alsaffar Manpower Recruitment — Professional domestic workers, drivers, and skilled labor recruitment in Saudi Arabia';
   return {
+    metadataBase: new URL(SITE_URL),
     title: {
-      default: isAr ? 'الصفار للاستقدام' : 'Alsaffar Manpower Recruitment',
+      default: siteName,
       template: isAr ? '%s | الصفار للاستقدام' : '%s | Alsaffar Manpower Recruitment',
     },
-    description: isAr
-      ? 'شركة الصفار للاستقدام — استقدام عمالة منزلية وسائقين وعمالة ماهرة في المملكة العربية السعودية'
-      : 'Alsaffar Manpower Recruitment — Professional domestic workers, drivers, and skilled labor recruitment in Saudi Arabia',
-    keywords: isAr
-      ? ['استقدام', 'عمالة منزلية', 'سائق', 'الرياض', 'المملكة العربية السعودية']
-      : ['recruitment', 'manpower', 'domestic worker', 'Saudi Arabia', 'Riyadh'],
+    description,
+    keywords: isAr ? BRAND_KEYWORDS_AR : BRAND_KEYWORDS_EN,
+    alternates: buildAlternates(locale, ''),
     openGraph: {
-      siteName: isAr ? 'الصفار للاستقدام' : 'Alsaffar Manpower Recruitment',
-      locale: locale === 'ar' ? 'ar_SA' : 'en_US',
+      type: 'website',
+      siteName,
+      title: siteName,
+      description,
+      url: `${SITE_URL}/${locale}`,
+      locale: isAr ? 'ar_SA' : 'en_US',
+      images: [{url: '/alsaffar.png', width: 1200, height: 630, alt: siteName}],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: siteName,
+      description,
+      images: ['/alsaffar.png'],
     },
   };
 }
@@ -58,6 +73,7 @@ export default async function LocaleLayout({children, params}: Props) {
 
   return (
     <NextIntlClientProvider messages={messages} locale={locale}>
+      <JsonLd locale={locale} />
       <DirectionProvider />
       <div style={{fontFamily: cairo.style.fontFamily}} className="flex flex-col min-h-screen relative pb-[70px]">
         <Header />

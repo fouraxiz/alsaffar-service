@@ -4,13 +4,23 @@ import {Home, Car, Wrench, Briefcase, FileText, HeartHandshake, CheckCircle2, Ar
 import Link from 'next/link';
 import Image from 'next/image';
 import type {Metadata} from 'next';
+import {buildAlternates} from '@/lib/seo';
 
 type Props = {params: Promise<{locale: string}>};
 
 export async function generateMetadata({params}: Props): Promise<Metadata> {
   const {locale} = await params;
+  const isAr = locale === 'ar';
+  const title = isAr ? 'خدماتنا' : 'Our Services';
+  const description = isAr
+    ? 'خدمات الصفار للاستقدام — عمالة منزلية، سائقون، عمالة ماهرة، توظيف مؤسسي، ومعالجة التأشيرات.'
+    : 'Alsaffar recruitment services — domestic workers, drivers, skilled labor, corporate staffing, and visa processing.';
+  const alternates = buildAlternates(locale, '/services');
   return {
-    title: locale === 'ar' ? 'خدماتنا' : 'Our Services',
+    title,
+    description,
+    alternates,
+    openGraph: {title, description, url: alternates.canonical},
   };
 }
 

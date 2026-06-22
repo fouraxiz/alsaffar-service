@@ -3,13 +3,23 @@ import {useTranslations, useLocale} from 'next-intl';
 import {Target, Eye, Award, MapPin, Clock, FileText, Shield, Zap, Heart} from 'lucide-react';
 import Image from 'next/image';
 import type {Metadata} from 'next';
+import {buildAlternates} from '@/lib/seo';
 
 type Props = {params: Promise<{locale: string}>};
 
 export async function generateMetadata({params}: Props): Promise<Metadata> {
   const {locale} = await params;
+  const isAr = locale === 'ar';
+  const title = isAr ? 'من نحن' : 'About Us';
+  const description = isAr
+    ? 'تعرف على شركة الصفار للاستقدام — خبرة وموثوقية في استقدام العمالة بالمملكة العربية السعودية.'
+    : 'Learn about Alsaffar Manpower Recruitment — trusted, licensed worker recruitment in Saudi Arabia.';
+  const alternates = buildAlternates(locale, '/about');
   return {
-    title: locale === 'ar' ? 'من نحن' : 'About Us',
+    title,
+    description,
+    alternates,
+    openGraph: {title, description, url: alternates.canonical},
   };
 }
 
