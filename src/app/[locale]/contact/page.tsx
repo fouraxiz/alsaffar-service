@@ -18,15 +18,49 @@ export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({ name: '', phone: '', service: '', message: '' });
   const [phoneError, setPhoneError] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  // Honeypot — hidden field; only bots fill it.
+  const [website, setWebsite] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMsg('');
     if (!form.phone || !isValidPhoneNumber(form.phone)) {
       setPhoneError(true);
       return;
     }
     setPhoneError(false);
-    setSubmitted(true);
+    setSending(true);
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...form, website }),
+      });
+      if (!res.ok) throw new Error('Request failed');
+
+      // WhatsApp (B1): open a pre-filled message from the visitor's own WhatsApp.
+      const waText = [
+        'New inquiry from Alsaffar website',
+        '',
+        `Name: ${form.name}`,
+        `Phone: ${form.phone}`,
+        `Service: ${form.service || '-'}`,
+        `Message: ${form.message || '-'}`,
+      ].join('\n');
+      window.open(`https://wa.me/966920021201?text=${encodeURIComponent(waText)}`, '_blank');
+
+      setSubmitted(true);
+    } catch {
+      setErrorMsg(
+        locale === 'ar'
+          ? 'تعذّر إرسال الرسالة. حاول مرة أخرى أو تواصل عبر واتساب.'
+          : 'Could not send your message. Please try again or contact us on WhatsApp.'
+      );
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -164,12 +198,31 @@ export default function ContactPage() {
                     />
                   </div>
 
+                  {/* Honeypot — hidden from real users */}
+                  <input
+                    type="text"
+                    name="website"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    aria-hidden="true"
+                    value={website}
+                    onChange={(e) => setWebsite(e.target.value)}
+                    className="hidden"
+                  />
+
+                  {errorMsg && (
+                    <p className="text-red-500 text-sm font-medium">{errorMsg}</p>
+                  )}
+
                   <button
                     type="submit"
-                    className="w-full flex items-center justify-center gap-2 bg-brand-orange hover:bg-brand-orange-dark text-white font-bold py-4 rounded-xl transition-colors duration-200 text-lg"
+                    disabled={sending}
+                    className="w-full flex items-center justify-center gap-2 bg-brand-orange hover:bg-brand-orange-dark text-white font-bold py-4 rounded-xl transition-colors duration-200 text-lg disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     <Send size={20} />
-                    {t('form.submit')}
+                    {sending
+                      ? (locale === 'ar' ? 'جارٍ الإرسال...' : 'Sending...')
+                      : t('form.submit')}
                   </button>
                 </form>
               )}
