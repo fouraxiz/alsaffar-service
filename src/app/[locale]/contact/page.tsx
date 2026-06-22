@@ -3,6 +3,8 @@
 import { useTranslations, useLocale } from 'next-intl';
 import { Phone, Mail, MapPin, Clock, Send } from 'lucide-react';
 import { useState } from 'react';
+import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
 
 const WhatsAppIcon = ({ size = 20 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
@@ -15,9 +17,15 @@ export default function ContactPage() {
   const locale = useLocale();
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({ name: '', phone: '', service: '', message: '' });
+  const [phoneError, setPhoneError] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!form.phone || !isValidPhoneNumber(form.phone)) {
+      setPhoneError(true);
+      return;
+    }
+    setPhoneError(false);
     setSubmitted(true);
   };
 
@@ -98,15 +106,29 @@ export default function ContactPage() {
                       <label className="block font-semibold text-brand-dark mb-2">
                         {t('form.phone')} *
                       </label>
-                      <input
-                        type="tel"
-                        required
-                        value={form.phone}
-                        onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                        placeholder={t('form.phonePlaceholder')}
-                        className="w-full border-2 border-gray-200 rounded-xl px-5 py-4 text-brand-dark placeholder:text-gray-400 focus:outline-none focus:border-brand-orange transition-colors"
+                      <div
                         dir="ltr"
-                      />
+                        className={`w-full border-2 rounded-xl px-5 py-4 transition-colors focus-within:border-brand-orange ${
+                          phoneError ? 'border-red-400' : 'border-gray-200'
+                        }`}
+                      >
+                        <PhoneInput
+                          international
+                          withCountryCallingCode
+                          defaultCountry={undefined}
+                          value={form.phone}
+                          onChange={(value) => {
+                            setForm({ ...form, phone: value || '' });
+                            if (phoneError) setPhoneError(false);
+                          }}
+                          placeholder={t('form.phonePlaceholder')}
+                        />
+                      </div>
+                      {phoneError && (
+                        <p className="text-red-500 text-sm mt-1.5">
+                          {locale === 'ar' ? 'يرجى إدخال رقم هاتف صحيح مع رمز الدولة' : 'Please enter a valid phone number with country code'}
+                        </p>
+                      )}
                     </div>
                   </div>
 
