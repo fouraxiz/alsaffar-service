@@ -1,7 +1,7 @@
 'use client';
 
-import {useTranslations} from 'next-intl';
-import {Phone, MapPin} from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { Phone, MapPin } from 'lucide-react';
 
 const WhatsAppIcon = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
@@ -30,7 +30,7 @@ export default function FloatingSidebar() {
       external: false,
     },
     {
-      href: 'https://maps.google.com/?q=26.5823757,50.0433538',
+      href: 'https://maps.google.com/maps?cid=12580771141352986513&ll=26.5823757,50.0433538&z=17&t=k',
       label: t('location'),
       icon: <MapPin size={20} />,
       bg: 'bg-sky-500',

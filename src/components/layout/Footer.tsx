@@ -1,6 +1,6 @@
-import {useTranslations, useLocale} from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
-import {Phone, Mail, MapPin, Clock} from 'lucide-react';
+import { Phone, Mail, MapPin, Clock } from 'lucide-react';
 
 export default function Footer() {
   const t = useTranslations('footer');
@@ -10,16 +10,16 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   const navLinks = [
-    {href: `/${locale}`, label: tn('home')},
-    {href: `/${locale}/about`, label: tn('about')},
-    {href: `/${locale}/services`, label: tn('services')},
-    {href: `/${locale}/contact`, label: tn('contact')},
+    { href: `/${locale}`, label: tn('home') },
+    { href: `/${locale}/about`, label: tn('about') },
+    { href: `/${locale}/services`, label: tn('services') },
+    { href: `/${locale}/contact`, label: tn('contact') },
   ];
 
   const trustBadges = [
-    {icon: 'مساند', title: tt('musaned'), subtitle: t('musanedText')},
-    {icon: 'MOL', title: tt('mol'), subtitle: t('molText')},
-    {icon: 'CoC', title: tt('chamber'), subtitle: locale === 'ar' ? 'عضو غرفة التجارة' : 'Chamber Member'},
+    { icon: 'مساند', title: tt('musaned'), subtitle: t('musanedText') },
+    { icon: 'MOL', title: tt('mol'), subtitle: t('molText') },
+    { icon: 'CoC', title: tt('chamber'), subtitle: locale === 'ar' ? 'عضو غرفة التجارة' : 'Chamber Member' },
   ];
 
   return (
@@ -95,8 +95,8 @@ export default function Footer() {
             </h3>
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2 text-white/60">
-                <MapPin size={14} className="mt-0.5 text-brand-orange flex-shrink-0" />
-                <a href="https://maps.google.com/?q=26.5823757,50.0433538" target="_blank" rel="noopener noreferrer" className="hover:text-brand-orange transition-colors">
+                <MapPin size={16} className="mt-0.5 text-brand-orange flex-shrink-0" />
+                <a href="https://www.google.com/maps?q=26.5823757,50.0433538&z=17&t=k" target="_blank" rel="noopener noreferrer" className="hover:text-brand-orange transition-colors">
                   {locale === 'ar' ? 'المنطقة الشرقية، المملكة العربية السعودية' : 'Eastern Province, Saudi Arabia'}
                 </a>
               </li>
