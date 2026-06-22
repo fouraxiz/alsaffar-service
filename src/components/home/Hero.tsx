@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations, useLocale } from 'next-intl';
-import { Phone, MapPin } from 'lucide-react';
+import { Phone, MapPin, Users } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -49,31 +49,38 @@ export default function Hero() {
 
             <p className="text-gray-600 text-lg leading-relaxed mb-8 max-w-lg">{t('subtitle')}</p>
 
-            {/* Contact CTA buttons — prominent */}
-            <div className="flex flex-wrap gap-3 mb-8">
+            {/* Contact CTA buttons */}
+            <div className="flex flex-wrap gap-2 mb-8">
+              <Link
+                href={`/${locale}/request-cv`}
+                className="flex items-center gap-1.5 bg-[#16201a] hover:bg-[#23332a] text-white px-4 py-3 rounded-xl font-bold text-sm transition-all duration-200 hover:scale-105 shadow-lg shadow-gray-300"
+              >
+                <Users size={16} />
+                {isAr ? 'تصفح السير الذاتية' : 'Browse CVs'}
+              </Link>
               <a
                 href="https://wa.me/966920021201"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 bg-[#25D366] hover:bg-[#1ebe5d] text-white px-6 py-3.5 rounded-xl font-bold text-base transition-all duration-200 hover:scale-105 shadow-lg shadow-green-200"
+                className="flex items-center gap-1.5 bg-[#25D366] hover:bg-[#1ebe5d] text-white px-4 py-3 rounded-xl font-bold text-sm transition-all duration-200 hover:scale-105 shadow-lg shadow-green-200"
               >
-                <WhatsAppIcon size={20} />
+                <WhatsAppIcon size={16} />
                 {isAr ? 'واتساب الآن' : 'WhatsApp Now'}
               </a>
               <a
                 href="tel:+966920021201"
-                className="flex items-center gap-2 bg-brand-orange hover:bg-brand-orange-dark text-white px-6 py-3.5 rounded-xl font-bold text-base transition-all duration-200 hover:scale-105 shadow-lg shadow-orange-200"
+                className="flex items-center gap-1.5 bg-brand-orange hover:bg-brand-orange-dark text-white px-4 py-3 rounded-xl font-bold text-sm transition-all duration-200 hover:scale-105 shadow-lg shadow-orange-200"
               >
-                <Phone size={18} />
+                <Phone size={16} />
                 {isAr ? 'اتصل بنا' : 'Call Us'}
               </a>
               <a
                 href="https://maps.app.goo.gl/qzWGFysrc4hP25Zv6"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-6 py-3.5 rounded-xl font-bold text-base transition-all duration-200 hover:scale-105 shadow-lg shadow-sky-200"
+                className="flex items-center gap-1.5 bg-sky-500 hover:bg-sky-600 text-white px-4 py-3 rounded-xl font-bold text-sm transition-all duration-200 hover:scale-105 shadow-lg shadow-sky-200"
               >
-                <MapPin size={18} />
+                <MapPin size={16} />
                 {isAr ? 'موقعنا' : 'Our Location'}
               </a>
             </div>
@@ -127,6 +134,7 @@ export default function Hero() {
                 </div>
               </div>
             </div>
+
           </div>
 
         </div>

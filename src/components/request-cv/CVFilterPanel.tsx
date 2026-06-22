@@ -79,9 +79,9 @@ export default function CVFilterPanel({ filters, setFilters }: Props) {
     filters.serviceType.length;
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden lg:flex lg:flex-col lg:max-h-[calc(100vh-6.5rem)]">
       {/* Mobile Header (Toggle) */}
-      <div 
+      <div
         className="lg:hidden flex items-center justify-between p-4 cursor-pointer"
         onClick={() => setIsMobileOpen(!isMobileOpen)}
       >
@@ -96,28 +96,28 @@ export default function CVFilterPanel({ filters, setFilters }: Props) {
         {isMobileOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
       </div>
 
-      <div className={`p-5 ${isMobileOpen ? 'block' : 'hidden lg:block'}`}>
-        
-        {/* Desktop Header */}
-        <div className="hidden lg:flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2">
-            <h3 className="font-bold text-lg text-brand-dark">{t('title')}</h3>
-            {activeFilterCount > 0 && (
-              <span className="bg-brand-orange text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                {activeFilterCount}
-              </span>
-            )}
-          </div>
+      {/* Desktop Header — always visible, never scrolls */}
+      <div className="hidden lg:flex items-center justify-between px-5 pt-5 pb-4 flex-shrink-0 border-b border-gray-100">
+        <div className="flex items-center gap-2">
+          <h3 className="font-bold text-lg text-brand-dark">{t('title')}</h3>
           {activeFilterCount > 0 && (
-            <button 
-              onClick={clearAll}
-              className="text-xs font-bold text-gray-400 hover:text-brand-orange transition-colors flex items-center gap-1"
-            >
-              <X size={14} />
-              {t('clearAll')}
-            </button>
+            <span className="bg-brand-orange text-white text-xs font-bold px-2 py-0.5 rounded-full">
+              {activeFilterCount}
+            </span>
           )}
         </div>
+        {activeFilterCount > 0 && (
+          <button
+            onClick={clearAll}
+            className="text-xs font-bold text-gray-400 hover:text-brand-orange transition-colors flex items-center gap-1"
+          >
+            <X size={14} />
+            {t('clearAll')}
+          </button>
+        )}
+      </div>
+
+      <div className={`p-5 ${isMobileOpen ? 'block' : 'hidden lg:block'} lg:overflow-y-auto lg:flex-1`}>
 
         {/* Mobile Clear All */}
         {activeFilterCount > 0 && (

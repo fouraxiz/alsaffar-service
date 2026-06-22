@@ -1,0 +1,240 @@
+==================================================================
+ ALSAFFAR WEBSITE — UPDATE PLAN
+ "Send Us a Message" form + Email/WhatsApp delivery + SEO
+ Created: 2026-06-22
+ Status: PLAN ONLY (nothing implemented yet)
+==================================================================
+
+This document is a plan. No code has been changed. It breaks the
+three client requests into concrete, buildable steps with options,
+effort estimates, and the exact files involved.
+
+Tech stack (for reference):
+  - Next.js 16.2.6 (App Router)
+  - next-intl (locales: en, ar)
+  - Tailwind CSS v4
+  - Contact form lives in: src/app/[locale]/contact/page.tsx
+  - SEO/metadata lives in: src/app/[locale]/layout.tsx
+
+Current state summary:
+  - The contact form has NO backend. handleSubmit() only sets a
+    "submitted" flag — submitted messages are NOT sent or stored
+    anywhere. This is why no emails are being received.
+  - The phone field is a plain <input type="tel"> with a placeholder.
+    There is no country-code dropdown.
+  - SEO has only a basic title/description/keywords block. There is
+    no sitemap, robots.txt, structured data (JSON-LD), hreflang
+    alternates, metadataBase, or per-page metadata.
+
+
+==================================================================
+ REQUEST 1 — INTERNATIONAL PHONE FIELD (country dropdown + search)
+==================================================================
+Goal:
+  - Country-code dropdown with search.
+  - Does NOT default to Saudi Arabia (+966); user must pick.
+  - Usable by clients worldwide.
+
+Recommended approach:
+  - Add the library "react-phone-number-input" (lightweight, has a
+    searchable country selector, supports no-default-country, RTL-
+    friendly, works with React 19).
+    Alternative: "intl-tel-input" (more setup) or a fully custom
+    dropdown (more work, not recommended).
+
+Steps:
+  1. npm install react-phone-number-input
+  2. In contact/page.tsx:
+       - Replace the <input type="tel"> (around line 101-109) with
+         the <PhoneInput> component.
+       - Set: international, withCountryCallingCode,
+         defaultCountry = undefined (so it does NOT default to SA),
+         countrySelectProps with search enabled.
+       - Bind value to form.phone (store full E.164 number, e.g.
+         +8801XXXXXXXXX).
+       - Add basic validation (isValidPhoneNumber) before submit.
+  3. Import the library's CSS once (in globals.css or the page) and
+     override colors to match brand-orange focus style.
+  4. RTL check: confirm the dropdown aligns correctly in Arabic.
+
+Files touched:
+  - src/app/[locale]/contact/page.tsx
+  - src/app/globals.css (style overrides)
+  - package.json (new dependency)
+
+Effort: ~1-2 hours.
+
+
+==================================================================
+ REQUEST 2 — DELIVER MESSAGES TO EMAIL + WHATSAPP
+==================================================================
+Goal:
+  - Every submitted message arrives instantly at:
+      * support@alsaffar.pro  (email)
+      * Company WhatsApp number (same content)
+
+IMPORTANT REALITY CHECK:
+  - The form currently sends nowhere. We must add a server endpoint
+    (Next.js Route Handler) that actually delivers the message.
+  - EMAIL: straightforward.
+  - WHATSAPP (automatic, server-side): this is the part that needs a
+    decision, because WhatsApp does NOT allow a website to silently
+    push a message into your WhatsApp inbox without an approved API.
+    Three realistic options below — pick one.
+
+----- PART A: EMAIL (required) -----
+Add an API route: src/app/api/contact/route.ts
+  Option A1 (recommended): Resend (https://resend.com)
+     - Simple, generous free tier, great deliverability.
+     - npm install resend; set RESEND_API_KEY in env.
+     - Send to support@alsaffar.pro with the form fields.
+     - Requires verifying the alsaffar.pro domain in Resend (add DNS
+       records) so mail isn't marked spam.
+  Option A2: SMTP via Nodemailer
+     - Use the existing alsaffar.pro mailbox SMTP credentials.
+     - npm install nodemailer; set SMTP host/user/pass in env.
+     - No third-party signup, but deliverability depends on the host.
+
+----- PART B: WHATSAPP (pick ONE) -----
+  Option B1 (cheapest, semi-automatic): wa.me pre-filled message
+     - On submit, also open https://wa.me/966920021201?text=<message>
+       in a new tab with the form content pre-filled.
+     - The USER taps "send". Not 100% automatic, but free and instant
+       from the visitor's own WhatsApp. Good enough for many sites.
+  Option B2 (fully automatic, official): WhatsApp Business Cloud API
+     - Meta's official API. The server sends the message to the
+       company number automatically, no visitor action.
+     - Requires: a Meta Business account, a WhatsApp Business number,
+       app setup, and a pre-approved message template.
+     - Most robust + truly "instant + automatic", but most setup.
+  Option B3 (fully automatic, third-party): Twilio / 360dialog / etc.
+     - Wrapper services over the WhatsApp API. Faster to set up than
+       raw Meta, but a paid monthly cost.
+
+  Recommendation: Email (A1) + WhatsApp (B1) for a fast, low-cost
+  launch; upgrade to B2/B3 later if fully-automatic WhatsApp is a
+  hard requirement.
+
+Steps:
+  1. Create src/app/api/contact/route.ts (POST handler).
+  2. Validate inputs server-side (name, phone, message).
+  3. Send email (Resend/Nodemailer) to support@alsaffar.pro.
+  4. WhatsApp per chosen option.
+  5. Update contact/page.tsx handleSubmit to:
+       - POST form data to /api/contact
+       - show success only on 200, show an error state on failure
+       - add loading state on the submit button
+  6. Add a honeypot / simple spam guard.
+  7. Store secrets in .env.local (never commit them).
+
+Files touched:
+  - src/app/api/contact/route.ts (new)
+  - src/app/[locale]/contact/page.tsx
+  - .env.local (new, secrets) + package.json (resend/nodemailer)
+
+Open questions for the client (needed before building):
+  - Confirm the WhatsApp business number (is it 966920021201, same
+    as the call/whatsapp buttons?).
+  - Provide SMTP credentials OR approve creating a Resend account.
+  - Decide WhatsApp option B1 / B2 / B3.
+
+Effort: Email + B1 ~2-3 hours. B2/B3 +1-2 days incl. Meta approval.
+
+
+==================================================================
+ REQUEST 3 — PUBLISHING + SEARCH VISIBILITY (SEO)
+==================================================================
+Goal: Site appears (ideally top) when people search, in EN + AR:
+  alsaffarservices, alsaffar, alsaffar services, alsaffar office,
+  alsaffar recruitment office, alsaffar manpower.
+
+----- 3.1 Is the site fully published? -----
+  - Cannot be confirmed from the code alone. Need to verify:
+      * Is it deployed to a host (Vercel / other) and reachable on a
+        public domain (e.g. https://alsaffar.pro)?
+      * Is the production domain connected with HTTPS?
+  - ACTION: confirm the live URL with the client/host. Everything
+    below assumes the canonical domain is https://alsaffar.pro
+    (replace if different).
+
+----- 3.2 What to add (on-site SEO) -----
+  a) metadataBase + canonical + hreflang
+     - Set metadataBase to the live domain in layout metadata.
+     - Add alternates.languages for en + ar (hreflang) so Google
+       serves the right language version.
+  b) Expand brand keywords (EN + AR) in generateMetadata:
+       English: Alsaffar, Alsaffar Services, Alsaffar Office,
+         Alsaffar Recruitment Office, Alsaffar Manpower,
+         Alsaffar Recruitment Manpower, alsaffarservices
+       Arabic:  الصفار, الصفار للاستقدام, مكتب الصفار,
+         مكتب الصفار للاستقدام, الصفار للخدمات
+     - Also reflect these in the visible page text + <h1>/<title>,
+       because Google ranks on real content, not just meta tags.
+  c) Structured data (JSON-LD) — biggest win for brand searches:
+     - Add an "Organization" + "LocalBusiness" schema with:
+         name (EN + AR), url, logo, telephone, email,
+         address (Eastern Province, SA), geo (26.5823757,50.0433538),
+         openingHours, sameAs (Google Maps/social links).
+     - This powers the business "knowledge panel" and helps queries
+       like "alsaffar office".
+  d) sitemap.xml + robots.txt
+     - Add src/app/sitemap.ts (lists all locale routes).
+     - Add src/app/robots.ts (allow all, point to sitemap).
+  e) Per-page metadata (title/description) for home, about,
+     services, contact — currently only the layout has it. NOTE:
+     contact/page.tsx is a Client Component ('use client'), so it
+     cannot export metadata directly; we either split a server
+     wrapper or move metadata to a parent. Same applies to any other
+     client pages.
+  f) Open Graph + Twitter cards (image, title, description) so links
+     shared on WhatsApp/social look professional.
+
+----- 3.3 Off-site / external (client actions) -----
+  - Google Search Console: verify domain, submit sitemap, request
+    indexing. (Add the verification meta tag — we can wire it in.)
+  - Google Business Profile: the business already exists on Maps
+    ("الصفار للاستقدام Alsaffar Recruitment Manpower", 376 reviews,
+    place cid 12580771141352986513). Claim/optimize it — this is the
+    #1 driver for "alsaffar office" / "alsaffar recruitment office"
+    local searches.
+  - Bing Webmaster Tools: optional, same idea.
+
+----- 3.4 Honest expectation on "appear at the top" -----
+  - For the BRAND terms above (alsaffar, alsaffar manpower, etc.),
+    ranking #1 is very achievable once indexed + structured data +
+    Google Business Profile are in place, because there is little
+    competition for the exact brand name.
+  - For generic terms (e.g. "recruitment Saudi Arabia") top ranking
+    is competitive and takes ongoing SEO; not guaranteed by config
+    alone.
+  - Indexing is not instant — expect days to a few weeks after
+    submission.
+
+Files touched:
+  - src/app/[locale]/layout.tsx (metadata, keywords, hreflang, JSON-LD)
+  - src/app/sitemap.ts (new)
+  - src/app/robots.ts (new)
+  - a JSON-LD component (new) injected in layout
+  - per-page metadata wrappers as needed
+
+Effort: ~3-5 hours on-site. Off-site (Search Console / GBP) is
+client-side account work, ~1-2 hours but indexing takes time.
+
+
+==================================================================
+ SUGGESTED ORDER OF WORK
+==================================================================
+  1. SEO on-site changes (3.2) — quick wins, no external deps.
+  2. International phone field (Request 1).
+  3. Contact form delivery — email first (2A), then WhatsApp (2B).
+  4. Client actions: Search Console + Google Business Profile (3.3).
+
+==================================================================
+ DECISIONS NEEDED FROM CLIENT BEFORE CODING
+==================================================================
+  [ ] Confirm live/production domain (e.g. https://alsaffar.pro).
+  [ ] Confirm WhatsApp business number for form delivery.
+  [ ] Email method: Resend account OR provide SMTP credentials.
+  [ ] WhatsApp method: B1 (wa.me) / B2 (Meta API) / B3 (Twilio).
+  [ ] Access to Google Search Console + Google Business Profile.
+==================================================================

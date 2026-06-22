@@ -10,20 +10,20 @@ import CVGallery from './CVGallery';
 import CVDetailModal from './CVDetailModal';
 import CVActionSelection from './CVActionSelection';
 import DocumentUploadWizard from './DocumentUploadWizard';
-import SpecialistBar from './SpecialistBar';
 import NoMatchForm from './NoMatchForm';
+import CTABanner from '@/components/home/CTABanner';
 
 export type FlowState = 'browsing' | 'viewing' | 'action' | 'upload' | 'success';
 
 export default function CVBrowser() {
   const t = useTranslations('requestCV');
   const locale = useLocale();
-  const isAr = locale === 'ar';
   const searchParams = useSearchParams();
 
   const [flowState, setFlowState] = useState<FlowState>('browsing');
   const [selectedCV, setSelectedCV] = useState<WorkerCV | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [showRequestForm, setShowRequestForm] = useState(false);
 
   const [filters, setFilters] = useState<FilterState>({
     nationality: [],
@@ -143,7 +143,7 @@ export default function CVBrowser() {
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Filters Sidebar */}
-          <div className="w-full lg:w-72 flex-shrink-0">
+          <div className="w-full lg:w-72 flex-shrink-0 lg:sticky lg:top-24 lg:self-start">
             <CVFilterPanel filters={filters} setFilters={setFilters} />
           </div>
 
@@ -173,16 +173,36 @@ export default function CVBrowser() {
             {filteredWorkers.length > 0 ? (
               <CVGallery workers={filteredWorkers} onSelect={handleSelectWorker} viewMode={viewMode} />
             ) : (
-              <NoMatchForm filters={filters} onClose={handleClearFilters} />
+              <div className="bg-white border border-gray-200 rounded-2xl p-10 text-center">
+                <p className="text-lg font-bold text-brand-dark mb-2">{t('gallery.noResults')}</p>
+                <p className="text-gray-500 mb-6">{t('gallery.tryAdjusting')}</p>
+                <button
+                  onClick={() => setShowRequestForm(true)}
+                  className="inline-flex items-center justify-center gap-2 bg-brand-orange hover:bg-brand-orange-dark text-white font-bold px-6 py-3 rounded-xl transition-colors"
+                >
+                  {t('noMatch.title')}
+                </button>
+              </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* No Match Mandatory Form removed from here as it's now inline */}
+      {/* CTA Banner */}
+      <div className="max-w-7xl mx-auto px-4 mt-12">
+        <CTABanner />
+      </div>
 
-      {/* Specialist Consultation Sticky Bar */}
-      {/* <SpecialistBar /> */}
+      {/* Request-specific-worker form: opens only when the user clicks the button */}
+      {showRequestForm && (
+        <NoMatchForm
+          filters={filters}
+          onClose={() => {
+            setShowRequestForm(false);
+            handleClearFilters();
+          }}
+        />
+      )}
 
       {/* Modals & Overlays */}
       {flowState === 'viewing' && selectedCV && (

@@ -1,6 +1,6 @@
 import {useTranslations, useLocale} from 'next-intl';
 import Link from 'next/link';
-import {Phone} from 'lucide-react';
+import {Phone, Users} from 'lucide-react';
 
 const WhatsAppIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -10,6 +10,7 @@ const WhatsAppIcon = () => (
 
 export default function CTABanner() {
   const t = useTranslations('cta');
+  const tNav = useTranslations('nav');
   const locale = useLocale();
 
   return (
@@ -24,6 +25,13 @@ export default function CTABanner() {
         <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">{t('title')}</h2>
         <p className="text-white/70 text-lg mb-10">{t('subtitle')}</p>
         <div className="flex flex-wrap justify-center gap-4">
+          <Link
+            href={`/${locale}/request-cv`}
+            className="flex items-center gap-2 bg-[#16201a] hover:bg-[#23332a] text-white px-8 py-3.5 rounded-xl font-bold text-base transition-all duration-200 hover:scale-105 shadow-lg"
+          >
+            <Users size={18} />
+            {tNav('browseCVs')}
+          </Link>
           <Link
             href={`/${locale}/contact`}
             className="flex items-center gap-2 bg-brand-orange hover:bg-brand-orange-dark text-white px-8 py-3.5 rounded-xl font-bold text-base transition-all duration-200 hover:scale-105 shadow-lg shadow-brand-orange/30"

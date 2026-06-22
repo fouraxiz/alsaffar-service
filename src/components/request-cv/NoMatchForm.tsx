@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { FilterState } from './CVFilterPanel';
-import { Send, FileText, Phone, User, CheckCircle2, Search, MessageSquare } from 'lucide-react';
+import { Send, FileText, Phone, User, CheckCircle2, Search, MessageSquare, X } from 'lucide-react';
 
 type Props = {
   filters: FilterState;
@@ -61,6 +61,14 @@ ${formatFilters()}
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-brand-dark/80 backdrop-blur-sm" />
       <div className="relative bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+      <button
+        type="button"
+        onClick={onClose}
+        aria-label="Close"
+        className="absolute top-4 end-4 z-10 w-9 h-9 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-800 transition-colors"
+      >
+        <X size={18} />
+      </button>
       {submitted ? (
         <div className="p-10 text-center flex flex-col items-center justify-center h-full">
           <div className="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center mb-6">

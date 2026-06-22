@@ -2,6 +2,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 import { Phone, Mail, MapPin, Clock } from 'lucide-react';
 
+
 export default function Footer() {
   const t = useTranslations('footer');
   const tn = useTranslations('nav');
@@ -13,6 +14,7 @@ export default function Footer() {
     { href: `/${locale}`, label: tn('home') },
     { href: `/${locale}/about`, label: tn('about') },
     { href: `/${locale}/services`, label: tn('services') },
+    { href: `/${locale}/request-cv`, label: tn('browseCVs') },
     { href: `/${locale}/contact`, label: tn('contact') },
   ];
 
@@ -125,6 +127,7 @@ export default function Footer() {
                 </span>
               </li>
             </ul>
+
           </div>
 
           {/* Map */}
