@@ -33,14 +33,14 @@ export default function ContactPageClient() {
     setPhoneError(false);
     setSending(true);
     try {
-      const res = await fetch('/api/contact', {
+      // Fire email in background — WhatsApp delivery is not blocked by email status.
+      fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...form, website }),
-      });
-      if (!res.ok) throw new Error('Request failed');
+      }).catch(() => {});
 
-      // WhatsApp (B1): open a pre-filled message from the visitor's own WhatsApp.
+      // Always open WhatsApp regardless of email result.
       const waText = [
         'New inquiry from Alsaffar website',
         '',
@@ -52,12 +52,6 @@ export default function ContactPageClient() {
       window.open(`https://wa.me/966920021201?text=${encodeURIComponent(waText)}`, '_blank');
 
       setSubmitted(true);
-    } catch {
-      setErrorMsg(
-        locale === 'ar'
-          ? 'تعذّر إرسال الرسالة. حاول مرة أخرى أو تواصل عبر واتساب.'
-          : 'Could not send your message. Please try again or contact us on WhatsApp.'
-      );
     } finally {
       setSending(false);
     }
