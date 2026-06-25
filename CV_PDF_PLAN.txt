@@ -1,0 +1,193 @@
+================================================================
+CV PDF DOWNLOAD — DESIGN TEMPLATE PLAN
+Date: 2026-06-25
+================================================================
+
+
+GOAL
+────
+Replace the current PDF output (which prints the modal layout) with
+a professionally designed CV template that matches the provided
+screenshot design: dark navy left sidebar + white right content area.
+
+
+================================================================
+SCREENSHOT DESIGN BREAKDOWN
+================================================================
+
+LEFT SIDEBAR (dark navy blue, ~35% width)
+  - Circular profile photo (top center)
+  - Worker name (large, white, bold)
+  - Job title (white, smaller)
+  - "About Me" section (bio text)
+  - Contact info (phone icon, email icon, location icon)
+  - "Language" section (bullet list)
+  - "Expertise" section (bullet list)
+
+RIGHT SECTION (white background, ~65% width)
+  - "Experience" section
+      → Company name, Location (City - Country), Date range, Description
+  - "Education" section
+      → University name, Degree, Date range
+  - "Skills Summary" section
+      → Skill name + horizontal progress bar + percentage
+
+
+================================================================
+PROBLEM — MISSING DATA IN WorkerCV TYPE
+================================================================
+
+The current cvData.ts WorkerCV type does NOT include:
+  ✗ Experience entries  (company, location, date range, description)
+  ✗ Education entries   (university, degree, date range)
+  ✗ Skill percentages   (for progress bars)
+  ✗ Email address       (worker's personal email)
+  ✗ Physical address    (worker's address)
+
+We cannot add fake personal data per worker. Instead, we will use
+the existing fields intelligently to fill each section.
+
+
+================================================================
+DATA MAPPING STRATEGY
+================================================================
+
+Design Section       | Source
+─────────────────────┼────────────────────────────────────────────
+Photo                | worker.photoUrl
+Name                 | worker.name  (AR: worker.nameAr)
+Job Title            | worker.jobType  (AR: worker.jobTypeAr)
+About Me             | worker.bio  (AR: worker.bioAr)
+Contact — Phone      | Fixed: +966 920 021 201  (company number)
+Contact — Email      | Fixed: support@alsaffar.pro
+Contact — Location   | Fixed: Eastern Province, Saudi Arabia
+Language             | worker.languages  (AR: worker.languagesAr)
+Expertise (bullets)  | worker.skills  (AR: worker.skillsAr)
+Experience           | Auto-generated from worker.experience (years)
+                     |   e.g. "X years professional experience as [jobType]"
+Education            | Generic: "Certified Professional — [jobType]"
+Skills Summary bars  | worker.skills with deterministic % values
+                     |   (based on skill index: 78%, 82%, 75%, 88%… cycling)
+
+
+================================================================
+FILES TO CREATE / MODIFY
+================================================================
+
+NEW FILE:
+  src/components/request-cv/CVPrintTemplate.tsx
+    - Pure presentational component
+    - Props: { worker: WorkerCV }
+    - Renders the full A4-like two-column layout
+    - Uses inline styles for print compatibility (Tailwind can break in print)
+    - Fixed width: 794px (A4 portrait equivalent at 96 dpi)
+    - NOT visible on screen (position absolute, opacity 0, off-screen)
+    - Only captured by useReactToPrint for PDF output
+
+MODIFIED FILE:
+  src/components/request-cv/CVDetailModal.tsx
+    - Import CVPrintTemplate
+    - Move cvRef from the modal content div to CVPrintTemplate
+    - Render CVPrintTemplate as a hidden element outside the visible modal
+    - Download button stays the same — just output changes
+
+
+================================================================
+CVPrintTemplate LAYOUT STRUCTURE
+================================================================
+
+<div ref={cvRef} style={{ width: 794, display: 'flex', fontFamily: 'Arial' }}>
+
+  {/* LEFT SIDEBAR */}
+  <div style={{ width: '35%', background: '#1a237e', color: 'white', padding: 32 }}>
+    <img src={worker.photoUrl} style={{ borderRadius: '50%', width: 110, height: 110 }} />
+    <h1>{worker.name}</h1>
+    <p>{worker.jobType}</p>
+    <hr />
+    <h3>About Me</h3>
+    <p>{worker.bio}</p>
+    <hr />
+    <h3>Contact</h3>
+    <p>📞 +966 920 021 201</p>
+    <p>✉ support@alsaffar.pro</p>
+    <p>📍 Eastern Province, Saudi Arabia</p>
+    <hr />
+    <h3>Language</h3>
+    <ul>{worker.languages.map(l => <li>{l}</li>)}</ul>
+    <hr />
+    <h3>Expertise</h3>
+    <ul>{worker.skills.map(s => <li>{s}</li>)}</ul>
+  </div>
+
+  {/* RIGHT CONTENT */}
+  <div style={{ width: '65%', background: '#ffffff', padding: 32 }}>
+
+    <h2>Experience</h2>
+    <div>
+      <strong>Alsaffar Recruitment Manpower</strong>
+      <span>Eastern Province — Saudi Arabia</span>
+      <span>2020 — Present</span>
+      <p>
+        {worker.experience} years of professional experience as a
+        {worker.jobType}. Skilled in {worker.skills.slice(0,3).join(', ')}.
+      </p>
+    </div>
+
+    <h2>Education</h2>
+    <div>
+      <strong>Certified Professional</strong>
+      <span>{worker.jobType} Training Program</span>
+      <span>2018 — 2020</span>
+    </div>
+
+    <h2>Skills Summary</h2>
+    {worker.skills.map((skill, i) => {
+      const pct = [78, 82, 75, 88, 91, 70, 85][i % 7];
+      return (
+        <div>
+          <span>{skill}</span>
+          <div style={{ background: '#e0e0e0', borderRadius: 4, height: 8 }}>
+            <div style={{ width: `${pct}%`, background: '#1a237e', height: 8 }} />
+          </div>
+          <span>{pct}%</span>
+        </div>
+      );
+    })}
+
+  </div>
+</div>
+
+
+================================================================
+EXECUTION ORDER
+================================================================
+
+  [1] Create CVPrintTemplate.tsx with full design
+  [2] Update CVDetailModal.tsx — point cvRef to the new template
+  [3] Test: open a worker modal → click Download PDF
+        → verify output matches the screenshot design
+        → verify worker name, photo, skills, languages appear correctly
+  [4] Test Arabic locale — verify Arabic text renders correctly in PDF
+
+
+================================================================
+NOTES
+================================================================
+
+  - react-to-print captures the DOM element as-is and sends to printer/PDF.
+    For best results, use inline styles rather than Tailwind classes inside
+    CVPrintTemplate — Tailwind's print purge can drop styles unexpectedly.
+
+  - The template is rendered off-screen at all times. It does NOT appear
+    inside the modal — it is a sibling element hidden from view.
+
+  - Circular photo: use border-radius: 50% with a fixed width/height on <img>.
+    Next.js <Image> component may not render correctly in react-to-print;
+    use a plain <img> tag inside CVPrintTemplate.
+
+  - If the worker has no skills listed, the Skills Summary section should
+    be hidden gracefully (check worker.skills.length > 0).
+
+================================================================
+END OF PLAN
+================================================================

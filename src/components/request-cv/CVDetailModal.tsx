@@ -7,6 +7,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { WorkerCV } from '@/data/cvData';
 import { X, Download, PlayCircle, MapPin, CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
+import CVPrintTemplate from './CVPrintTemplate';
 
 type Props = {
   worker: WorkerCV;
@@ -26,9 +27,17 @@ export default function CVDetailModal({ worker, onClose, onProceed }: Props) {
   const handleDownloadPDF = useReactToPrint({
     contentRef: cvRef,
     documentTitle: `${worker.name.replace(/\s+/g, '_')}_CV`,
+    pageStyle: `
+      @page { size: A4 portrait; margin: 0; }
+      @media print { html, body { margin: 0; padding: 0; } }
+    `,
   });
 
   return (
+    <>
+    <div aria-hidden="true" style={{ position: 'fixed', left: '-10000px', top: 0, zIndex: -1 }}>
+      <CVPrintTemplate ref={cvRef} worker={worker} locale={locale} />
+    </div>
     <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 pointer-events-auto">
       {/* Backdrop */}
       <div
@@ -50,7 +59,7 @@ export default function CVDetailModal({ worker, onClose, onProceed }: Props) {
           <X size={18} />
         </button>
 
-        <div ref={cvRef} className="flex flex-col md:flex-row h-full overflow-y-auto bg-white">
+        <div className="flex flex-col md:flex-row h-full overflow-y-auto bg-white">
           {/* Left Panel: Media */}
           <div className="w-full md:w-2/5 bg-gray-50 flex flex-col">
             <div className="relative aspect-[3/4] w-full bg-black">
@@ -210,5 +219,6 @@ export default function CVDetailModal({ worker, onClose, onProceed }: Props) {
         </div>
       </div>
     </div>
+    </>
   );
 }
