@@ -1,10 +1,10 @@
 'use client';
 
-import {useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import {useTranslations, useLocale} from 'next-intl';
-import {usePathname} from '@/i18n/navigation';
-import {Menu, X, Phone} from 'lucide-react';
+import { useTranslations, useLocale } from 'next-intl';
+import { usePathname } from '@/i18n/navigation';
+import { Menu, X, Phone } from 'lucide-react';
 import LanguageSwitcher from '@/components/shared/LanguageSwitcher';
 
 const WhatsAppIcon = () => (
@@ -76,26 +76,25 @@ export default function Header() {
   }, [pathname]);
 
   const navLinks = [
-    {href: `/${locale}`, label: t('home')},
-    {href: `/${locale}/about`, label: t('about')},
-    {href: `/${locale}/services`, label: t('services')},
-    {href: `/${locale}/request-cv`, label: locale === 'ar' ? 'تصفح العمالة' : 'Browse CVs'},
-    {href: `/${locale}/why-us`, label: t('whyUs')},
-    {href: `/${locale}/contact`, label: t('contact')},
+    { href: `/${locale}`, label: t('home') },
+    { href: `/${locale}/about`, label: t('about') },
+    { href: `/${locale}/services`, label: t('services') },
+    { href: `/${locale}/request-cv`, label: locale === 'ar' ? 'تصفح العمالة' : 'Browse CVs' },
+    { href: `/${locale}/why-us`, label: t('whyUs') },
+    { href: `/${locale}/contact`, label: t('contact') },
   ];
 
   const isActive = (href: string) => {
     if (href.includes('#')) return false; // Do not highlight hash links as active pages
-    
+
     if (href === `/${locale}`) return pathname === '/';
     return pathname.startsWith(href.replace(`/${locale}`, ''));
   };
 
   return (
     <header
-      className={`fixed top-0 inset-x-0 z-40 transition-all duration-300 ${
-        scrolled ? 'bg-white shadow-md' : 'bg-white/95 backdrop-blur-sm'
-      }`}
+      className={`fixed top-0 inset-x-0 z-40 transition-all duration-300 ${scrolled ? 'bg-white shadow-md' : 'bg-white/95 backdrop-blur-sm'
+        }`}
     >
       {/* Top info bar */}
       <div className="bg-brand-dark text-white text-xs py-2 hidden md:block">
@@ -156,11 +155,10 @@ export default function Header() {
                     }
                   }
                 }}
-                className={`px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors duration-200 ${
-                  isActive(link.href)
+                className={`px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors duration-200 ${isActive(link.href)
                     ? 'text-brand-orange bg-brand-light'
                     : 'text-brand-dark hover:text-brand-orange hover:bg-brand-light'
-                }`}
+                  }`}
               >
                 {link.label}
               </Link>
@@ -210,11 +208,10 @@ export default function Header() {
                   }
                   setMobileOpen(false);
                 }}
-                className={`px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${
-                  isActive(link.href)
+                className={`px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${isActive(link.href)
                     ? 'text-brand-orange bg-brand-light'
                     : 'text-brand-dark hover:text-brand-orange hover:bg-brand-light'
-                }`}
+                  }`}
               >
                 {link.label}
               </Link>

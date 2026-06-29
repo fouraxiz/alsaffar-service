@@ -142,10 +142,10 @@ export default function CVFilterPanel({ filters, setFilters }: Props) {
                 <button
                   key={nat.code}
                   onClick={() => toggleNationality(nat.code)}
-                  className={`px-3 py-1.5 rounded-full text-[13px] font-semibold transition-colors border ${
+                  className={`px-3 py-1.5 rounded-full text-[13px] font-semibold transition-all duration-200 border ${
                     filters.nationality.includes(nat.code)
-                      ? 'bg-brand-orange/10 border-brand-orange text-brand-orange-dark'
-                      : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
+                      ? 'bg-brand-orange/10 border-brand-orange text-brand-orange-dark shadow-sm shadow-orange-200'
+                      : 'bg-white border-gray-200 text-gray-600 hover:border-brand-orange/50 hover:bg-brand-orange/5 hover:text-brand-orange hover:shadow-md hover:shadow-orange-100 hover:-translate-y-0.5'
                   }`}
                 >
                   {isAr ? nat.ar : nat.en}
@@ -164,10 +164,10 @@ export default function CVFilterPanel({ filters, setFilters }: Props) {
                 <button
                   key={job.key}
                   onClick={() => toggleJobType(job.key)}
-                  className={`px-3 py-1.5 rounded-lg text-[13px] font-semibold transition-colors border ${
+                  className={`px-3 py-1.5 rounded-lg text-[13px] font-semibold transition-all duration-200 border ${
                     filters.jobType.includes(job.key)
-                      ? 'bg-brand-orange border-brand-orange text-white'
-                      : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
+                      ? 'bg-brand-orange border-brand-orange text-white shadow-md shadow-orange-200'
+                      : 'bg-white border-gray-200 text-gray-600 hover:border-brand-orange/50 hover:bg-brand-orange/5 hover:text-brand-orange hover:shadow-md hover:shadow-orange-100 hover:-translate-y-0.5'
                   }`}
                 >
                   {isAr ? job.ar : job.en}
@@ -184,20 +184,20 @@ export default function CVFilterPanel({ filters, setFilters }: Props) {
             <div className="flex gap-2">
               <button
                 onClick={() => setFilters(prev => ({ ...prev, gender: prev.gender === 'female' ? null : 'female' }))}
-                className={`flex-1 py-2 rounded-xl text-sm font-semibold transition-colors border ${
+                className={`flex-1 py-2 rounded-xl text-sm font-semibold transition-all duration-200 border ${
                   filters.gender === 'female'
-                    ? 'bg-rose-50 border-rose-200 text-rose-700'
-                    : 'bg-white border-gray-200 text-gray-600'
+                    ? 'bg-rose-50 border-rose-200 text-rose-700 shadow-sm shadow-rose-100'
+                    : 'bg-white border-gray-200 text-gray-600 hover:border-rose-300 hover:bg-rose-50/50 hover:text-rose-600 hover:-translate-y-0.5 hover:shadow-md hover:shadow-rose-100'
                 }`}
               >
                 {t('female')}
               </button>
               <button
                 onClick={() => setFilters(prev => ({ ...prev, gender: prev.gender === 'male' ? null : 'male' }))}
-                className={`flex-1 py-2 rounded-xl text-sm font-semibold transition-colors border ${
+                className={`flex-1 py-2 rounded-xl text-sm font-semibold transition-all duration-200 border ${
                   filters.gender === 'male'
-                    ? 'bg-sky-50 border-sky-200 text-sky-700'
-                    : 'bg-white border-gray-200 text-gray-600'
+                    ? 'bg-sky-50 border-sky-200 text-sky-700 shadow-sm shadow-sky-100'
+                    : 'bg-white border-gray-200 text-gray-600 hover:border-sky-300 hover:bg-sky-50/50 hover:text-sky-600 hover:-translate-y-0.5 hover:shadow-md hover:shadow-sky-100'
                 }`}
               >
                 {t('male')}

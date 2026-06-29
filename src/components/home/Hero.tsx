@@ -31,7 +31,7 @@ export default function Hero() {
       {/* Soft glow bottom-left */}
       <div className="absolute bottom-0 start-0 w-96 h-96 bg-orange-100/60 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative max-w-7xl mx-auto px-4 pt-28 pb-16 w-full">
+      <div className="relative max-w-7xl mx-auto px-4 pt-8 pb-16 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
           {/* LEFT — text */}

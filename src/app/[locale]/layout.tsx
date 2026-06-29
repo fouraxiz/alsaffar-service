@@ -1,16 +1,17 @@
-import {NextIntlClientProvider} from 'next-intl';
-import {getMessages, setRequestLocale} from 'next-intl/server';
-import {notFound} from 'next/navigation';
-import {Cairo} from 'next/font/google';
-import {routing} from '@/i18n/routing';
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages, setRequestLocale } from 'next-intl/server';
+import { notFound } from 'next/navigation';
+import { Cairo } from 'next/font/google';
+import { routing } from '@/i18n/routing';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import FloatingSidebar from '@/components/layout/FloatingSidebar';
+import MotionBanner from '@/components/home/MotionBanner';
 import DirectionProvider from '@/components/DirectionProvider';
 import LiveChatBar from '@/components/shared/LiveChatBar';
 import JsonLd from '@/components/seo/JsonLd';
-import {SITE_URL, buildAlternates, BRAND_KEYWORDS_EN, BRAND_KEYWORDS_AR} from '@/lib/seo';
-import type {Metadata} from 'next';
+import { SITE_URL, buildAlternates, BRAND_KEYWORDS_EN, BRAND_KEYWORDS_AR } from '@/lib/seo';
+import type { Metadata } from 'next';
 
 const cairo = Cairo({
   subsets: ['arabic', 'latin'],
@@ -20,11 +21,11 @@ const cairo = Cairo({
 
 type Props = {
   children: React.ReactNode;
-  params: Promise<{locale: string}>;
+  params: Promise<{ locale: string }>;
 };
 
-export async function generateMetadata({params}: Props): Promise<Metadata> {
-  const {locale} = await params;
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
   const isAr = locale === 'ar';
   const siteName = isAr ? 'الصفار للاستقدام' : 'Alsaffar Manpower Recruitment';
   const description = isAr
@@ -46,7 +47,7 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
       description,
       url: `${SITE_URL}/${locale}`,
       locale: isAr ? 'ar_SA' : 'en_US',
-      images: [{url: '/alsaffar.png', width: 1200, height: 630, alt: siteName}],
+      images: [{ url: '/alsaffar.png', width: 1200, height: 630, alt: siteName }],
     },
     twitter: {
       card: 'summary_large_image',
@@ -58,11 +59,11 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
 }
 
 export function generateStaticParams() {
-  return routing.locales.map((locale) => ({locale}));
+  return routing.locales.map((locale) => ({ locale }));
 }
 
-export default async function LocaleLayout({children, params}: Props) {
-  const {locale} = await params;
+export default async function LocaleLayout({ children, params }: Props) {
+  const { locale } = await params;
 
   if (!routing.locales.includes(locale as 'en' | 'ar')) {
     notFound();
@@ -75,8 +76,9 @@ export default async function LocaleLayout({children, params}: Props) {
     <NextIntlClientProvider messages={messages} locale={locale}>
       <JsonLd locale={locale} />
       <DirectionProvider />
-      <div style={{fontFamily: cairo.style.fontFamily}} className="flex flex-col min-h-screen relative pb-[70px]">
+      <div style={{ fontFamily: cairo.style.fontFamily }} className="flex flex-col min-h-screen relative pb-[70px]">
         <Header />
+        <MotionBanner />
         <main className="flex-1">{children}</main>
         <Footer />
         <FloatingSidebar />
