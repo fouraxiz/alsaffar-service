@@ -1,7 +1,7 @@
 import {setRequestLocale} from 'next-intl/server';
 import WhyUs from '@/components/home/WhyUs';
-import type {Metadata} from 'next';
 import {buildAlternates} from '@/lib/seo';
+import PageBanner from '@/components/shared/PageBanner';
 
 type Props = {params: Promise<{locale: string}>};
 
@@ -25,9 +25,23 @@ export default async function WhyUsPage({params}: Props) {
   const {locale} = await params;
   setRequestLocale(locale);
 
+  const title = locale === 'ar' ? 'لماذا نحن' : 'Why Us';
+  const subtitle = locale === 'ar' 
+    ? 'اكتشف ما يميزنا عن غيرنا في تقديم خدمات الاستقدام بخبرة وموثوقية عالية' 
+    : 'Discover what sets us apart in providing recruitment services with high expertise and reliability';
+  const badgeText = locale === 'ar' ? 'ميزتنا' : 'Our Advantage';
+
   return (
-    <div className="pt-24 min-h-screen bg-white">
-      <WhyUs />
+    <div className="pt-24 min-h-screen bg-gray-50 pb-12">
+      <PageBanner
+        title={title}
+        subtitle={subtitle}
+        badgeText={badgeText}
+        iconType="why-us"
+      />
+      <div className="mt-8">
+        <WhyUs />
+      </div>
     </div>
   );
 }

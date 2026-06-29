@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import type {Metadata} from 'next';
 import {buildAlternates} from '@/lib/seo';
+import PageBanner from '@/components/shared/PageBanner';
 
 type Props = {params: Promise<{locale: string}>};
 
@@ -103,46 +104,15 @@ function ServicesContent() {
 
   return (
     <>
-      {/* ── Hero with background image ── */}
-      <section className="relative bg-brand-dark pt-32 pb-28 overflow-hidden">
-        <Image
-          src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1600&q=80"
-          alt="Our Services"
-          fill
-          className="object-cover opacity-25"
-          priority
+      {/* Hero banner */}
+      <div className="pt-24 pb-8 bg-gray-50">
+        <PageBanner
+          title={t('title')}
+          subtitle={t('subtitle')}
+          badgeText={locale === 'ar' ? 'ما نقدمه' : 'What We Offer'}
+          iconType="services"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-brand-dark via-brand-dark/80 to-brand-dark/40" />
-
-        <div className="relative max-w-7xl mx-auto px-4">
-          {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-white/40 text-sm mb-5 font-medium">
-            <span>Alsaffar</span>
-            <ChevronRight size={14} />
-            <span className="text-white/80">{t('title')}</span>
-          </div>
-
-          <h1 className="text-5xl sm:text-6xl font-black text-white mb-5 leading-tight max-w-2xl">
-            {t('title')}
-          </h1>
-          <p className="text-white/70 text-xl max-w-xl leading-relaxed mb-10">
-            {t('subtitle')}
-          </p>
-
-          {/* Highlight badges */}
-          <div className="flex flex-wrap gap-3">
-            <span className="bg-brand-orange text-white text-sm font-bold px-5 py-2 rounded-full">
-              {locale === 'ar' ? 'منصة مساند' : 'Musaned Registered'}
-            </span>
-            <span className="bg-white/10 backdrop-blur-sm text-white text-sm font-semibold px-5 py-2 rounded-full">
-              {locale === 'ar' ? '٦ فئات خدمة' : '6 Service Categories'}
-            </span>
-            <span className="bg-white/10 backdrop-blur-sm text-white text-sm font-semibold px-5 py-2 rounded-full">
-              {locale === 'ar' ? '١٥+ سنة خبرة' : '15+ Years Experience'}
-            </span>
-          </div>
-        </div>
-      </section>
+      </div>
 
       {/* ── How it works ── */}
       <section className="py-20 bg-brand-orange relative overflow-hidden">

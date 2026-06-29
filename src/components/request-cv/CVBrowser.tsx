@@ -11,6 +11,7 @@ import CVDetailModal from './CVDetailModal';
 import CVActionSelection from './CVActionSelection';
 import DocumentUploadWizard from './DocumentUploadWizard';
 import NoMatchForm from './NoMatchForm';
+import PageBanner from '@/components/shared/PageBanner';
 
 export type FlowState = 'browsing' | 'viewing' | 'action' | 'upload' | 'success';
 
@@ -131,59 +132,12 @@ export default function CVBrowser() {
   return (
     <div className="min-h-screen bg-gray-50 pt-20 pb-32 relative">
 
-      {/* Creative Header Section */}
-      <div className="relative mx-4 lg:mx-auto max-w-7xl mb-12 mt-4 rounded-[2rem] overflow-hidden bg-brand-dark shadow-2xl">
-        {/* Animated Gradient Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0a1105] via-[#1a2e12] to-[#0a1105] z-0" />
-        
-        {/* Glowing Orbs */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-orange/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 z-[1] animate-pulse" style={{ animationDuration: '4s' }} />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#E8870A]/10 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/4 z-[1]" />
-        
-        {/* Subtle Grid Pattern */}
-        <div className="absolute inset-0 z-[2] opacity-[0.03]" style={{
-          backgroundImage: 'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)',
-          backgroundSize: '32px 32px',
-        }} />
-
-        <div className="relative z-10 px-8 py-12 md:px-16 md:py-20 flex flex-col md:flex-row items-center justify-between gap-10">
-          <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-6 backdrop-blur-md shadow-lg">
-              <span className="w-2.5 h-2.5 rounded-full bg-brand-orange animate-ping absolute opacity-75" />
-              <span className="w-2.5 h-2.5 rounded-full bg-brand-orange relative" />
-              <span className="text-xs md:text-sm font-bold tracking-widest text-brand-orange uppercase">
-                {locale === 'ar' ? 'تصفح السير الذاتية' : 'Discover Talent'}
-              </span>
-            </div>
-            
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 leading-tight drop-shadow-lg">
-              {t('title')}
-            </h1>
-            <p className="text-gray-300 text-lg md:text-xl font-medium max-w-xl leading-relaxed">
-              {t('subtitle')}
-            </p>
-          </div>
-
-          {/* Decorative 3D Elements Area for Desktop */}
-          <div className="hidden lg:flex relative w-72 h-72 justify-center items-center perspective-1000">
-            {/* Back Card */}
-            <div className="absolute w-48 h-64 bg-white/5 rounded-3xl border border-white/10 backdrop-blur-md transform rotate-[-15deg] -translate-x-10 shadow-2xl transition-transform duration-500 hover:rotate-[-20deg] hover:-translate-x-12" />
-            
-            {/* Front Card */}
-            <div className="absolute w-52 h-72 bg-gradient-to-br from-white/10 to-white/5 rounded-3xl border border-white/20 backdrop-blur-xl transform rotate-[10deg] translate-x-6 shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col p-6 transition-transform duration-500 hover:rotate-[15deg] hover:translate-x-8 hover:-translate-y-2 group">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-brand-orange to-[#ffb84d] mb-6 shadow-[0_0_20px_rgba(232,135,10,0.4)] group-hover:scale-110 transition-transform duration-500 flex-shrink-0" />
-              <div className="w-3/4 h-3 bg-white/20 rounded-full mb-3" />
-              <div className="w-1/2 h-3 bg-white/10 rounded-full mb-8" />
-              
-              <div className="mt-auto flex gap-2">
-                <div className="w-8 h-8 rounded-lg bg-white/10" />
-                <div className="w-8 h-8 rounded-lg bg-white/10" />
-                <div className="w-8 h-8 rounded-lg bg-brand-orange/80 shadow-lg shadow-orange-500/20" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageBanner
+        title={t('title')}
+        subtitle={t('subtitle')}
+        badgeText={locale === 'ar' ? 'تصفح السير الذاتية' : 'Discover Talent'}
+        iconType="cv"
+      />
 
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex flex-col lg:flex-row gap-6">

@@ -5,6 +5,7 @@ import { Phone, Mail, MapPin, Clock, Send } from 'lucide-react';
 import { useState } from 'react';
 import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
+import PageBanner from '@/components/shared/PageBanner';
 
 const WhatsAppIcon = ({ size = 20 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
@@ -60,13 +61,14 @@ export default function ContactPageClient() {
   return (
     <>
       {/* Hero banner */}
-      <section className="bg-brand-dark pt-32 pb-24">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-white/50 text-sm mb-4 font-medium">Alsaffar / {t('title')}</div>
-          <h1 className="text-5xl sm:text-6xl font-black text-white mb-6 leading-tight">{t('title')}</h1>
-          <p className="text-white/70 text-xl max-w-2xl leading-relaxed">{t('subtitle')}</p>
-        </div>
-      </section>
+      <div className="pt-24 pb-8 bg-gray-50">
+        <PageBanner
+          title={t('title')}
+          subtitle={t('subtitle')}
+          badgeText={locale === 'ar' ? 'تواصل معنا' : 'Get In Touch'}
+          iconType="contact"
+        />
+      </div>
 
       {/* Quick contact strip */}
       <section className="bg-brand-orange">

@@ -4,6 +4,7 @@ import {Target, Eye, Award, MapPin, Clock, FileText, Shield, Zap, Heart} from 'l
 import Image from 'next/image';
 import type {Metadata} from 'next';
 import {buildAlternates} from '@/lib/seo';
+import PageBanner from '@/components/shared/PageBanner';
 
 type Props = {params: Promise<{locale: string}>};
 
@@ -52,20 +53,14 @@ function AboutContent() {
   return (
     <>
       {/* Hero banner */}
-      <section className="relative bg-brand-dark pt-32 pb-24 overflow-hidden">
-        <Image
-          src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1600&q=80"
-          alt="Team"
-          fill
-          className="object-cover opacity-20"
-          priority
+      <div className="pt-24 pb-8 bg-gray-50">
+        <PageBanner
+          title={t('title')}
+          subtitle={t('subtitle')}
+          badgeText={locale === 'ar' ? 'من نحن' : 'Who We Are'}
+          iconType="about"
         />
-        <div className="relative max-w-7xl mx-auto px-4">
-          <div className="text-white/50 text-sm mb-4 font-medium">Alsaffar / {t('title')}</div>
-          <h1 className="text-5xl sm:text-6xl font-black text-white mb-6 leading-tight">{t('title')}</h1>
-          <p className="text-white/70 text-xl max-w-2xl leading-relaxed">{t('subtitle')}</p>
-        </div>
-      </section>
+      </div>
 
       {/* Stats bar */}
       <section className="bg-brand-orange">
