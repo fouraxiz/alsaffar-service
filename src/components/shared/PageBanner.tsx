@@ -85,7 +85,7 @@ export default function PageBanner({ title, subtitle, badgeText, iconType = 'ser
   };
 
   return (
-    <div className="relative mx-4 lg:mx-auto max-w-7xl mb-12 mt-4 rounded-[2rem] overflow-hidden bg-brand-dark shadow-2xl">
+    <div className="relative w-full overflow-hidden bg-brand-dark">
       {/* Animated Gradient Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#0a1105] via-[#1a2e12] to-[#0a1105] z-0" />
 
@@ -99,7 +99,7 @@ export default function PageBanner({ title, subtitle, badgeText, iconType = 'ser
         backgroundSize: '32px 32px',
       }} />
 
-      <div className="relative z-10 px-8 py-12 md:px-16 md:py-20 flex flex-col md:flex-row items-center justify-between gap-10">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 pt-24 md:pt-28 pb-10 md:pb-14 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="max-w-2xl">
           {badgeText && (
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-6 backdrop-blur-md shadow-lg">

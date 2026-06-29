@@ -130,7 +130,7 @@ export default function CVBrowser() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20 pb-32 relative">
+    <div className="min-h-screen bg-gray-50 pb-32 relative">
 
       <PageBanner
         title={t('title')}
@@ -139,7 +139,7 @@ export default function CVBrowser() {
         iconType="cv"
       />
 
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="max-w-7xl mx-auto px-4 mt-6">
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Filters Sidebar */}
           <div className="w-full lg:w-72 flex-shrink-0 lg:sticky lg:top-24 lg:self-start">

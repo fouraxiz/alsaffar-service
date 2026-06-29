@@ -105,7 +105,7 @@ function ServicesContent() {
   return (
     <>
       {/* Hero banner */}
-      <div className="pt-24 pb-8 bg-gray-50">
+      <div>
         <PageBanner
           title={t('title')}
           subtitle={t('subtitle')}
