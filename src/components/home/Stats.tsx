@@ -22,7 +22,7 @@ export default function Stats() {
           fill
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-brand-dark/90" />
+        <div className="absolute inset-0 bg-brand-dark/70" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4">

@@ -77,7 +77,7 @@ function AboutContent() {
       </section>
 
       {/* Story section */}
-      <section className="py-24 bg-white/70">
+      <section className="py-24 bg-white/45">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
             <div>
@@ -102,7 +102,7 @@ function AboutContent() {
       </section>
 
       {/* Mission & Vision */}
-      <section className="py-24 bg-brand-gray/70">
+      <section className="py-24 bg-brand-gray/45">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-14">
             <h2 className="text-4xl font-black text-brand-dark">
@@ -129,7 +129,7 @@ function AboutContent() {
       </section>
 
       {/* Values */}
-      <section className="py-24 bg-white/70">
+      <section className="py-24 bg-white/45">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-14">
             <div className="inline-block bg-brand-orange/10 text-brand-orange text-sm font-bold px-4 py-1.5 rounded-full mb-4">

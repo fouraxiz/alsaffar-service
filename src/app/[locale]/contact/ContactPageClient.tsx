@@ -93,7 +93,7 @@ export default function ContactPageClient() {
       </section>
 
       {/* Main content */}
-      <section className="py-24 bg-white/70">
+      <section className="py-24 bg-white/45">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-14">
 

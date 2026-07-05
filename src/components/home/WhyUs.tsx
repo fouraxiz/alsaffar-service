@@ -17,7 +17,7 @@ export default function WhyUs() {
   ] as const;
 
   return (
-    <section id="why-us" className="py-20 bg-white">
+    <section id="why-us" className="py-20 bg-white/45">
       <div className="max-w-7xl mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
 

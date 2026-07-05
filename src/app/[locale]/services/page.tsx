@@ -1,6 +1,6 @@
 import {setRequestLocale} from 'next-intl/server';
 import {useTranslations, useLocale} from 'next-intl';
-import {Home, Car, Wrench, Briefcase, FileText, HeartHandshake, CheckCircle2, ArrowRight, ChevronRight} from 'lucide-react';
+import {Home, Car, Wrench, Briefcase, FileText, HeartHandshake, CheckCircle2, ArrowRight} from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import type {Metadata} from 'next';
@@ -150,7 +150,7 @@ function ServicesContent() {
       </section>
 
       {/* ── Services grid ── */}
-      <section className="py-24 bg-white/70">
+      <section className="py-24 bg-white/45">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-14">
             <div className="inline-block bg-brand-orange/10 text-brand-orange text-sm font-bold px-4 py-1.5 rounded-full mb-4">
@@ -260,9 +260,11 @@ function ServicesContent() {
                 className="bg-white/10 hover:bg-white/20 border border-white/10 rounded-2xl px-6 py-4 transition-colors flex flex-col items-center justify-center gap-3 min-w-[120px]"
               >
                 <div className="w-12 h-9 relative rounded overflow-hidden shadow-sm flex items-center justify-center bg-gray-50">
-                  <img
+                  <Image
                     src={`https://flagcdn.com/w80/${c.code}.png`}
                     alt={c.name}
+                    fill
+                    sizes="3rem"
                     className="w-full h-full object-cover"
                   />
                 </div>

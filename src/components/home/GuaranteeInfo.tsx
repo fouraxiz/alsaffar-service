@@ -32,7 +32,7 @@ export default function GuaranteeInfo() {
   ];
 
   return (
-    <section className="relative py-16 bg-white border-t border-gray-100 overflow-hidden">
+    <section className="relative py-16 bg-white/45 border-t border-gray-100 overflow-hidden">
       <SilhouetteBackdrop shapes={['nanny', 'cleaning']} />
       <div className="relative max-w-7xl mx-auto px-4">
         {/* Header */}

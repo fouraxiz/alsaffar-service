@@ -33,7 +33,7 @@ export default async function WhyUsPage({params}: Props) {
   const badgeText = locale === 'ar' ? 'ميزتنا' : 'Our Advantage';
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-12">
+    <div className="min-h-screen bg-transparent">
       <PageBanner
         title={title}
         subtitle={subtitle}

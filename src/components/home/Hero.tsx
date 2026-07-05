@@ -17,7 +17,7 @@ export default function Hero() {
   const isAr = locale === 'ar';
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-white/80 via-brand-light/80 to-orange-50/80">
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-white/60 via-brand-light/55 to-orange-50/60">
       {/* Subtle background pattern */}
       <div
         className="absolute inset-0 opacity-[0.04]"
