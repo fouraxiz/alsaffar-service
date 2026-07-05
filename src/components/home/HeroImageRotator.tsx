@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 import Image from 'next/image';
 
 const ROTATE_INTERVAL_MS = 5000;
@@ -24,18 +24,32 @@ const HERO_IMAGES = [
   },
 ];
 
+function subscribeToReducedMotion(onStoreChange: () => void) {
+  if (typeof window === 'undefined') return () => {};
+
+  const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  mediaQuery.addEventListener('change', onStoreChange);
+
+  return () => mediaQuery.removeEventListener('change', onStoreChange);
+}
+
+function getReducedMotionSnapshot() {
+  if (typeof window === 'undefined') return false;
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
 export default function HeroImageRotator() {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const reducedMotion = useSyncExternalStore(
+    subscribeToReducedMotion,
+    getReducedMotionSnapshot,
+    () => false
+  );
 
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setReducedMotion(mq.matches);
-    const onChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
-    mq.addEventListener('change', onChange);
-    return () => mq.removeEventListener('change', onChange);
-  }, []);
+  const showNextImage = () => {
+    setIndex((i) => (i + 1) % HERO_IMAGES.length);
+  };
 
   useEffect(() => {
     if (paused || reducedMotion) return;
@@ -47,8 +61,11 @@ export default function HeroImageRotator() {
   }, [paused, reducedMotion]);
 
   return (
-    <div
-      className="relative w-full max-w-md aspect-[7/8] rounded-3xl overflow-hidden shadow-2xl shadow-orange-100 z-10"
+    <button
+      type="button"
+      aria-label="Show next hero image"
+      className="relative block w-full max-w-md aspect-[7/8] rounded-3xl overflow-hidden shadow-2xl shadow-orange-100 z-10 cursor-pointer focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-orange/40"
+      onClick={showNextImage}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -79,6 +96,6 @@ export default function HeroImageRotator() {
         );
       })}
       <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/30 via-transparent to-transparent" />
-    </div>
+    </button>
   );
 }
