@@ -85,7 +85,7 @@ export default function NationalityFlags() {
   };
 
   return (
-    <section className="py-16 bg-gradient-to-br from-brand-light/80 to-white/80 relative">
+    <section className="py-16 bg-gradient-to-br from-brand-light/60 to-white/60 relative">
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-10">
