@@ -2,6 +2,7 @@
 
 import {useTranslations} from 'next-intl';
 import {ShieldCheck, Scale, HeartHandshake} from 'lucide-react';
+import SilhouetteBackdrop from './SilhouetteBackdrop';
 
 export default function GuaranteeInfo() {
   const t = useTranslations('guarantee');
@@ -31,8 +32,9 @@ export default function GuaranteeInfo() {
   ];
 
   return (
-    <section className="py-16 bg-white border-t border-gray-100">
-      <div className="max-w-7xl mx-auto px-4">
+    <section className="relative py-16 bg-white border-t border-gray-100 overflow-hidden">
+      <SilhouetteBackdrop shapes={['nanny', 'cleaning']} />
+      <div className="relative max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-block bg-brand-orange/10 text-brand-orange text-sm font-bold px-4 py-1.5 rounded-full mb-3">

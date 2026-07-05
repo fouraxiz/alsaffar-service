@@ -51,14 +51,12 @@ export default function CVGallery({ workers, onSelect, viewMode = 'grid' }: Prop
                 className="object-cover transition-transform duration-500 group-hover:scale-105"
               />
               
-              {/* Nationality Flag Badge */}
               <div className="absolute top-3 start-3 shadow-sm bg-white p-1 rounded">
-                <div className="relative w-7 h-5 rounded-sm overflow-hidden">
-                  <Image 
+                <div className="relative w-7 h-5 rounded-sm overflow-hidden flex items-center justify-center bg-gray-50">
+                  <img 
                     src={`https://flagcdn.com/w40/${worker.nationality}.png`}
                     alt={isAr ? worker.nationalityNameAr : worker.nationalityNameEn}
-                    fill
-                    className="object-cover"
+                    className="w-full h-full object-cover"
                   />
                 </div>
               </div>
@@ -136,12 +134,11 @@ export default function CVGallery({ workers, onSelect, viewMode = 'grid' }: Prop
             
             {/* Nationality Flag Badge */}
             <div className="absolute top-3 start-3 shadow-sm bg-white p-1 rounded">
-              <div className="relative w-7 h-5 rounded-sm overflow-hidden">
-                <Image 
+              <div className="relative w-7 h-5 rounded-sm overflow-hidden flex items-center justify-center bg-gray-50">
+                <img 
                   src={`https://flagcdn.com/w40/${worker.nationality}.png`}
                   alt={isAr ? worker.nationalityNameAr : worker.nationalityNameEn}
-                  fill
-                  className="object-cover"
+                  className="w-full h-full object-cover"
                 />
               </div>
             </div>

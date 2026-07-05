@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import {ArrowRight} from 'lucide-react';
 import {Home, Car, Wrench, Briefcase, FileText, HeartHandshake} from 'lucide-react';
+import SilhouetteBackdrop from './SilhouetteBackdrop';
 
 const WhatsAppIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
@@ -60,8 +61,8 @@ export default function ServicesSection() {
   ] as const;
 
   return (
-    <section className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-4">
+    <section className="relative py-20 bg-white/70 overflow-hidden">
+      <div className="relative max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-14">
           <div className="inline-block bg-brand-orange/10 text-brand-orange text-sm font-bold px-4 py-1.5 rounded-full mb-3">

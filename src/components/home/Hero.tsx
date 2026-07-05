@@ -3,7 +3,7 @@
 import { useTranslations, useLocale } from 'next-intl';
 import { Phone, MapPin, Users } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
+import HeroImageRotator from './HeroImageRotator';
 
 const WhatsAppIcon = ({ size = 20 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
@@ -17,7 +17,7 @@ export default function Hero() {
   const isAr = locale === 'ar';
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-white via-brand-light to-orange-50">
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-white/80 via-brand-light/80 to-orange-50/80">
       {/* Subtle background pattern */}
       <div
         className="absolute inset-0 opacity-[0.04]"
@@ -103,35 +103,31 @@ export default function Hero() {
 
           {/* RIGHT — image with stats */}
           <div className="order-1 lg:order-2 relative flex justify-center lg:justify-end">
-            <div className="relative">
+            <div className="relative w-full max-w-md">
               {/* Orange decorative ring */}
               <div className="absolute -top-4 -end-4 w-full h-full rounded-3xl border-2 border-brand-orange/20 z-0" />
-              {/* Image */}
-              <div className="relative w-full max-w-md rounded-3xl overflow-hidden shadow-2xl shadow-orange-100 z-10">
-                <Image
-                  src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=700&q=85&auto=format&fit=crop"
-                  alt="Professional business meeting"
-                  width={560}
-                  height={640}
-                  className="w-full object-cover"
-                  priority
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/30 via-transparent to-transparent" />
-              </div>
+              {/* Rotating images */}
+              <HeroImageRotator />
 
               {/* Floating stat card — bottom */}
-              <div className="absolute -bottom-5 -start-6 z-20 bg-white rounded-2xl px-5 py-4 shadow-xl border border-orange-100">
+              <div className="absolute -bottom-5 -start-6 z-20 bg-white rounded-2xl px-5 py-4 shadow-xl border border-orange-100 animate-float-delayed">
                 <div className="text-3xl font-black text-brand-orange">5,000+</div>
                 <div className="text-brand-dark text-xs font-semibold">
                   {isAr ? 'عامل تم توظيفه' : 'Workers Placed'}
                 </div>
               </div>
               {/* Floating stat card — top */}
-              <div className="absolute top-6 -start-6 z-20 bg-brand-orange text-white rounded-2xl px-4 py-3 shadow-xl">
-                <div className="text-2xl font-black">15+</div>
-                <div className="text-white/90 text-xs font-semibold">
-                  {isAr ? 'سنوات خبرة' : 'Years Experience'}
+              <div className="absolute top-6 -start-6 z-20 bg-brand-orange text-white rounded-2xl px-4 py-3 shadow-xl animate-float flex items-center gap-3">
+                <div>
+                  <div className="text-2xl font-black">15+</div>
+                  <div className="text-white/90 text-xs font-semibold">
+                    {isAr ? 'سنوات خبرة' : 'Years Experience'}
+                  </div>
                 </div>
+                {/* Rotating subtle visual */}
+                <svg className="w-8 h-8 opacity-40 animate-spin-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2v20M17 5l-10 14M22 12H2M19 19L5 5" />
+                </svg>
               </div>
             </div>
 

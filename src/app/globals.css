@@ -7,6 +7,29 @@
   --color-brand-olive: #2D3500;
   --color-brand-light: #FFF8F0;
   --color-brand-gray: #F5F5F0;
+
+  --animate-kenburns: kenburns 7s ease-out forwards;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-float-delayed: float 6s ease-in-out 3s infinite;
+  --animate-spin-slow: spin 8s linear infinite;
+
+  @keyframes kenburns {
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(1.12);
+    }
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
 }
 
 :root {

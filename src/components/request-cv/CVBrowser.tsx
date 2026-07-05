@@ -130,8 +130,7 @@ export default function CVBrowser() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-32 relative">
-
+    <div className="min-h-screen bg-transparent pb-16 relative">
       <PageBanner
         title={t('title')}
         subtitle={t('subtitle')}

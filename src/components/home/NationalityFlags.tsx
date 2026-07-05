@@ -85,7 +85,7 @@ export default function NationalityFlags() {
   };
 
   return (
-    <section className="py-16 bg-gradient-to-br from-brand-light to-white relative">
+    <section className="py-16 bg-gradient-to-br from-brand-light/80 to-white/80 relative">
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-10">
@@ -140,12 +140,11 @@ export default function NationalityFlags() {
                 : 'border-gray-100 hover:border-orange-200'
                 }`}>
                 {/* Flag Image from CDN */}
-                <div className="w-12 h-9 relative rounded overflow-hidden shadow-sm">
-                  <Image
+                <div className="w-12 h-9 relative rounded overflow-hidden shadow-sm flex items-center justify-center bg-gray-50">
+                  <img
                     src={`https://flagcdn.com/w80/${nat.code}.png`}
                     alt={nat.nameEn}
-                    fill
-                    className="object-cover"
+                    className="w-full h-full object-cover"
                   />
                 </div>
 
@@ -185,12 +184,11 @@ export default function NationalityFlags() {
             {/* Header */}
             <div className="bg-gray-50 px-6 py-5 border-b border-gray-100 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-7 relative rounded overflow-hidden shadow-sm">
-                  <Image
+                <div className="w-10 h-7 relative rounded overflow-hidden shadow-sm flex items-center justify-center bg-gray-50">
+                  <img
                     src={`https://flagcdn.com/w80/${selectedNationality.code}.png`}
                     alt={selectedNationality.nameEn}
-                    fill
-                    className="object-cover"
+                    className="w-full h-full object-cover"
                   />
                 </div>
                 <div>

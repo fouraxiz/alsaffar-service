@@ -124,12 +124,11 @@ export default function CVDetailModal({ worker, onClose, onProceed }: Props) {
                   {isAr ? worker.nameAr : worker.name}
                 </h2>
                 <div className="flex items-center gap-2 text-gray-500 font-medium">
-                  <div className="w-5 h-3.5 relative rounded-sm overflow-hidden">
-                    <Image
+                  <div className="w-5 h-3.5 relative rounded-sm overflow-hidden flex items-center justify-center bg-gray-50">
+                    <img
                       src={`https://flagcdn.com/w40/${worker.nationality}.png`}
                       alt={isAr ? worker.nationalityNameAr : worker.nationalityNameEn}
-                      fill
-                      className="object-cover"
+                      className="w-full h-full object-cover"
                     />
                   </div>
                   {isAr ? worker.nationalityNameAr : worker.nationalityNameEn}

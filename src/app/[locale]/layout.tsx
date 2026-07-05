@@ -10,6 +10,7 @@ import MotionBanner from '@/components/home/MotionBanner';
 import DirectionProvider from '@/components/DirectionProvider';
 import LiveChatBar from '@/components/shared/LiveChatBar';
 import JsonLd from '@/components/seo/JsonLd';
+import SilhouetteBackdrop from '@/components/home/SilhouetteBackdrop';
 import { SITE_URL, buildAlternates, BRAND_KEYWORDS_EN, BRAND_KEYWORDS_AR } from '@/lib/seo';
 import type { Metadata } from 'next';
 
@@ -77,6 +78,7 @@ export default async function LocaleLayout({ children, params }: Props) {
       <JsonLd locale={locale} />
       <DirectionProvider />
       <div style={{ fontFamily: cairo.style.fontFamily }} className="flex flex-col min-h-screen relative pb-[70px]">
+        <SilhouetteBackdrop className="fixed inset-0 -z-10" />
         <Header />
         <MotionBanner />
         <main className="flex-1">{children}</main>

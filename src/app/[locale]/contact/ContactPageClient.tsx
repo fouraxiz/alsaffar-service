@@ -93,7 +93,7 @@ export default function ContactPageClient() {
       </section>
 
       {/* Main content */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-white/70">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-14">
 
@@ -107,7 +107,7 @@ export default function ContactPageClient() {
               </p>
 
               {submitted ? (
-                <div className="flex flex-col items-center justify-center py-24 text-center bg-brand-gray rounded-2xl">
+                <div className="flex flex-col items-center justify-center py-24 text-center bg-brand-gray/70 rounded-2xl">
                   <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mb-5">
                     <Send size={36} className="text-emerald-600" />
                   </div>
@@ -234,7 +234,7 @@ export default function ContactPageClient() {
                 href="https://maps.google.com/maps?cid=12580771141352986513&ll=26.5823757,50.0433538&z=17&t=k"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-start gap-4 bg-brand-gray hover:bg-brand-orange/5 rounded-2xl p-6 transition-colors group"
+                className="flex items-start gap-4 bg-brand-gray/70 hover:bg-brand-orange/5 rounded-2xl p-6 transition-colors group"
               >
                 <div className="w-14 h-14 bg-brand-orange/10 group-hover:bg-brand-orange rounded-xl flex items-center justify-center text-brand-orange group-hover:text-white flex-shrink-0 transition-colors">
                   <MapPin size={26} />
@@ -249,7 +249,7 @@ export default function ContactPageClient() {
 
               <a
                 href="tel:+966920021201"
-                className="flex items-start gap-4 bg-brand-gray hover:bg-brand-orange/5 rounded-2xl p-6 transition-colors group"
+                className="flex items-start gap-4 bg-brand-gray/70 hover:bg-brand-orange/5 rounded-2xl p-6 transition-colors group"
               >
                 <div className="w-14 h-14 bg-brand-orange/10 group-hover:bg-brand-orange rounded-xl flex items-center justify-center text-brand-orange group-hover:text-white flex-shrink-0 transition-colors">
                   <Phone size={26} />
@@ -264,7 +264,7 @@ export default function ContactPageClient() {
 
               <a
                 href="mailto:support@alsaffar.pro"
-                className="flex items-start gap-4 bg-brand-gray hover:bg-brand-orange/5 rounded-2xl p-6 transition-colors group"
+                className="flex items-start gap-4 bg-brand-gray/70 hover:bg-brand-orange/5 rounded-2xl p-6 transition-colors group"
               >
                 <div className="w-14 h-14 bg-brand-orange/10 group-hover:bg-brand-orange rounded-xl flex items-center justify-center text-brand-orange group-hover:text-white flex-shrink-0 transition-colors">
                   <Mail size={26} />
@@ -277,7 +277,7 @@ export default function ContactPageClient() {
                 </div>
               </a>
 
-              <div className="flex items-start gap-4 bg-brand-gray rounded-2xl p-6">
+              <div className="flex items-start gap-4 bg-brand-gray/70 rounded-2xl p-6">
                 <div className="w-14 h-14 bg-brand-orange/10 rounded-xl flex items-center justify-center text-brand-orange flex-shrink-0">
                   <Clock size={26} />
                 </div>

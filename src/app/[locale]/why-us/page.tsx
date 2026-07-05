@@ -1,3 +1,4 @@
+import type {Metadata} from 'next';
 import {setRequestLocale} from 'next-intl/server';
 import WhyUs from '@/components/home/WhyUs';
 import {buildAlternates} from '@/lib/seo';
