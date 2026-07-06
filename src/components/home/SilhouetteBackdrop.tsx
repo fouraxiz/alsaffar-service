@@ -52,7 +52,7 @@ export default function SilhouetteBackdrop({
         which includes the elderly caregiver, nanny, skilled workers, etc.
       */}
       <div
-        className="absolute inset-[-50%] w-[200%] h-[200%] mix-blend-multiply"
+        className="absolute inset-[-50%] w-[200%] h-[200%] mix-blend-multiply animate-milk-motion"
         style={{
           backgroundImage: 'url(/images/manpower_silhouettes_bg.png)',
           backgroundSize: '800px',
