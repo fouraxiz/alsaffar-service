@@ -26,6 +26,7 @@ const CVPrintTemplate = forwardRef<HTMLDivElement, Props>(({ worker, locale = 'e
   return (
     <div
       ref={ref}
+      className="cv-print-wrapper"
       style={{
         width: '794px',
         height: '1123px',
@@ -37,8 +38,33 @@ const CVPrintTemplate = forwardRef<HTMLDivElement, Props>(({ worker, locale = 'e
         color: TEXT_MAIN,
       }}
     >
+      <style>{`
+        @media print {
+          .cv-print-wrapper {
+            width: 100% !important;
+            height: 100vh !important;
+          }
+        }
+      `}</style>
+
+      {/* ════════ MILK SHADOW BACKGROUND ════════ */}
+      <div 
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: 'url(/images/manpower_silhouettes_bg.png)',
+          backgroundSize: '500px',
+          backgroundRepeat: 'repeat',
+          mixBlendMode: 'multiply',
+          opacity: 0.35, // Increased opacity to make it visible
+          zIndex: 0,
+          WebkitPrintColorAdjust: 'exact',
+          printColorAdjust: 'exact',
+        }}
+      />
+
       {/* ════════ BACKGROUND SHAPES ════════ */}
-      <svg viewBox="0 0 794 140" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '140px', zIndex: 1, transform: isAr ? 'scaleX(-1)' : 'none' }}>
+      <svg preserveAspectRatio="none" viewBox="0 0 794 140" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '140px', zIndex: 1, transform: isAr ? 'scaleX(-1)' : 'none' }}>
         <polygon points="0,60 794,110 0,140" fill={COLOR_LIGHT_BG} />
         <polygon points="794,20 794,140 180,80" fill={COLOR_MID} />
         <polygon points="0,0 794,0 794,30 0,110" fill={COLOR_DARK} />
@@ -61,7 +87,7 @@ const CVPrintTemplate = forwardRef<HTMLDivElement, Props>(({ worker, locale = 'e
         </div>
       </div>
 
-      <svg viewBox="0 0 794 140" style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '140px', zIndex: 1, transform: isAr ? 'scaleX(-1)' : 'none' }}>
+      <svg preserveAspectRatio="none" viewBox="0 0 794 140" style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '140px', zIndex: 1, transform: isAr ? 'scaleX(-1)' : 'none' }}>
         <polygon points="0,0 794,15 794,140 0,140" fill={COLOR_LIGHT_BG} />
         <polygon points="0,15 794,30 794,140 0,140" fill={COLOR_MID} />
         <polygon points="0,30 794,45 794,140 0,140" fill={COLOR_DARK} />
