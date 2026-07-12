@@ -38,21 +38,21 @@ export default function NoMatchForm({ filters, onClose }: Props) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // In a real app, this would be an API call.
-    // For now, we simulate formatting a WhatsApp message and showing success.
-    const message = `
-*New Specific Worker Request*
-Phone: ${form.phone}
-ID: ${form.idNumber}
-Description: ${form.description}
-
-*Applied Filters:*
-${formatFilters()}
-    `.trim();
-
-    console.log('Sending message:', message);
-    // You could also open WhatsApp directly here
-    // window.open(`https://wa.me/966920021201?text=${encodeURIComponent(message)}`, '_blank');
+    // Capture the request as a CRM lead (best-effort, server-side via our route
+    // handler which keeps the ERP token off the client). Success is shown
+    // regardless so the visitor is never blocked by a backend hiccup.
+    fetch('/api/inquiry', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        phone: form.phone,
+        description: form.description,
+        idNumber: form.idNumber,
+        filters: formatFilters(),
+      }),
+    }).catch(() => {
+      /* non-fatal */
+    });
 
     setSubmitted(true);
   };

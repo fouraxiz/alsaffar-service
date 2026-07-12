@@ -3,7 +3,7 @@
 import { useTranslations, useLocale } from 'next-intl';
 import { WorkerCV } from '@/data/cvData';
 import { Phone, ChevronRight, ArrowLeft, ArrowRight, FileText } from 'lucide-react';
-import Image from 'next/image';
+import WorkerPhoto from './WorkerPhoto';
 
 const WhatsAppIcon = ({ size = 24 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
@@ -52,7 +52,7 @@ export default function CVActionSelection({ worker, onClose, onBack, onContinue 
           
           <div className="flex-1 px-4 flex items-center gap-3">
             <div className="w-10 h-10 relative rounded-full overflow-hidden shrink-0 shadow-sm border border-gray-100">
-              <Image src={worker.photoUrl} alt="Worker" fill className="object-cover" />
+              <WorkerPhoto src={worker.photoUrl} alt="Worker" className="object-cover" iconSize={20} sizes="40px" />
             </div>
             <div>
               <div className="font-bold text-sm text-brand-dark leading-tight">{isAr ? worker.nameAr : worker.name}</div>

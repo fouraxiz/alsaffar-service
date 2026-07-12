@@ -1,5 +1,31 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
+import { postLead, erpEnabled } from '@/lib/erpApi';
+
+/**
+ * Best-effort mirror of a contact submission into the ERP CRM as a Lead.
+ * Never throws to the caller — email is the source of truth for the reply,
+ * the CRM lead is an additive capture. Runs server-side so no token leaks.
+ */
+async function mirrorLeadToCrm(payload: {
+  name: string;
+  phone: string;
+  service: string;
+  message: string;
+}): Promise<void> {
+  if (!erpEnabled()) return;
+  try {
+    await postLead({
+      name: payload.name,
+      phone: payload.phone,
+      service_type: payload.service || null,
+      message: payload.message || null,
+      source: 'website-contact',
+    });
+  } catch (err) {
+    console.error('[contact] CRM lead mirror failed (non-fatal):', err);
+  }
+}
 
 type ContactPayload = {
   name?: string;
@@ -87,6 +113,9 @@ export async function POST(request: Request) {
       console.error('[contact] Resend error:', error);
       return NextResponse.json({ error: 'Failed to send message.' }, { status: 502 });
     }
+
+    // Additive: also capture the enquiry as a CRM lead (best-effort, non-fatal).
+    await mirrorLeadToCrm({ name, phone, service, message });
 
     return NextResponse.json({ ok: true });
   } catch (err) {

@@ -6,7 +6,7 @@ import { useReactToPrint } from 'react-to-print';
 import { useTranslations, useLocale } from 'next-intl';
 import { WorkerCV } from '@/data/cvData';
 import { X, Download, PlayCircle, MapPin, CheckCircle2 } from 'lucide-react';
-import Image from 'next/image';
+import WorkerPhoto from './WorkerPhoto';
 import CVPrintTemplate from './CVPrintTemplate';
 
 type Props = {
@@ -74,11 +74,11 @@ export default function CVDetailModal({ worker, onClose, onProceed }: Props) {
                 ></iframe>
               ) : (
                 <>
-                  <Image
+                  <WorkerPhoto
                     src={worker.photoUrl}
                     alt={isAr ? worker.nameAr : worker.name}
-                    fill
                     className="object-cover"
+                    iconSize={64}
                   />
 
                   {/* Video Overlay if available */}

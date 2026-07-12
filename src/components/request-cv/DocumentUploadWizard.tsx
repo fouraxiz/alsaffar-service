@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { WorkerCV } from '@/data/cvData';
 import { ArrowLeft, ArrowRight, UploadCloud, File, X, CheckCircle2 } from 'lucide-react';
-import Image from 'next/image';
+import WorkerPhoto from './WorkerPhoto';
 
 type Props = {
   worker: WorkerCV;
@@ -124,7 +124,7 @@ export default function DocumentUploadWizard({ worker, onClose, onBack, onComple
           {/* Worker summary mini-card */}
           <div className="px-6 pb-4 flex items-center gap-4">
             <div className="w-12 h-12 relative rounded-xl overflow-hidden shrink-0 shadow-sm">
-              <Image src={worker.photoUrl} alt="Worker" fill className="object-cover" />
+              <WorkerPhoto src={worker.photoUrl} alt="Worker" className="object-cover" iconSize={24} sizes="48px" />
             </div>
             <div>
               <div className="font-bold text-brand-dark leading-tight">{isAr ? worker.nameAr : worker.name}</div>

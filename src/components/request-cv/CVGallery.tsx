@@ -2,8 +2,8 @@
 
 import { useTranslations, useLocale } from 'next-intl';
 import { WorkerCV } from '@/data/cvData';
-import Image from 'next/image';
 import { Play } from 'lucide-react';
+import WorkerPhoto from './WorkerPhoto';
 
 type Props = {
   workers: WorkerCV[];
@@ -44,11 +44,11 @@ export default function CVGallery({ workers, onSelect, viewMode = 'grid' }: Prop
           >
             {/* Photo Section */}
             <div className="relative w-full sm:w-48 aspect-[4/3] sm:aspect-square bg-gray-100 overflow-hidden shrink-0">
-              <Image 
-                src={worker.photoUrl} 
+              <WorkerPhoto
+                src={worker.photoUrl}
                 alt={isAr ? worker.nameAr : worker.name}
-                fill
                 className="object-cover transition-transform duration-500 group-hover:scale-105"
+                iconSize={48}
               />
               
               <div className="absolute top-3 start-3 shadow-sm bg-white p-1 rounded">
@@ -125,11 +125,11 @@ export default function CVGallery({ workers, onSelect, viewMode = 'grid' }: Prop
         >
           {/* Photo Section */}
           <div className="relative aspect-[4/3] w-full bg-gray-100 overflow-hidden">
-            <Image 
-              src={worker.photoUrl} 
+            <WorkerPhoto
+              src={worker.photoUrl}
               alt={isAr ? worker.nameAr : worker.name}
-              fill
               className="object-cover transition-transform duration-500 group-hover:scale-105"
+              iconSize={48}
             />
             
             {/* Nationality Flag Badge */}

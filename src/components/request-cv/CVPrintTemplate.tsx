@@ -159,12 +159,28 @@ const CVPrintTemplate = forwardRef<HTMLDivElement, Props>(({ worker, locale = 'e
             flexShrink: 0,
             backgroundColor: '#f0f0f0'
           }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={worker.photoUrl}
-              alt={name}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
+            {worker.photoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={worker.photoUrl}
+                alt={name}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            ) : (
+              <div style={{
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '64px',
+                fontWeight: 900,
+                color: '#c9c9c9',
+                backgroundColor: '#f0f0f0',
+              }}>
+                {(name || '?').charAt(0).toUpperCase()}
+              </div>
+            )}
           </div>
 
           {/* Name & Title */}

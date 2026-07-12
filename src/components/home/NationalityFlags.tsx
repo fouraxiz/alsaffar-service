@@ -1,33 +1,11 @@
 'use client';
 
 import { useLocale, useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { X, Phone } from 'lucide-react';
-
-type Nationality = {
-  code: string;
-  nameAr: string;
-  nameEn: string;
-  category: 'domestic' | 'driver' | 'skilled';
-  priceRange: string;
-};
-
-const nationalities: Nationality[] = [
-  { code: 'ph', nameAr: 'فلبينية', nameEn: 'Filipino', category: 'domestic', priceRange: '8,000–12,000 ريال' },
-  { code: 'id', nameAr: 'إندونيسية', nameEn: 'Indonesian', category: 'domestic', priceRange: '7,000–10,000 ريال' },
-  { code: 'lk', nameAr: 'سريلانكية', nameEn: 'Sri Lankan', category: 'domestic', priceRange: '6,000–9,000 ريال' },
-  { code: 'et', nameAr: 'إثيوبية', nameEn: 'Ethiopian', category: 'domestic', priceRange: '5,000–8,000 ريال' },
-  { code: 'in', nameAr: 'هندية', nameEn: 'Indian', category: 'driver', priceRange: '5,000–9,000 ريال' },
-  { code: 'pk', nameAr: 'باكستانية', nameEn: 'Pakistani', category: 'driver', priceRange: '5,000–8,000 ريال' },
-  { code: 'bd', nameAr: 'بنغلاديشية', nameEn: 'Bangladeshi', category: 'skilled', priceRange: '4,500–7,500 ريال' },
-  { code: 'np', nameAr: 'نيبالية', nameEn: 'Nepali', category: 'skilled', priceRange: '4,000–7,000 ريال' },
-  { code: 'ug', nameAr: 'أوغندية', nameEn: 'Ugandan', category: 'domestic', priceRange: '4,500–7,000 ريال' },
-  { code: 'ke', nameAr: 'كينية', nameEn: 'Kenyan', category: 'domestic', priceRange: '5,000–8,000 ريال' },
-  { code: 'gh', nameAr: 'غانية', nameEn: 'Ghanaian', category: 'domestic', priceRange: '5,000–8,000 ريال' },
-  { code: 'tz', nameAr: 'تنزانية', nameEn: 'Tanzanian', category: 'domestic', priceRange: '4,500–7,000 ريال' },
-];
+import { STATIC_NATIONALITIES, type Nationality } from '@/data/nationalities';
 
 const categoryLabels = {
   all: { ar: 'الكل', en: 'All' },
@@ -59,6 +37,26 @@ export default function NationalityFlags() {
 
   const [selectedNationality, setSelectedNationality] = useState<Nationality | null>(null);
   const [formState, setFormState] = useState<'idle' | 'submitting' | 'success'>('idle');
+
+  // Render the static list instantly (SSR/SEO), then upgrade to the live ERP
+  // /countries feed (published list + labels). The route handler already falls
+  // back to the same static list, so this only ever replaces like-for-like.
+  const [nationalities, setNationalities] = useState<Nationality[]>(STATIC_NATIONALITIES);
+
+  useEffect(() => {
+    let active = true;
+    fetch('/api/countries')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (active && data?.nationalities?.length) setNationalities(data.nationalities as Nationality[]);
+      })
+      .catch(() => {
+        /* keep static fallback */
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const filtered = activeFilter === 'all' ? nationalities : nationalities.filter(n => n.category === activeFilter);
 

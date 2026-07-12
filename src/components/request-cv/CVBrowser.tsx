@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
-import { useSearchParams } from 'next/navigation';
 import { LayoutGrid, AlignJustify } from 'lucide-react';
-import { mockWorkers, WorkerCV } from '@/data/cvData';
+import { WorkerCV } from '@/data/cvData';
 import CVFilterPanel, { FilterState } from './CVFilterPanel';
 import CVGallery from './CVGallery';
+import CVGallerySkeleton from './CVGallerySkeleton';
 import CVDetailModal from './CVDetailModal';
 import CVActionSelection from './CVActionSelection';
 import DocumentUploadWizard from './DocumentUploadWizard';
@@ -18,13 +18,37 @@ export type FlowState = 'browsing' | 'viewing' | 'action' | 'upload' | 'success'
 export default function CVBrowser() {
   const t = useTranslations('requestCV');
   const locale = useLocale();
-  const searchParams = useSearchParams();
 
   const [flowState, setFlowState] = useState<FlowState>('browsing');
   const [selectedCV, setSelectedCV] = useState<WorkerCV | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showRequestForm, setShowRequestForm] = useState(false);
 
+  // Worker CVs come from the live ERP feed via our /api/workers route handler
+  // (token stays server-side; the route itself falls back to the bundled static
+  // data when the ERP is disabled/unreachable). `null` = still loading, so we
+  // show a skeleton instead of flashing demo data that then gets replaced.
+  const [workers, setWorkers] = useState<WorkerCV[] | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    fetch('/api/workers')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (active) setWorkers((data?.workers as WorkerCV[]) ?? []);
+      })
+      .catch(() => {
+        if (active) setWorkers([]);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const isLoading = workers === null;
+
+  // Browse-CVs always opens with no filter pre-selected — deep links from the
+  // home nationality flags (?nationality=/?category=) no longer auto-filter.
   const [filters, setFilters] = useState<FilterState>({
     nationality: [],
     gender: null,
@@ -35,33 +59,8 @@ export default function CVBrowser() {
     serviceType: [],
   });
 
-  useEffect(() => {
-    const nationalityParam = searchParams.get('nationality');
-    const categoryParam = searchParams.get('category');
-    
-    setFilters(prev => {
-      const next = { ...prev };
-      
-      if (nationalityParam) {
-        next.nationality = [nationalityParam];
-      }
-      
-      if (categoryParam) {
-        if (categoryParam === 'domestic') {
-          next.jobType = ['housemaid', 'nanny', 'cook', 'cleaner', 'elderly_care'];
-        } else if (categoryParam === 'driver') {
-          next.jobType = ['driver'];
-        } else if (categoryParam === 'skilled') {
-          next.jobType = ['technician', 'electrician', 'plumber', 'gardener'];
-        }
-      }
-      
-      return next;
-    });
-  }, [searchParams]);
-
   // Filter logic
-  const filteredWorkers = mockWorkers.filter((worker) => {
+  const filteredWorkers = (workers ?? []).filter((worker) => {
     // Nationality
     if (filters.nationality.length > 0 && !filters.nationality.includes(worker.nationality)) return false;
     // Gender
@@ -149,7 +148,9 @@ export default function CVBrowser() {
           <div className="flex-1">
             <div className="flex items-center justify-between mb-4">
               <div className="text-sm font-semibold text-gray-500">
-                {t('gallery.showing', { count: filteredWorkers.length })}
+                {isLoading
+                  ? (locale === 'ar' ? 'جاري التحميل…' : 'Loading…')
+                  : t('gallery.showing', { count: filteredWorkers.length })}
               </div>
               <div className="flex items-center gap-2">
                 <button
@@ -168,7 +169,9 @@ export default function CVBrowser() {
                 </button>
               </div>
             </div>
-            {filteredWorkers.length > 0 ? (
+            {isLoading ? (
+              <CVGallerySkeleton viewMode={viewMode} />
+            ) : filteredWorkers.length > 0 ? (
               <CVGallery workers={filteredWorkers} onSelect={handleSelectWorker} viewMode={viewMode} />
             ) : (
               <div className="bg-white border border-gray-200 rounded-2xl p-10 text-center">
