@@ -178,12 +178,14 @@ function ServicesContent({ services }: { services: DisplayService[] }) {
                     key={service.serviceKey}
                     className="group rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-400 border border-gray-100 hover:-translate-y-1"
                   >
-                    <div className="relative h-48 overflow-hidden">
+                    <div className="relative h-48 overflow-hidden bg-gray-100">
                       <Image
                         src={service.pageImage}
                         alt={titleFor(service)}
                         fill
+                        sizes="(max-width: 768px) 100vw, 50vw"
                         className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        unoptimized={!service.pageImage.includes('images.unsplash.com')}
                       />
                       <div className={`absolute inset-0 bg-gradient-to-t ${service.gradient}`} />
 

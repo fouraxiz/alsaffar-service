@@ -93,12 +93,21 @@ export default function ServicesSection({ initialServices }: Props) {
                 key={service.serviceKey}
                 className="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl hover:border-transparent transition-all duration-300"
               >
-                <div className="relative h-44 overflow-hidden">
+                <div className="relative h-44 overflow-hidden bg-gray-100">
                   <Image
                     src={service.image}
                     alt={titleFor(service)}
                     fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    unoptimized={
+                      // Local ERP / signed hosts — skip optimizer when URL is not Unsplash CDN.
+                      !service.image.includes('images.unsplash.com')
+                    }
+                    onError={(e) => {
+                      // Broken CMS upload → hide broken-icon empty, keep card usable.
+                      e.currentTarget.style.opacity = '0';
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div

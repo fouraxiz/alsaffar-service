@@ -1,5 +1,6 @@
 import type { ErpServiceCard } from './erpApi';
 import { STATIC_SERVICES, type StaticService } from '@/data/services';
+import { serverEnv } from './env';
 
 /**
  * UI-ready service card. Titles/descriptions prefer ERP CMS text; presentation
@@ -36,6 +37,26 @@ function defaultsFor(key: string, index: number): StaticService {
 }
 
 /**
+ * ERP may return a full URL, `/storage/...` path, or bare media basename.
+ * Next/Image needs an absolute http(s) URL; otherwise use the static fallback.
+ */
+function resolveServiceImage(raw: string | null | undefined, fallback: string): string {
+  const v = (raw ?? '').trim();
+  if (!v) return fallback;
+  if (/^https?:\/\//i.test(v)) return v;
+
+  const base = serverEnv.erp.baseUrl.replace(/\/$/, '');
+  if (!base) return fallback;
+
+  if (v.startsWith('/')) return `${base}${v}`;
+  if (v.includes('storage/media') || v.includes('packages/workdo')) {
+    return `${base}/${v.replace(/^\/+/, '')}`;
+  }
+  // Media-library basename saved by the ERP panel.
+  return `${base}/storage/media/${v.replace(/^\/+/, '')}`;
+}
+
+/**
  * Build presentation-ready cards from the ERP feed. Order follows the API
  * (sort_order). Also drop any inactive rows if the API includes `is_active`.
  */
@@ -48,6 +69,7 @@ export function mapApiServicesToDisplay(list: ErpServiceCard[]): DisplayService[
       const titleAr = card.title?.ar?.trim() || titleEn;
       const descEn = card.description?.en?.trim() || '';
       const descAr = card.description?.ar?.trim() || descEn;
+      const image = resolveServiceImage(card.image, base.image);
 
       return {
         serviceKey: card.service_key,
@@ -56,8 +78,8 @@ export function mapApiServicesToDisplay(list: ErpServiceCard[]): DisplayService[
         title: { en: titleEn, ar: titleAr },
         description: { en: descEn, ar: descAr },
         icon: card.icon?.trim() || base.icon,
-        image: card.image?.trim() || base.image,
-        pageImage: card.image?.trim() || base.pageImage,
+        image,
+        pageImage: image || base.pageImage,
         bg: base.bg,
         gradient: base.gradient,
         waMsgEn: base.waMsgEn,
