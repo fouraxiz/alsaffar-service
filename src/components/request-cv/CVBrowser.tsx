@@ -59,18 +59,24 @@ export default function CVBrowser() {
     serviceType: [],
   });
 
-  // Filter logic
+  // Filter logic — skip age/salary when ERP left them as 0/unknown
+  // so default ranges don't wipe the whole gallery.
   const filteredWorkers = (workers ?? []).filter((worker) => {
     // Nationality
     if (filters.nationality.length > 0 && !filters.nationality.includes(worker.nationality)) return false;
     // Gender
     if (filters.gender && worker.gender !== filters.gender) return false;
-    // Age
-    if (worker.age < filters.ageRange[0] || worker.age > filters.ageRange[1]) return false;
+    // Age (only when known)
+    if (worker.age > 0 && (worker.age < filters.ageRange[0] || worker.age > filters.ageRange[1])) return false;
     // Job Type
     if (filters.jobType.length > 0 && !filters.jobType.includes(worker.jobType)) return false;
-    // Salary
-    if (worker.salaryExpectation < filters.salaryRange[0] || worker.salaryExpectation > filters.salaryRange[1]) return false;
+    // Salary (only when known)
+    if (
+      worker.salaryExpectation > 0 &&
+      (worker.salaryExpectation < filters.salaryRange[0] || worker.salaryExpectation > filters.salaryRange[1])
+    ) {
+      return false;
+    }
     // Experience
     if (filters.experience) {
       if (filters.experience === 'fresh') {

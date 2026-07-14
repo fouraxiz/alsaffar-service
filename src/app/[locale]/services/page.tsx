@@ -1,16 +1,19 @@
-import {setRequestLocale} from 'next-intl/server';
-import {useTranslations, useLocale} from 'next-intl';
-import {Home, Car, Wrench, Briefcase, FileText, HeartHandshake, CheckCircle2, ArrowRight} from 'lucide-react';
+import { setRequestLocale } from 'next-intl/server';
+import { useTranslations, useLocale } from 'next-intl';
+import { CheckCircle2, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import type {Metadata} from 'next';
-import {buildAlternates} from '@/lib/seo';
+import type { Metadata } from 'next';
+import { buildAlternates } from '@/lib/seo';
 import PageBanner from '@/components/shared/PageBanner';
+import ServiceIcon from '@/components/shared/ServiceIcon';
+import { getServices } from '@/lib/getServices';
+import type { DisplayService } from '@/lib/serviceAdapter';
 
-type Props = {params: Promise<{locale: string}>};
+type Props = { params: Promise<{ locale: string }> };
 
-export async function generateMetadata({params}: Props): Promise<Metadata> {
-  const {locale} = await params;
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
   const isAr = locale === 'ar';
   const title = isAr ? 'خدماتنا' : 'Our Services';
   const description = isAr
@@ -21,52 +24,51 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
     title,
     description,
     alternates,
-    openGraph: {title, description, url: alternates.canonical},
+    openGraph: { title, description, url: alternates.canonical },
   };
 }
 
-function ServicesContent() {
+function ServicesContent({ services }: { services: DisplayService[] }) {
   const t = useTranslations('servicesPage');
   const locale = useLocale();
+  const isAr = locale === 'ar';
 
-  const services = [
-    {
-      key: 'domestic',
-      icon: <Home size={28} />,
-      color: 'from-rose-600/90 to-rose-900/90',
-      img: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
-    },
-    {
-      key: 'drivers',
-      icon: <Car size={28} />,
-      color: 'from-sky-600/90 to-sky-900/90',
-      img: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&q=80',
-    },
-    {
-      key: 'skilled',
-      icon: <Wrench size={28} />,
-      color: 'from-amber-600/90 to-amber-900/90',
-      img: 'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=800&q=80',
-    },
-    {
-      key: 'corporate',
-      icon: <Briefcase size={28} />,
-      color: 'from-violet-600/90 to-violet-900/90',
-      img: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=800&q=80',
-    },
-    {
-      key: 'visa',
-      icon: <FileText size={28} />,
-      color: 'from-emerald-600/90 to-emerald-900/90',
-      img: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800&q=80',
-    },
-    {
-      key: 'support',
-      icon: <HeartHandshake size={28} />,
-      color: 'from-orange-600/90 to-orange-900/90',
-      img: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80',
-    },
-  ] as const;
+  const titleFor = (s: DisplayService) => {
+    const fromApi = isAr ? s.title.ar : s.title.en;
+    if (fromApi?.trim()) return fromApi;
+    try {
+      return t(`${s.pageKey}.title`);
+    } catch {
+      return s.serviceKey;
+    }
+  };
+
+  const subtitleFor = (s: DisplayService) => {
+    try {
+      return t(`${s.pageKey}.subtitle`);
+    } catch {
+      return '';
+    }
+  };
+
+  const descFor = (s: DisplayService) => {
+    const fromApi = isAr ? s.description.ar : s.description.en;
+    if (fromApi?.trim()) return fromApi;
+    try {
+      return t(`${s.pageKey}.desc`);
+    } catch {
+      return '';
+    }
+  };
+
+  const featuresFor = (s: DisplayService): string[] => {
+    try {
+      const raw = t.raw(`${s.pageKey}.features`);
+      return Array.isArray(raw) ? (raw as string[]) : [];
+    } catch {
+      return [];
+    }
+  };
 
   const steps = [
     {
@@ -92,19 +94,18 @@ function ServicesContent() {
   ];
 
   const countries = [
-    {code: 'ph', name: 'Philippines'},
-    {code: 'id', name: 'Indonesia'},
-    {code: 'in', name: 'India'},
-    {code: 'lk', name: 'Sri Lanka'},
-    {code: 'et', name: 'Ethiopia'},
-    {code: 'bd', name: 'Bangladesh'},
-    {code: 'np', name: 'Nepal'},
-    {code: 'pk', name: 'Pakistan'},
+    { code: 'ph', name: 'Philippines' },
+    { code: 'id', name: 'Indonesia' },
+    { code: 'in', name: 'India' },
+    { code: 'lk', name: 'Sri Lanka' },
+    { code: 'et', name: 'Ethiopia' },
+    { code: 'bd', name: 'Bangladesh' },
+    { code: 'np', name: 'Nepal' },
+    { code: 'pk', name: 'Pakistan' },
   ];
 
   return (
     <>
-      {/* Hero banner */}
       <div>
         <PageBanner
           title={t('title')}
@@ -114,7 +115,6 @@ function ServicesContent() {
         />
       </div>
 
-      {/* ── How it works ── */}
       <section className="py-20 bg-brand-orange relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 start-1/4 w-64 h-64 rounded-full bg-white -translate-y-1/2" />
@@ -149,7 +149,6 @@ function ServicesContent() {
         </div>
       </section>
 
-      {/* ── Services grid ── */}
       <section className="py-24 bg-white/45">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-14">
@@ -166,58 +165,65 @@ function ServicesContent() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
-            {services.map((service) => (
-              <div
-                key={service.key}
-                className="group rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-400 border border-gray-100 hover:-translate-y-1"
-              >
-                {/* Image header */}
-                <div className="relative h-48 overflow-hidden">
-                  <Image
-                    src={service.img}
-                    alt={t(`${service.key}.title`)}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className={`absolute inset-0 bg-gradient-to-t ${service.color}`} />
+          {services.length === 0 ? (
+            <p className="text-center text-gray-500 py-10">
+              {isAr ? 'لا توجد خدمات نشطة حالياً.' : 'No active services at the moment.'}
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+              {services.map((service) => {
+                const features = featuresFor(service);
+                return (
+                  <div
+                    key={service.serviceKey}
+                    className="group rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-400 border border-gray-100 hover:-translate-y-1"
+                  >
+                    <div className="relative h-48 overflow-hidden">
+                      <Image
+                        src={service.pageImage}
+                        alt={titleFor(service)}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className={`absolute inset-0 bg-gradient-to-t ${service.gradient}`} />
 
-                  {/* Icon badge */}
-                  <div className="absolute top-4 start-4 w-11 h-11 bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl flex items-center justify-center text-white">
-                    {service.icon}
-                  </div>
+                      <div className="absolute top-4 start-4 w-11 h-11 bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl flex items-center justify-center text-white">
+                        <ServiceIcon name={service.icon} size={28} />
+                      </div>
 
-                  {/* Title on image */}
-                  <div className="absolute inset-x-0 bottom-0 p-5">
-                    <h2 className="text-xl font-black text-white leading-snug">
-                      {t(`${service.key}.title`)}
-                    </h2>
-                    <div className="text-white/80 text-sm font-semibold mt-0.5">
-                      {t(`${service.key}.subtitle`)}
+                      <div className="absolute inset-x-0 bottom-0 p-5">
+                        <h2 className="text-xl font-black text-white leading-snug">
+                          {titleFor(service)}
+                        </h2>
+                        {subtitleFor(service) ? (
+                          <div className="text-white/80 text-sm font-semibold mt-0.5">
+                            {subtitleFor(service)}
+                          </div>
+                        ) : null}
+                      </div>
+                    </div>
+
+                    <div className="p-6 bg-white">
+                      <p className="text-gray-500 leading-relaxed mb-5">{descFor(service)}</p>
+                      {features.length > 0 ? (
+                        <ul className="flex flex-wrap gap-2">
+                          {features.map((feature) => (
+                            <li
+                              key={feature}
+                              className="flex items-center gap-1.5 bg-brand-gray text-brand-dark text-sm font-medium px-3 py-1.5 rounded-full"
+                            >
+                              <CheckCircle2 size={13} className="text-brand-orange flex-shrink-0" />
+                              {feature}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : null}
                     </div>
                   </div>
-                </div>
-
-                {/* Card body */}
-                <div className="p-6 bg-white">
-                  <p className="text-gray-500 leading-relaxed mb-5">
-                    {t(`${service.key}.desc`)}
-                  </p>
-                  <ul className="flex flex-wrap gap-2">
-                    {(t.raw(`${service.key}.features`) as string[]).map((feature) => (
-                      <li
-                        key={feature}
-                        className="flex items-center gap-1.5 bg-brand-gray text-brand-dark text-sm font-medium px-3 py-1.5 rounded-full"
-                      >
-                        <CheckCircle2 size={13} className="text-brand-orange flex-shrink-0" />
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            ))}
-          </div>
+                );
+              })}
+            </div>
+          )}
 
           <div className="text-center mt-16">
             <Link
@@ -231,7 +237,6 @@ function ServicesContent() {
         </div>
       </section>
 
-      {/* ── Source Countries ── */}
       <section className="py-20 bg-brand-dark relative overflow-hidden">
         <div className="absolute inset-0 opacity-5">
           <Image
@@ -278,8 +283,9 @@ function ServicesContent() {
   );
 }
 
-export default async function ServicesPage({params}: Props) {
-  const {locale} = await params;
+export default async function ServicesPage({ params }: Props) {
+  const { locale } = await params;
   setRequestLocale(locale);
-  return <ServicesContent />;
+  const { services } = await getServices();
+  return <ServicesContent services={services} />;
 }

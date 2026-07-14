@@ -1,8 +1,12 @@
-import {useTranslations, useLocale} from 'next-intl';
+'use client';
+
+import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 import Image from 'next/image';
-import {ArrowRight} from 'lucide-react';
-import {Home, Car, Wrench, Briefcase, FileText, HeartHandshake} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { ArrowRight } from 'lucide-react';
+import ServiceIcon from '@/components/shared/ServiceIcon';
+import { getStaticDisplayServices, type DisplayService } from '@/lib/serviceAdapter';
 
 const WhatsAppIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
@@ -10,59 +14,66 @@ const WhatsAppIcon = () => (
   </svg>
 );
 
-export default function ServicesSection() {
+type Props = {
+  /** SSR/ISR list from getServices(); client upgrades from /api/services. */
+  initialServices?: DisplayService[];
+};
+
+export default function ServicesSection({ initialServices }: Props) {
   const t = useTranslations('services');
   const locale = useLocale();
+  const isAr = locale === 'ar';
 
-  const services = [
-    {
-      key: 'domestic',
-      icon: <Home size={22} />,
-      img: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=500&q=80&auto=format&fit=crop',
-      bg: 'bg-rose-500',
-      waMsg: 'Hello! I am interested in Domestic Worker recruitment services.',
-    },
-    {
-      key: 'drivers',
-      icon: <Car size={22} />,
-      img: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=500&q=80&auto=format&fit=crop',
-      bg: 'bg-sky-500',
-      waMsg: 'Hello! I am interested in Driver recruitment services.',
-    },
-    {
-      key: 'skilled',
-      icon: <Wrench size={22} />,
-      img: 'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=500&q=80&auto=format&fit=crop',
-      bg: 'bg-amber-500',
-      waMsg: 'Hello! I am interested in Skilled Worker recruitment.',
-    },
-    {
-      key: 'corporate',
-      icon: <Briefcase size={22} />,
-      img: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=500&q=80&auto=format&fit=crop',
-      bg: 'bg-violet-500',
-      waMsg: 'Hello! I am interested in Corporate Staffing services.',
-    },
-    {
-      key: 'visa',
-      icon: <FileText size={22} />,
-      img: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=500&q=80&auto=format&fit=crop',
-      bg: 'bg-emerald-500',
-      waMsg: 'Hello! I need help with Visa Processing services.',
-    },
-    {
-      key: 'followUp',
-      icon: <HeartHandshake size={22} />,
-      img: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=500&q=80&auto=format&fit=crop',
-      bg: 'bg-brand-orange',
-      waMsg: 'Hello! I need After-Placement Support services.',
-    },
-  ] as const;
+  const [services, setServices] = useState<DisplayService[]>(
+    initialServices ?? getStaticDisplayServices(),
+  );
+
+  useEffect(() => {
+    let active = true;
+    fetch('/api/services', { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!active || !data) return;
+        // ERP source: honour list exactly (inactive cards already filtered out).
+        if (data.source === 'erp') {
+          setServices(Array.isArray(data.services) ? data.services : []);
+          return;
+        }
+        if (Array.isArray(data.services) && data.services.length > 0) {
+          setServices(data.services);
+        }
+      })
+      .catch(() => {
+        /* keep initial / static */
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const titleFor = (s: DisplayService) => {
+    const fromApi = isAr ? s.title.ar : s.title.en;
+    if (fromApi?.trim()) return fromApi;
+    try {
+      return t(`${s.homeKey}.title`);
+    } catch {
+      return s.serviceKey;
+    }
+  };
+
+  const descFor = (s: DisplayService) => {
+    const fromApi = isAr ? s.description.ar : s.description.en;
+    if (fromApi?.trim()) return fromApi;
+    try {
+      return t(`${s.homeKey}.desc`);
+    } catch {
+      return '';
+    }
+  };
 
   return (
     <section className="relative py-20 bg-white/45 overflow-hidden">
       <div className="relative max-w-7xl mx-auto px-4">
-        {/* Header */}
         <div className="text-center mb-14">
           <div className="inline-block bg-brand-orange/10 text-brand-orange text-sm font-bold px-4 py-1.5 rounded-full mb-3">
             {t('title')}
@@ -71,57 +82,62 @@ export default function ServicesSection() {
           <p className="text-gray-500 max-w-xl mx-auto">{t('subtitle')}</p>
         </div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((service) => (
-            <div
-              key={service.key}
-              className="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl hover:border-transparent transition-all duration-300"
-            >
-              {/* Card image */}
-              <div className="relative h-44 overflow-hidden">
-                <Image
-                  src={service.img}
-                  alt={t(`${service.key}.title`)}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                {/* Icon badge */}
-                <div className={`absolute bottom-3 start-3 w-10 h-10 ${service.bg} rounded-xl flex items-center justify-center text-white shadow-lg`}>
-                  {service.icon}
+        {services.length === 0 ? (
+          <p className="text-center text-gray-500 py-10">
+            {isAr ? 'لا توجد خدمات نشطة حالياً.' : 'No active services at the moment.'}
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {services.map((service) => (
+              <div
+                key={service.serviceKey}
+                className="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl hover:border-transparent transition-all duration-300"
+              >
+                <div className="relative h-44 overflow-hidden">
+                  <Image
+                    src={service.image}
+                    alt={titleFor(service)}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div
+                    className={`absolute bottom-3 start-3 w-10 h-10 ${service.bg} rounded-xl flex items-center justify-center text-white shadow-lg`}
+                  >
+                    <ServiceIcon name={service.icon} size={22} />
+                  </div>
+                </div>
+
+                <div className="p-5">
+                  <h3 className="font-bold text-brand-dark text-lg mb-1.5 group-hover:text-brand-orange transition-colors">
+                    {titleFor(service)}
+                  </h3>
+                  <p className="text-gray-500 text-sm leading-relaxed mb-4">{descFor(service)}</p>
+
+                  <div className="flex items-center gap-2">
+                    <Link
+                      href={`/${locale}/services`}
+                      className="flex-1 text-center py-2 rounded-lg border border-gray-200 text-brand-dark text-xs font-semibold hover:border-brand-orange hover:text-brand-orange transition-colors"
+                    >
+                      {t('learnMore')}
+                    </Link>
+                    <a
+                      href={`https://wa.me/966920021201?text=${encodeURIComponent(
+                        isAr ? service.waMsgAr : service.waMsgEn,
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 bg-[#25D366] hover:bg-[#1ebe5d] text-white px-3 py-2 rounded-lg text-xs font-semibold transition-colors"
+                    >
+                      <WhatsAppIcon />
+                      {t('whatsapp')}
+                    </a>
+                  </div>
                 </div>
               </div>
-
-              {/* Card body */}
-              <div className="p-5">
-                <h3 className="font-bold text-brand-dark text-lg mb-1.5 group-hover:text-brand-orange transition-colors">
-                  {t(`${service.key}.title`)}
-                </h3>
-                <p className="text-gray-500 text-sm leading-relaxed mb-4">{t(`${service.key}.desc`)}</p>
-
-                {/* Action buttons */}
-                <div className="flex items-center gap-2">
-                  <Link
-                    href={`/${locale}/services`}
-                    className="flex-1 text-center py-2 rounded-lg border border-gray-200 text-brand-dark text-xs font-semibold hover:border-brand-orange hover:text-brand-orange transition-colors"
-                  >
-                    {t('learnMore')}
-                  </Link>
-                  <a
-                    href={`https://wa.me/966920021201?text=${encodeURIComponent(service.waMsg)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 bg-[#25D366] hover:bg-[#1ebe5d] text-white px-3 py-2 rounded-lg text-xs font-semibold transition-colors"
-                  >
-                    <WhatsAppIcon />
-                    {t('whatsapp')}
-                  </a>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         <div className="text-center mt-10">
           <Link

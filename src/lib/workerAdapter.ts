@@ -1,5 +1,6 @@
 import type { ErpWorker } from './erpApi';
 import { NATIONALITIES_LIST, type WorkerCV } from '@/data/cvData';
+import { resolvePublicWorkerName } from './publicWorkerName';
 
 /**
  * Map an ERP PublicWorkerResource into the site's WorkerCV shape so the
@@ -28,11 +29,19 @@ export function mapApiWorkerToCV(w: ErpWorker): WorkerCV {
   const catAr = w.category?.ar ?? catEn;
 
   const languages = (w.languages ?? []).map((l) => l.name).filter(Boolean);
+  const { name, nameAr } = resolvePublicWorkerName({
+    firstName: w.first_name,
+    name: w.name,
+    nameAr: w.name_ar,
+    gender: w.gender,
+    nationalityEn: natEn,
+    seed: w.worker_code || w.first_name || 'worker',
+  });
 
   return {
     id: w.worker_code,
-    name: w.first_name || 'Worker',
-    nameAr: w.first_name || 'عامل',
+    name,
+    nameAr,
     nationality: NATIONALITY_NAME_TO_CODE.get(natEn.toLowerCase().trim()) || slug(natEn) || 'other',
     nationalityNameEn: natEn,
     nationalityNameAr: natAr,

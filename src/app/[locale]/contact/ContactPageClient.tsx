@@ -6,6 +6,7 @@ import { useState } from 'react';
 import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import PageBanner from '@/components/shared/PageBanner';
+import { useSite } from '@/components/site/SiteProvider';
 
 const WhatsAppIcon = ({ size = 20 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
@@ -16,6 +17,15 @@ const WhatsAppIcon = ({ size = 20 }: { size?: number }) => (
 export default function ContactPageClient() {
   const t = useTranslations('contactPage');
   const locale = useLocale();
+  const site = useSite();
+  const isAr = locale === 'ar';
+  const phoneDisplay = site.phone || '+966 920 021 201';
+  const phoneHref = site.phone_tel || 'tel:+966920021201';
+  const email = site.email || 'support@alsaffar.pro';
+  const hours = (isAr ? site.hours.ar : site.hours.en) || t('hoursValue');
+  const address = (isAr ? site.address.ar : site.address.en) || '';
+  const waHref = site.whatsapp_url || 'https://wa.me/966920021201';
+  const mapEmbed = site.map_embed_url || '';
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({ name: '', phone: '', service: '', message: '' });
   const [phoneError, setPhoneError] = useState(false);
@@ -50,7 +60,8 @@ export default function ContactPageClient() {
         `Service: ${form.service || '-'}`,
         `Message: ${form.message || '-'}`,
       ].join('\n');
-      window.open(`https://wa.me/966920021201?text=${encodeURIComponent(waText)}`, '_blank');
+      const sep = waHref.includes('?') ? '&' : '?';
+      window.open(`${waHref}${sep}text=${encodeURIComponent(waText)}`, '_blank');
 
       setSubmitted(true);
     } finally {
@@ -74,19 +85,19 @@ export default function ContactPageClient() {
       <section className="bg-brand-orange">
         <div className="max-w-7xl mx-auto px-4 py-5">
           <div className="flex flex-wrap justify-center gap-6 text-white">
-            <a href="tel:+966920021201" className="flex items-center gap-2 font-bold hover:text-white/80 transition-colors">
+            <a href={phoneHref} className="flex items-center gap-2 font-bold hover:text-white/80 transition-colors">
               <Phone size={18} />
-              <span dir="ltr">+966 920 021 201</span>
+              <span dir="ltr">{phoneDisplay}</span>
             </a>
             <span className="text-white/30 hidden sm:block self-center">|</span>
-            <a href="mailto:support@alsaffar.pro" className="flex items-center gap-2 font-bold hover:text-white/80 transition-colors">
+            <a href={`mailto:${email}`} className="flex items-center gap-2 font-bold hover:text-white/80 transition-colors">
               <Mail size={18} />
-              support@alsaffar.pro
+              {email}
             </a>
             <span className="text-white/30 hidden sm:block self-center">|</span>
             <span className="flex items-center gap-2 font-bold whitespace-pre-line text-sm sm:text-base leading-tight">
               <Clock size={18} />
-              {t('hoursValue')}
+              {hours}
             </span>
           </div>
         </div>
@@ -231,7 +242,7 @@ export default function ContactPageClient() {
               </h2>
 
               <a
-                href="https://maps.google.com/maps?cid=12580771141352986513&ll=26.5823757,50.0433538&z=17&t=k"
+                href={site.map_link_url || '#'}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-start gap-4 bg-brand-gray/70 hover:bg-brand-orange/5 rounded-2xl p-6 transition-colors group"
@@ -241,14 +252,12 @@ export default function ContactPageClient() {
                 </div>
                 <div>
                   <div className="text-xs text-gray-400 uppercase tracking-wider font-medium mb-1.5">{t('office')}</div>
-                  <div className="font-bold text-brand-dark text-lg">
-                    {locale === 'ar' ? 'المنطقة الشرقية، المملكة العربية السعودية' : 'Eastern Province, Saudi Arabia'}
-                  </div>
+                  <div className="font-bold text-brand-dark text-lg">{address}</div>
                 </div>
               </a>
 
               <a
-                href="tel:+966920021201"
+                href={phoneHref}
                 className="flex items-start gap-4 bg-brand-gray/70 hover:bg-brand-orange/5 rounded-2xl p-6 transition-colors group"
               >
                 <div className="w-14 h-14 bg-brand-orange/10 group-hover:bg-brand-orange rounded-xl flex items-center justify-center text-brand-orange group-hover:text-white flex-shrink-0 transition-colors">
@@ -258,12 +267,12 @@ export default function ContactPageClient() {
                   <div className="text-xs text-gray-400 uppercase tracking-wider font-medium mb-1.5">
                     {locale === 'ar' ? 'الهاتف' : 'Phone'}
                   </div>
-                  <div className="font-bold text-brand-dark text-lg" dir="ltr">+966 920 021 201</div>
+                  <div className="font-bold text-brand-dark text-lg" dir="ltr">{phoneDisplay}</div>
                 </div>
               </a>
 
               <a
-                href="mailto:support@alsaffar.pro"
+                href={`mailto:${email}`}
                 className="flex items-start gap-4 bg-brand-gray/70 hover:bg-brand-orange/5 rounded-2xl p-6 transition-colors group"
               >
                 <div className="w-14 h-14 bg-brand-orange/10 group-hover:bg-brand-orange rounded-xl flex items-center justify-center text-brand-orange group-hover:text-white flex-shrink-0 transition-colors">
@@ -273,7 +282,7 @@ export default function ContactPageClient() {
                   <div className="text-xs text-gray-400 uppercase tracking-wider font-medium mb-1.5">
                     {locale === 'ar' ? 'البريد الإلكتروني' : 'Email'}
                   </div>
-                  <div className="font-bold text-brand-dark text-lg">support@alsaffar.pro</div>
+                  <div className="font-bold text-brand-dark text-lg">{email}</div>
                 </div>
               </a>
 
@@ -283,13 +292,13 @@ export default function ContactPageClient() {
                 </div>
                 <div>
                   <div className="text-xs text-gray-400 uppercase tracking-wider font-medium mb-1.5">{t('hours')}</div>
-                  <div className="font-bold text-brand-dark text-lg whitespace-pre-line leading-tight">{t('hoursValue')}</div>
+                  <div className="font-bold text-brand-dark text-lg whitespace-pre-line leading-tight">{hours}</div>
                 </div>
               </div>
 
               <div className="pt-2 space-y-3">
                 <a
-                  href="https://wa.me/966920021201"
+                  href={waHref}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 w-full bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold py-4 rounded-xl transition-colors duration-200 text-lg"
@@ -298,7 +307,7 @@ export default function ContactPageClient() {
                   {t('whatsappCta')}
                 </a>
                 <a
-                  href="tel:+966920021201"
+                  href={phoneHref}
                   className="flex items-center justify-center gap-2 w-full border-2 border-brand-orange text-brand-orange hover:bg-brand-orange hover:text-white font-bold py-4 rounded-xl transition-colors duration-200 text-lg"
                 >
                   <Phone size={20} />
@@ -313,7 +322,7 @@ export default function ContactPageClient() {
       {/* Embedded Google Map */}
       <section className="h-96 w-full bg-gray-100 border-t border-gray-200 relative">
         <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3570.089853907742!2d50.0433538!3d26.5823757!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e4a0092c0a2a67b%3A0xae97e0b280d49791!2sAlsaffar%20Recruitment%20Manpower!5e1!3m2!1sen!2sus!4v1718338167823!5m2!1sen!2sus"
+          src={mapEmbed}
           width="100%"
           height="100%"
           style={{ border: 0 }}

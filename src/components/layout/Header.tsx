@@ -6,6 +6,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { usePathname } from '@/i18n/navigation';
 import { Menu, X, Phone } from 'lucide-react';
 import LanguageSwitcher from '@/components/shared/LanguageSwitcher';
+import { useSite } from '@/components/site/SiteProvider';
 
 const WhatsAppIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -15,55 +16,49 @@ const WhatsAppIcon = () => (
 
 const AlsaffarLogoSVG = () => (
   <svg width="160" height="48" viewBox="0 0 160 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-    {/* Orange A triangle */}
     <polygon points="24,4 6,42 42,42" fill="none" stroke="#E8870A" strokeWidth="3.5" strokeLinejoin="round" />
-    {/* Crossbar */}
     <line x1="11" y1="30" x2="37" y2="30" stroke="#E8870A" strokeWidth="3" />
-    {/* Left dash accent */}
     <line x1="3" y1="26" x2="8" y2="26" stroke="#E8870A" strokeWidth="2.5" strokeLinecap="round" />
-    {/* Right dash accent */}
     <line x1="40" y1="26" x2="45" y2="26" stroke="#E8870A" strokeWidth="2.5" strokeLinecap="round" />
-    {/* Handshake silhouette (simplified) */}
     <circle cx="20" cy="21" r="3" fill="#1A1F00" />
     <circle cx="28" cy="21" r="3" fill="#1A1F00" />
     <path d="M17 24 Q24 27 31 24" stroke="#1A1F00" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-    {/* ALSAFFAR text */}
     <text x="52" y="22" fontFamily="Arial, sans-serif" fontWeight="900" fontSize="17" fill="#1A1F00" letterSpacing="0.5">ALSAFFAR</text>
-    {/* Subtitle */}
     <text x="52" y="36" fontFamily="Arial, sans-serif" fontWeight="600" fontSize="8" fill="#E8870A" letterSpacing="1.5">MANPOWER RECRUITMENT</text>
-    {/* Arabic */}
     <text x="52" y="47" fontFamily="Arial, sans-serif" fontWeight="700" fontSize="9" fill="#1A1F00" letterSpacing="0.3">الصفار للاستقدام</text>
   </svg>
 );
 
-function LogoMark() {
-  const [showImg, setShowImg] = useState(false);
+function LogoMark({ logoUrl, alt }: { logoUrl: string | null; alt: string }) {
+  const [broken, setBroken] = useState(false);
 
-  useEffect(() => {
-    const img = new window.Image();
-    img.onload = () => setShowImg(true);
-    img.src = '/alsaffar.png';
-  }, []);
-
-  if (showImg) {
-    return (
-      <img
-        src="/alsaffar.png"
-        alt="Alsaffar Manpower Recruitment"
-        className="h-12 w-auto object-contain"
-      />
-    );
+  if (!logoUrl || broken) {
+    return <AlsaffarLogoSVG />;
   }
 
-  return <AlsaffarLogoSVG />;
+  return (
+    <img
+      src={logoUrl}
+      alt={alt}
+      className="h-12 w-auto object-contain"
+      onError={() => setBroken(true)}
+    />
+  );
 }
 
 export default function Header() {
   const t = useTranslations('nav');
   const locale = useLocale();
   const pathname = usePathname();
+  const site = useSite();
+  const isAr = locale === 'ar';
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  const brandName = (isAr ? site.name.ar : site.name.en) || 'Alsaffar';
+  const phoneDisplay = site.phone || '+966 920 021 201';
+  const phoneHref = site.phone_tel || 'tel:+966920021201';
+  const waHref = site.whatsapp_url || 'https://wa.me/966920021201';
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -85,34 +80,37 @@ export default function Header() {
   ];
 
   const isActive = (href: string) => {
-    if (href.includes('#')) return false; // Do not highlight hash links as active pages
-
+    if (href.includes('#')) return false;
     if (href === `/${locale}`) return pathname === '/';
     return pathname.startsWith(href.replace(`/${locale}`, ''));
   };
 
   return (
     <header
-      className={`fixed top-0 inset-x-0 z-40 transition-all duration-300 ${scrolled ? 'bg-white shadow-md' : 'bg-white/95 backdrop-blur-sm'
-        }`}
+      className={`fixed top-0 inset-x-0 z-40 transition-all duration-300 ${
+        scrolled ? 'bg-white shadow-md' : 'bg-white/95 backdrop-blur-sm'
+      }`}
     >
-      {/* Top info bar */}
       <div className="bg-brand-dark text-white text-xs py-2 hidden md:block">
         <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
           <div className="flex items-center gap-5 text-white/70">
-            <span>
-              <span className="text-white/40 me-1">{locale === 'ar' ? 'س.ت:' : 'CR:'}</span>
-              <span className="text-white font-semibold">2053034759</span>
-            </span>
-            <span className="text-white/20">|</span>
-            <span>
-              <span className="text-white/40 me-1">{locale === 'ar' ? 'رخصة:' : 'License:'}</span>
-              <span className="text-white font-semibold">3704231</span>
-            </span>
+            {site.cr_number ? (
+              <span>
+                <span className="text-white/40 me-1">{isAr ? 'س.ت:' : 'CR:'}</span>
+                <span className="text-white font-semibold">{site.cr_number}</span>
+              </span>
+            ) : null}
+            {site.cr_number && site.license_number ? <span className="text-white/20">|</span> : null}
+            {site.license_number ? (
+              <span>
+                <span className="text-white/40 me-1">{isAr ? 'رخصة:' : 'License:'}</span>
+                <span className="text-white font-semibold">{site.license_number}</span>
+              </span>
+            ) : null}
           </div>
           <div className="flex items-center gap-4">
             <a
-              href="https://wa.me/966920021201"
+              href={waHref}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 text-[#25D366] hover:text-[#1ebe5d] transition-colors font-semibold"
@@ -121,55 +119,42 @@ export default function Header() {
               <span>WhatsApp</span>
             </a>
             <a
-              href="tel:+966920021201"
+              href={phoneHref}
               className="flex items-center gap-1.5 text-white/70 hover:text-brand-orange transition-colors"
             >
               <Phone size={12} />
-              <span dir="ltr">+966 920 021 201</span>
+              <span dir="ltr">{phoneDisplay}</span>
             </a>
           </div>
         </div>
       </div>
 
-      {/* Main nav */}
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Link href={`/${locale}`} className="flex items-center">
-            <LogoMark />
+            <LogoMark logoUrl={site.logo_url} alt={brandName} />
           </Link>
 
-          {/* Desktop nav */}
           <nav className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                onClick={(e) => {
-                  if (link.href.includes('#')) {
-                    const targetId = link.href.split('#')[1];
-                    const elem = document.getElementById(targetId);
-                    if (elem) {
-                      e.preventDefault();
-                      elem.scrollIntoView({ behavior: 'smooth' });
-                      window.history.pushState(null, '', link.href);
-                    }
-                  }
-                }}
-                className={`px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors duration-200 ${isActive(link.href)
+                className={`px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors duration-200 ${
+                  isActive(link.href)
                     ? 'text-brand-orange bg-brand-light'
                     : 'text-brand-dark hover:text-brand-orange hover:bg-brand-light'
-                  }`}
+                }`}
               >
                 {link.label}
               </Link>
             ))}
           </nav>
 
-          {/* Right actions */}
           <div className="flex items-center gap-3">
             <LanguageSwitcher />
             <a
-              href="https://wa.me/966920021201"
+              href={waHref}
               target="_blank"
               rel="noopener noreferrer"
               className="hidden md:flex items-center gap-2 bg-[#25D366] hover:bg-[#1ebe5d] text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors duration-200"
@@ -188,7 +173,6 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile menu */}
       {mobileOpen && (
         <div className="lg:hidden bg-white border-t border-gray-100 shadow-lg">
           <nav className="max-w-7xl mx-auto px-4 py-3 flex flex-col gap-1">
@@ -196,35 +180,25 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                onClick={(e) => {
-                  if (link.href.includes('#')) {
-                    const targetId = link.href.split('#')[1];
-                    const elem = document.getElementById(targetId);
-                    if (elem) {
-                      e.preventDefault();
-                      elem.scrollIntoView({ behavior: 'smooth' });
-                      window.history.pushState(null, '', link.href);
-                    }
-                  }
-                  setMobileOpen(false);
-                }}
-                className={`px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${isActive(link.href)
+                onClick={() => setMobileOpen(false)}
+                className={`px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${
+                  isActive(link.href)
                     ? 'text-brand-orange bg-brand-light'
                     : 'text-brand-dark hover:text-brand-orange hover:bg-brand-light'
-                  }`}
+                }`}
               >
                 {link.label}
               </Link>
             ))}
             <div className="pt-2 pb-1 border-t border-gray-100 mt-1 flex gap-3">
               <a
-                href="tel:+966920021201"
+                href={phoneHref}
                 className="flex-1 text-center py-2.5 rounded-lg border border-brand-orange text-brand-orange text-sm font-bold"
               >
-                {locale === 'ar' ? 'اتصل بنا' : 'Call Us'}
+                {isAr ? 'اتصل بنا' : 'Call Us'}
               </a>
               <a
-                href="https://wa.me/966920021201"
+                href={waHref}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-[#25D366] text-white text-sm font-bold"

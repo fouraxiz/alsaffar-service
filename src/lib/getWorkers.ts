@@ -1,5 +1,5 @@
 // Server-only by architecture (imported only by the /api/workers route handler).
-import { fetchWorkers, erpEnabled, type WorkerQuery } from './erpApi';
+import { fetchWorkers, erpEnabled, logErpFallback, type WorkerQuery } from './erpApi';
 import { mapApiWorkers } from './workerAdapter';
 import { mockWorkers, type WorkerCV } from '@/data/cvData';
 
@@ -21,7 +21,7 @@ export async function getWorkers(
     if (workers.length === 0) return { workers: mockWorkers, source: 'static' };
     return { workers, source: 'erp' };
   } catch (err) {
-    console.error('[getWorkers] ERP fetch failed, using static fallback:', err);
+    logErpFallback('getWorkers', err);
     return { workers: mockWorkers, source: 'static' };
   }
 }

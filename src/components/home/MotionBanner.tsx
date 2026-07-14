@@ -2,26 +2,58 @@
 
 import { useLocale } from 'next-intl';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+
+type ApiBanner = {
+  title: { en: string | null; ar: string | null };
+  image: string | null;
+  link_url: string | null;
+  placement: string | null;
+};
 
 export default function MotionBanner() {
   const locale = useLocale();
   const isAr = locale === 'ar';
 
-  // Toggle state so you can easily switch during client demo
-  const [hasActiveCampaign, setHasActiveCampaign] = useState(false);
+  const [apiBanners, setApiBanners] = useState<ApiBanner[]>([]);
+  // Fallback demo toggle only when ERP has no live banners.
+  const [demoCampaign, setDemoCampaign] = useState(false);
 
-  const campaignItems = isAr
-    ? [
-      "🚀 خصم 20% على باقات الاستقدام للشركات هذا الأسبوع!",
-      "🌟 استقدم الآن وادفع لاحقاً - حملة الصيف",
-      "👨‍🔧 عمالة فورية جاهزة لنقل الكفالة"
-    ]
-    : [
-      "🚀 20% OFF Corporate Staffing Packages this week!",
-      "🌟 Hire Now, Pay Later - Summer Campaign",
-      "👨‍🔧 Immediate Available Workers for Transfer"
-    ];
+  useEffect(() => {
+    let active = true;
+    fetch('/api/banners')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!active || !Array.isArray(data?.banners)) return;
+        setApiBanners(data.banners as ApiBanner[]);
+      })
+      .catch(() => {
+        /* keep visual marquee */
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const campaignItems = useMemo(() => {
+    const fromApi = apiBanners
+      .map((b) => (isAr ? b.title?.ar : b.title?.en)?.trim())
+      .filter((t): t is string => !!t);
+    if (fromApi.length > 0) return fromApi;
+    return isAr
+      ? [
+          '🚀 خصم 20% على باقات الاستقدام للشركات هذا الأسبوع!',
+          '🌟 استقدم الآن وادفع لاحقاً - حملة الصيف',
+          '👨‍🔧 عمالة فورية جاهزة لنقل الكفالة',
+        ]
+      : [
+          '🚀 20% OFF Corporate Staffing Packages this week!',
+          '🌟 Hire Now, Pay Later - Summer Campaign',
+          '👨‍🔧 Immediate Available Workers for Transfer',
+        ];
+  }, [apiBanners, isAr]);
+
+  const hasActiveCampaign = apiBanners.length > 0 || demoCampaign;
 
   const visualItems = [
     { src: '/images/3d/worker_office.png', alt: 'Professional Staffing', text: isAr ? 'كوادر مهنية' : 'Professional Staffing', icon: '🏢' },
@@ -41,25 +73,21 @@ export default function MotionBanner() {
 
         <style>{`
         .motion-banner-wrapper {
-          height: ${hasActiveCampaign ? '52px' : '80px'};
-          transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .motion-banner-wrapper:hover {
           height: ${hasActiveCampaign ? '70px' : '130px'};
         }
-        .motion-banner-wrapper:hover .banner-card {
+        .banner-card {
           transform: scale(1.08);
           border-color: rgba(232,135,10,0.5);
           box-shadow: 0 4px 20px rgba(232,135,10,0.15);
         }
-        .motion-banner-wrapper:hover .banner-avatar {
+        .banner-avatar {
           width: 56px;
           height: 56px;
         }
-        .motion-banner-wrapper:hover .banner-text-main {
+        .banner-text-main {
           font-size: 16px;
         }
-        .motion-banner-wrapper:hover .banner-label {
+        .banner-label {
           font-size: 11px;
         }
       `}</style>
@@ -173,23 +201,19 @@ export default function MotionBanner() {
                 <div key={i} className="banner-card group flex items-center gap-3 rounded-2xl px-2 py-1.5 cursor-default"
                   style={{
                     background: 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(232,135,10,0.08) 100%)',
-                    border: '1px solid rgba(232,135,10,0.2)',
+                    border: '1px solid rgba(232,135,10,0.5)',
                     backdropFilter: 'blur(8px)',
-                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                   }}
                 >
                   {/* Glowing avatar */}
                   <div className="relative shrink-0">
-                    <div className="absolute -inset-1 rounded-full opacity-60 group-hover:opacity-100 transition-opacity" style={{
+                    <div className="absolute -inset-1 rounded-full opacity-100" style={{
                       background: 'conic-gradient(from 0deg, #E8870A, #1A1F00, #E8870A)',
                       animation: 'pulseRing 2.5s infinite',
                       animationDelay: `${(i % 3) * 0.8}s`,
                     }} />
                     <div className="banner-avatar relative rounded-full overflow-hidden border-2 border-brand-orange/60" style={{
                       boxShadow: '0 0 12px rgba(232,135,10,0.3)',
-                      width: '48px',
-                      height: '48px',
-                      transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                     }}>
                       <Image
                         src={item.src}
@@ -202,13 +226,12 @@ export default function MotionBanner() {
 
                   {/* Text with icon */}
                   <div className="flex flex-col pe-4">
-                    <span className="banner-label text-brand-orange/80 font-medium tracking-widest uppercase" style={{ fontSize: '10px', transition: 'font-size 0.4s cubic-bezier(0.4, 0, 0.2, 1)' }}>
+                    <span className="banner-label text-brand-orange/80 font-medium tracking-widest uppercase">
                       {item.icon} {isAr ? 'الصّفّار' : 'ALSAFFAR'}
                     </span>
                     <span
                       dir={isAr ? 'rtl' : 'ltr'}
-                      className="banner-text-main font-bold tracking-wide text-white group-hover:text-brand-orange"
-                      style={{ fontSize: '14px', transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)' }}
+                      className="banner-text-main font-bold tracking-wide text-white group-hover:text-brand-orange transition-colors"
                     >
                       {item.text}
                     </span>
@@ -225,14 +248,17 @@ export default function MotionBanner() {
         </div>
       </div>
 
-      {/* DEMO TOGGLE BUTTON - ONLY FOR PRESENTATION */}
-      <button
-        onClick={() => setHasActiveCampaign(!hasActiveCampaign)}
-        className="fixed bottom-6 left-6 z-50 bg-brand-dark/90 text-brand-orange border border-brand-orange/30 px-4 py-2 rounded-full text-xs font-bold shadow-lg hover:bg-black hover:scale-105 transition-all flex items-center gap-2 backdrop-blur-sm cursor-pointer"
-      >
-        <span className="w-2 h-2 rounded-full animate-pulse bg-brand-orange"></span>
-        Demo: Switch Banner Style
-      </button>
+      {/* Demo toggle only when CMS has no live banners */}
+      {apiBanners.length === 0 ? (
+        <button
+          type="button"
+          onClick={() => setDemoCampaign((v) => !v)}
+          className="fixed bottom-6 left-6 z-50 bg-brand-dark/90 text-brand-orange border border-brand-orange/30 px-4 py-2 rounded-full text-xs font-bold shadow-lg hover:bg-black hover:scale-105 transition-all flex items-center gap-2 backdrop-blur-sm cursor-pointer"
+        >
+          <span className="w-2 h-2 rounded-full animate-pulse bg-brand-orange"></span>
+          Demo: Switch Banner Style
+        </button>
+      ) : null}
     </>
   );
 }

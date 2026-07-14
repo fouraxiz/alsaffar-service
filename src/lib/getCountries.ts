@@ -1,5 +1,5 @@
 // Server-only by architecture (imported only by the /api/countries route handler).
-import { fetchCountries, erpEnabled } from './erpApi';
+import { fetchCountries, erpEnabled, logErpFallback } from './erpApi';
 import { mapApiCountriesToNationalities } from './countryAdapter';
 import { STATIC_NATIONALITIES, type Nationality } from '@/data/nationalities';
 
@@ -19,7 +19,7 @@ export async function getCountries(): Promise<{ nationalities: Nationality[]; so
     if (nationalities.length === 0) return { nationalities: STATIC_NATIONALITIES, source: 'static' };
     return { nationalities, source: 'erp' };
   } catch (err) {
-    console.error('[getCountries] ERP fetch failed, using static fallback:', err);
+    logErpFallback('getCountries', err);
     return { nationalities: STATIC_NATIONALITIES, source: 'static' };
   }
 }

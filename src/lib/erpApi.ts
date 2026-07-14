@@ -24,6 +24,10 @@ export type ErpLanguage = { name: string; proficiency: string | null };
 export type ErpWorker = {
   worker_code: string;
   first_name: string | null;
+  /** Sanitized human display name (EN) from ERP PublicWorkerResource. */
+  name?: string | null;
+  /** Sanitized human display name (AR). */
+  name_ar?: string | null;
   photo_url: string | null;
   video_url: string | null;
   nationality: ErpNationality;
@@ -55,6 +59,54 @@ export type ErpCountry = {
 };
 
 export type ErpCountryListResponse = { success?: boolean; data: ErpCountry[] };
+
+export type ErpServiceCard = {
+  service_key: string;
+  title: { en: string | null; ar: string | null };
+  description: { en: string | null; ar: string | null };
+  icon: string | null;
+  image: string | null;
+  /** Present on some payloads; public list should already be active-only. */
+  is_active?: boolean | null;
+};
+
+export type ErpServiceListResponse = { success?: boolean; data: ErpServiceCard[] };
+
+export type ErpBanner = {
+  title: { en: string | null; ar: string | null };
+  image: string | null;
+  link_url: string | null;
+  placement: string | null;
+};
+
+export type ErpBannerListResponse = { success?: boolean; data: ErpBanner[] };
+
+export type ErpPageContent = {
+  slug: string;
+  title: { en: string | null; ar: string | null };
+  meta?: {
+    title?: { en: string | null; ar: string | null };
+    description?: { en: string | null; ar: string | null };
+    og_image?: string | null;
+  };
+  status?: string;
+  sections: Array<{
+    section_key: string;
+    sort_order: number;
+    is_visible?: boolean;
+    content: unknown;
+  }>;
+};
+
+export type ErpSitemapResponse = {
+  success?: boolean;
+  data: {
+    pages: Array<{ slug: string; lastmod: string | null }>;
+    countries: Array<{ slug: string; lastmod: string | null }>;
+    posts: Array<{ slug: string; lastmod: string | null }>;
+    workers: Array<{ slug: string; lastmod: string | null }>;
+  };
+};
 
 export type WorkerQuery = {
   category?: string;
@@ -97,22 +149,34 @@ async function erpFetch<T>(
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), DEFAULT_TIMEOUT_MS);
+  const method = opts.method ?? 'GET';
 
   try {
+    const revalidate = opts.revalidate ?? serverEnv.erp.workersRevalidate;
     const res = await fetch(url, {
-      method: opts.method ?? 'GET',
+      method,
       headers,
       body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined,
       signal: controller.signal,
-      // ISR for GETs; POSTs are never cached.
-      next: opts.method === 'POST' ? undefined : { revalidate: opts.revalidate ?? serverEnv.erp.workersRevalidate },
+      // POSTs never cached. revalidate:0 → always fresh (service activate/deactivate).
+      ...(method === 'POST'
+        ? { cache: 'no-store' as const }
+        : revalidate === 0
+          ? { cache: 'no-store' as const }
+          : { next: { revalidate } }),
     });
 
     if (!res.ok) {
       const text = await res.text().catch(() => '');
-      throw new Error(`ERP ${opts.method ?? 'GET'} ${path} -> ${res.status} ${text.slice(0, 200)}`);
+      throw new Error(`ERP ${method} ${path} -> ${res.status} ${text.slice(0, 200)}`);
     }
     return (await res.json()) as T;
+  } catch (err) {
+    // AbortController timeout → clean message (raw AbortError triggers Next.dev overlay noise).
+    if (err instanceof Error && err.name === 'AbortError') {
+      throw new Error(`ERP ${method} ${path} timed out after ${DEFAULT_TIMEOUT_MS}ms`);
+    }
+    throw err;
   } finally {
     clearTimeout(timer);
   }
@@ -131,6 +195,59 @@ export function fetchWorker(code: string): Promise<{ data: ErpWorker }> {
 /** READ: published nationality/country pages (labels, salary ranges, pool count). */
 export function fetchCountries(): Promise<ErpCountryListResponse> {
   return erpFetch<ErpCountryListResponse>('/countries');
+}
+
+/** READ: active service cards (is_active=true only). Fresh on every request so
+ * panel deactivate/activate is visible immediately (no sticky ISR snapshot). */
+export function fetchServices(): Promise<ErpServiceListResponse> {
+  return erpFetch<ErpServiceListResponse>('/services', { revalidate: 0 });
+}
+
+export type ErpSiteConfig = {
+  name: { en: string | null; ar: string | null };
+  tagline: { en: string | null; ar: string | null };
+  logo_url: string | null;
+  phone: string | null;
+  phone_tel: string | null;
+  whatsapp: string | null;
+  whatsapp_url: string | null;
+  email: string | null;
+  address: { en: string | null; ar: string | null };
+  hours: { en: string | null; ar: string | null };
+  cr_number: string | null;
+  license_number: string | null;
+  musaned_id: string | null;
+  map_embed_url: string | null;
+  map_link_url: string | null;
+};
+
+/** READ: SaaS branding (logo, footer, contact). */
+export function fetchSite(): Promise<{ success?: boolean; data: ErpSiteConfig }> {
+  return erpFetch<{ success?: boolean; data: ErpSiteConfig }>('/site');
+}
+
+/** READ: live marketing banners (optional placement filter). */
+export function fetchBanners(placement?: string): Promise<ErpBannerListResponse> {
+  return erpFetch<ErpBannerListResponse>('/banners', {
+    query: placement ? { placement } : undefined,
+  });
+}
+
+/** READ: published page + visible sections. */
+export function fetchPageContent(page: string): Promise<{ success?: boolean; data: ErpPageContent }> {
+  return erpFetch<{ success?: boolean; data: ErpPageContent }>(`/content/${encodeURIComponent(page)}`);
+}
+
+/** READ: visible sections across published pages. */
+export function fetchSections(page?: string): Promise<{ success?: boolean; data: unknown[] }> {
+  return erpFetch<{ success?: boolean; data: unknown[] }>('/sections', {
+    query: page ? { page } : undefined,
+  });
+}
+
+/** READ: slugs + lastmod for sitemap build. */
+export function fetchSitemap(): Promise<ErpSitemapResponse> {
+  return erpFetch<ErpSitemapResponse>('/sitemap');
 }
 
 /** WRITE (public intake): contact / general lead. */
@@ -154,3 +271,9 @@ export function postNewsletter(payload: Record<string, unknown>): Promise<unknow
 }
 
 export const erpEnabled = () => serverEnv.erp.enabled;
+
+/** Soft log for expected ERP downtime — `console.warn` avoids Next.js red overlay in dev. */
+export function logErpFallback(scope: string, err: unknown): void {
+  const msg = err instanceof Error ? err.message : String(err);
+  console.warn(`[${scope}] ERP unavailable, using static fallback: ${msg}`);
+}
