@@ -21,6 +21,9 @@ export default function DocumentUploadWizard({ worker, onClose, onBack, onComple
 
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+  // Honeypot — bots fill this; real users never see it.
+  const [website, setWebsite] = useState('');
 
   // Form State
   const [formData, setFormData] = useState({
@@ -52,14 +55,46 @@ export default function DocumentUploadWizard({ worker, onClose, onBack, onComple
     setFiles(prev => ({ ...prev, [type]: null }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError('');
+    if (!files.visa || !files.id) {
+      setSubmitError(isAr ? 'يرجى إرفاق المستندات المطلوبة.' : 'Please attach the required documents.');
+      return;
+    }
     setIsSubmitting(true);
-    // Mock API call
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      const fd = new FormData();
+      fd.append('worker_code', worker.id);
+      fd.append('worker_name', isAr ? worker.nameAr : worker.name);
+      fd.append('name', formData.fullName);
+      fd.append('phone', formData.phone);
+      if (formData.email) fd.append('email', formData.email);
+      fd.append('city', formData.city);
+      fd.append('address', formData.address);
+      fd.append('locale', isAr ? 'ar' : 'en');
+      fd.append('website', website);
+      fd.append('visa', files.visa);
+      fd.append('national_id', files.id);
+
+      const res = await fetch('/api/worker-inquiry', {
+        method: 'POST',
+        body: fd,
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setSubmitError(
+          (data as { error?: string }).error ||
+            (isAr ? 'تعذر إرسال الطلب. حاول مرة أخرى.' : 'Could not submit. Please try again.'),
+        );
+        return;
+      }
       onComplete();
-    }, 1500);
+    } catch {
+      setSubmitError(isAr ? 'تعذر الاتصال بالخادم.' : 'Could not reach the server.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const FileUploadArea = ({ type, label }: { type: 'visa' | 'id', label: string }) => {
@@ -259,6 +294,20 @@ export default function DocumentUploadWizard({ worker, onClose, onBack, onComple
                     ? 'يرجى مراجعة تفاصيل طلبك والمستندات المرفقة قبل الإرسال النهائي.' 
                     : 'Please review your request details and attached documents before final submission.'}
                 </p>
+                {/* Honeypot */}
+                <input
+                  type="text"
+                  name="website"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  value={website}
+                  onChange={(e) => setWebsite(e.target.value)}
+                  className="hidden"
+                />
+                {submitError ? (
+                  <p className="text-sm text-rose-600 text-center font-semibold">{submitError}</p>
+                ) : null}
               </div>
             )}
           </div>

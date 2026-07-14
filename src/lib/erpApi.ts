@@ -130,8 +130,10 @@ async function erpFetch<T>(
     method?: 'GET' | 'POST';
     query?: Record<string, string | number | undefined>;
     body?: unknown;
+    formData?: FormData;
     auth?: boolean;
     revalidate?: number;
+    timeoutMs?: number;
   } = {},
 ): Promise<T> {
   assertConfigured();
@@ -145,10 +147,14 @@ async function erpFetch<T>(
   if (opts.auth !== false && serverEnv.erp.token) {
     headers.Authorization = `Bearer ${serverEnv.erp.token}`;
   }
-  if (opts.body !== undefined) headers['Content-Type'] = 'application/json';
+  // Never set Content-Type for FormData — fetch must add multipart boundary.
+  if (opts.body !== undefined && !opts.formData) {
+    headers['Content-Type'] = 'application/json';
+  }
 
+  const timeoutMs = opts.timeoutMs ?? (opts.formData ? 60000 : DEFAULT_TIMEOUT_MS);
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), DEFAULT_TIMEOUT_MS);
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
   const method = opts.method ?? 'GET';
 
   try {
@@ -156,7 +162,11 @@ async function erpFetch<T>(
     const res = await fetch(url, {
       method,
       headers,
-      body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined,
+      body: opts.formData
+        ? opts.formData
+        : opts.body !== undefined
+          ? JSON.stringify(opts.body)
+          : undefined,
       signal: controller.signal,
       // POSTs never cached. revalidate:0 → always fresh (service activate/deactivate).
       ...(method === 'POST'
@@ -174,7 +184,7 @@ async function erpFetch<T>(
   } catch (err) {
     // AbortController timeout → clean message (raw AbortError triggers Next.dev overlay noise).
     if (err instanceof Error && err.name === 'AbortError') {
-      throw new Error(`ERP ${method} ${path} timed out after ${DEFAULT_TIMEOUT_MS}ms`);
+      throw new Error(`ERP ${method} ${path} timed out after ${timeoutMs}ms`);
     }
     throw err;
   } finally {
@@ -182,9 +192,13 @@ async function erpFetch<T>(
   }
 }
 
-/** READ: public worker listing (only Available + publicly-visible workers). */
+/** READ: public worker listing (only Available + publicly-visible workers).
+ * Always fresh so panel "make available" shows up immediately. */
 export function fetchWorkers(query: WorkerQuery = {}): Promise<ErpWorkerListResponse> {
-  return erpFetch<ErpWorkerListResponse>('/workers', { query: { ...query } });
+  return erpFetch<ErpWorkerListResponse>('/workers', {
+    query: { ...query },
+    revalidate: 0,
+  });
 }
 
 /** READ: single worker by code. */
@@ -255,8 +269,18 @@ export function postLead(payload: Record<string, unknown>): Promise<unknown> {
   return erpFetch('/leads', { method: 'POST', body: payload, auth: false });
 }
 
-/** WRITE: a worker inquiry (interest in a specific CV). */
-export function postWorkerInquiry(payload: Record<string, unknown>): Promise<unknown> {
+/** WRITE: a worker inquiry (interest in a specific CV). Accepts JSON or multipart FormData (docs). */
+export function postWorkerInquiry(
+  payload: Record<string, unknown> | FormData,
+): Promise<unknown> {
+  if (payload instanceof FormData) {
+    return erpFetch('/worker-inquiries', {
+      method: 'POST',
+      formData: payload,
+      auth: false,
+      timeoutMs: 60000,
+    });
+  }
   return erpFetch('/worker-inquiries', { method: 'POST', body: payload, auth: false });
 }
 

@@ -32,7 +32,7 @@ export default function CVBrowser() {
 
   useEffect(() => {
     let active = true;
-    fetch('/api/workers')
+    fetch('/api/workers', { cache: 'no-store' })
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (active) setWorkers((data?.workers as WorkerCV[]) ?? []);
