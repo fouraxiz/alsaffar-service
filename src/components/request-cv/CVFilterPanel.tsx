@@ -148,7 +148,44 @@ export default function CVFilterPanel({ filters, setFilters, options, loading }:
         )}
 
         {loading ? (
-          <p className="text-sm text-gray-400">{isAr ? 'جاري التحميل…' : 'Loading filters…'}</p>
+          <div className="relative overflow-hidden rounded-xl border border-white/60 bg-white/50 p-4 backdrop-blur-md">
+            <div className="pointer-events-none absolute inset-0 animate-pulse bg-gradient-to-r from-transparent via-white/50 to-transparent" />
+            <div className="relative space-y-5">
+              <div>
+                <div className="mb-3 h-3 w-24 rounded-full bg-brand-dark/10" />
+                <div className="flex flex-wrap gap-2">
+                  {[72, 88, 64, 96, 80, 70].map((w, i) => (
+                    <div
+                      key={i}
+                      className="h-8 rounded-full bg-white/70 shadow-sm backdrop-blur-sm"
+                      style={{ width: w }}
+                    />
+                  ))}
+                </div>
+              </div>
+              <div className="h-px bg-white/60" />
+              <div>
+                <div className="mb-3 h-3 w-20 rounded-full bg-brand-dark/10" />
+                <div className="flex flex-wrap gap-2">
+                  {[90, 76, 84, 68].map((w, i) => (
+                    <div
+                      key={i}
+                      className="h-8 rounded-lg bg-white/70 shadow-sm backdrop-blur-sm"
+                      style={{ width: w }}
+                    />
+                  ))}
+                </div>
+              </div>
+              <div className="h-px bg-white/60" />
+              <div>
+                <div className="mb-3 h-3 w-16 rounded-full bg-brand-dark/10" />
+                <div className="flex gap-2">
+                  <div className="h-10 flex-1 rounded-xl bg-white/70 backdrop-blur-sm" />
+                  <div className="h-10 flex-1 rounded-xl bg-white/70 backdrop-blur-sm" />
+                </div>
+              </div>
+            </div>
+          </div>
         ) : (
           <div className="space-y-6">
             {options.nationalities.length > 0 && (

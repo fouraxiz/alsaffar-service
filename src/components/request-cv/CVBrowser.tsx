@@ -218,7 +218,12 @@ export default function CVBrowser() {
             <div className="flex items-center justify-between mb-4">
               <div className="text-sm font-semibold text-gray-500">
                 {isLoading
-                  ? (locale === 'ar' ? 'جاري التحميل…' : 'Loading…')
+                  ? (
+                    <span className="inline-flex items-center gap-2">
+                      <span className="h-2 w-2 animate-pulse rounded-full bg-brand-orange/70" />
+                      {locale === 'ar' ? 'جاري التحميل…' : 'Loading…'}
+                    </span>
+                  )
                   : t('gallery.showing', { count: filteredWorkers.length })}
               </div>
               <div className="flex items-center gap-2">
