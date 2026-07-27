@@ -17,7 +17,12 @@ import { serverEnv } from './env';
 const API_PREFIX = '/api/website/v1';
 const DEFAULT_TIMEOUT_MS = 8000;
 
-export type ErpNationality = { en: string | null; ar: string | null };
+export type ErpNationality = {
+  en: string | null;
+  ar: string | null;
+  /** Lowercase ISO2 from Manpower country (bd, ph, …). */
+  iso2?: string | null;
+};
 export type ErpCategory = { en: string | null; ar: string | null };
 export type ErpLanguage = { name: string; proficiency: string | null };
 
@@ -209,6 +214,47 @@ export function fetchWorker(code: string): Promise<{ data: ErpWorker }> {
 /** READ: published nationality/country pages (labels, salary ranges, pool count). */
 export function fetchCountries(): Promise<ErpCountryListResponse> {
   return erpFetch<ErpCountryListResponse>('/countries');
+}
+
+export type ErpLookupOption = {
+  value: string;
+  label_en?: string | null;
+  label_ar?: string | null;
+  min?: number | null;
+  max?: number | null;
+};
+
+export type ErpLookupCategory = ErpLookupOption & {
+  id?: number;
+  name?: string | null;
+  name_ar?: string | null;
+  slug?: string | null;
+};
+
+export type ErpLookupCountry = ErpLookupOption & {
+  id?: number;
+  iso2?: string | null;
+  code?: string | null;
+  name?: string | null;
+  name_ar?: string | null;
+  nationality_label?: string | null;
+};
+
+export type ErpLookups = {
+  categories: ErpLookupCategory[];
+  countries: ErpLookupCountry[];
+  languages: ErpLookupOption[];
+  genders: ErpLookupOption[];
+  skill_levels: ErpLookupOption[];
+  experience_ranges: ErpLookupOption[];
+  service_types: ErpLookupOption[];
+};
+
+export type ErpLookupsResponse = { success?: boolean; data: ErpLookups };
+
+/** READ: filter option masters (nationality, job type, gender, service type, …). */
+export function fetchLookups(): Promise<ErpLookupsResponse> {
+  return erpFetch<ErpLookupsResponse>('/lookups', { revalidate: 0 });
 }
 
 /** READ: active service cards (is_active=true only). Fresh on every request so

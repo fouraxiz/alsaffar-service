@@ -12,7 +12,7 @@ export type WorkerCV = {
   experience: number;
   salaryExpectation: number;
   visaType: 'new' | 'transfer' | 'visit';
-  serviceType: 'new_visa' | 'transfer' | 'monthly_rent' | 'hourly_rent';
+  serviceType: 'new_visa' | 'transfer' | 'monthly_rent' | 'hourly_rent' | string;
   languages: string[];
   languagesAr: string[];
   skills: string[];

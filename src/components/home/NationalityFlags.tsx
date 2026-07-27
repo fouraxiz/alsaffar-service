@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { X, Phone } from 'lucide-react';
-import { STATIC_NATIONALITIES, type Nationality } from '@/data/nationalities';
+import { type Nationality } from '@/data/nationalities';
 
 const categoryLabels = {
   all: { ar: 'الكل', en: 'All' },
@@ -38,20 +38,20 @@ export default function NationalityFlags() {
   const [selectedNationality, setSelectedNationality] = useState<Nationality | null>(null);
   const [formState, setFormState] = useState<'idle' | 'submitting' | 'success'>('idle');
 
-  // Render the static list instantly (SSR/SEO), then upgrade to the live ERP
-  // /countries feed (published list + labels). The route handler already falls
-  // back to the same static list, so this only ever replaces like-for-like.
-  const [nationalities, setNationalities] = useState<Nationality[]>(STATIC_NATIONALITIES);
+  // Start empty — options come from Manpower via /api/countries (lookups).
+  const [nationalities, setNationalities] = useState<Nationality[]>([]);
 
   useEffect(() => {
     let active = true;
     fetch('/api/countries')
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
-        if (active && data?.nationalities?.length) setNationalities(data.nationalities as Nationality[]);
+        if (active && Array.isArray(data?.nationalities)) {
+          setNationalities(data.nationalities as Nationality[]);
+        }
       })
       .catch(() => {
-        /* keep static fallback */
+        /* leave empty — do not invent */
       });
     return () => {
       active = false;

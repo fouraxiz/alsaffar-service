@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { LayoutGrid, AlignJustify } from 'lucide-react';
 import { WorkerCV } from '@/data/cvData';
-import CVFilterPanel, { FilterState } from './CVFilterPanel';
+import CVFilterPanel, { FilterState, FilterOptions } from './CVFilterPanel';
 import CVGallery from './CVGallery';
 import CVGallerySkeleton from './CVGallerySkeleton';
 import CVDetailModal from './CVDetailModal';
@@ -14,6 +14,14 @@ import NoMatchForm from './NoMatchForm';
 import PageBanner from '@/components/shared/PageBanner';
 
 export type FlowState = 'browsing' | 'viewing' | 'action' | 'upload' | 'success';
+
+const EMPTY_FILTER_OPTIONS: FilterOptions = {
+  nationalities: [],
+  jobTypes: [],
+  genders: [],
+  experienceRanges: [],
+  serviceTypes: [],
+};
 
 export default function CVBrowser() {
   const t = useTranslations('requestCV');
@@ -25,10 +33,10 @@ export default function CVBrowser() {
   const [showRequestForm, setShowRequestForm] = useState(false);
 
   // Worker CVs come from the live ERP feed via our /api/workers route handler
-  // (token stays server-side; the route itself falls back to the bundled static
-  // data when the ERP is disabled/unreachable). `null` = still loading, so we
-  // show a skeleton instead of flashing demo data that then gets replaced.
+  // (token stays server-side). `null` = still loading.
   const [workers, setWorkers] = useState<WorkerCV[] | null>(null);
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>(EMPTY_FILTER_OPTIONS);
+  const [filtersLoading, setFiltersLoading] = useState(true);
 
   useEffect(() => {
     let active = true;
@@ -45,10 +53,53 @@ export default function CVBrowser() {
     };
   }, []);
 
+  useEffect(() => {
+    let active = true;
+    fetch('/api/lookups', { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!active || !data) return;
+        setFilterOptions({
+          nationalities: (data.countries ?? []).map((c: { value?: string; code?: string; iso2?: string; label_en?: string; label_ar?: string; nationality_label?: string; name?: string; name_ar?: string }) => ({
+            value: String(c.value || c.code || c.iso2 || '').toLowerCase(),
+            label_en: c.label_en || c.nationality_label || c.name || null,
+            label_ar: c.label_ar || c.name_ar || c.label_en || c.name || null,
+          })).filter((c: { value: string }) => !!c.value),
+          jobTypes: (data.categories ?? []).map((j: { value?: string; slug?: string; label_en?: string; label_ar?: string; name?: string; name_ar?: string }) => ({
+            value: String(j.value || j.slug || '').toLowerCase(),
+            label_en: j.label_en || j.name || null,
+            label_ar: j.label_ar || j.name_ar || j.label_en || j.name || null,
+          })).filter((j: { value: string }) => !!j.value),
+          genders: (data.genders ?? []).map((g: { value?: string; label_en?: string; label_ar?: string }) => ({
+            value: String(g.value || ''),
+            label_en: g.label_en || null,
+            label_ar: g.label_ar || g.label_en || null,
+          })).filter((g: { value: string }) => !!g.value),
+          experienceRanges: (data.experience_ranges ?? []).map((e: { value?: string; label_en?: string; label_ar?: string }) => ({
+            value: String(e.value || ''),
+            label_en: e.label_en || null,
+            label_ar: e.label_ar || e.label_en || null,
+          })).filter((e: { value: string }) => !!e.value),
+          serviceTypes: (data.service_types ?? []).map((s: { value?: string; label_en?: string; label_ar?: string }) => ({
+            value: String(s.value || ''),
+            label_en: s.label_en || null,
+            label_ar: s.label_ar || s.label_en || null,
+          })).filter((s: { value: string }) => !!s.value),
+        });
+      })
+      .catch(() => {
+        if (active) setFilterOptions(EMPTY_FILTER_OPTIONS);
+      })
+      .finally(() => {
+        if (active) setFiltersLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const isLoading = workers === null;
 
-  // Browse-CVs always opens with no filter pre-selected — deep links from the
-  // home nationality flags (?nationality=/?category=) no longer auto-filter.
   const [filters, setFilters] = useState<FilterState>({
     nationality: [],
     gender: null,
@@ -59,34 +110,41 @@ export default function CVBrowser() {
     serviceType: [],
   });
 
-  // Filter logic — skip age/salary when ERP left them as 0/unknown
-  // so default ranges don't wipe the whole gallery.
   const filteredWorkers = (workers ?? []).filter((worker) => {
-    // Nationality
     if (filters.nationality.length > 0 && !filters.nationality.includes(worker.nationality)) return false;
-    // Gender
     if (filters.gender && worker.gender !== filters.gender) return false;
-    // Age (only when known)
     if (worker.age > 0 && (worker.age < filters.ageRange[0] || worker.age > filters.ageRange[1])) return false;
-    // Job Type
     if (filters.jobType.length > 0 && !filters.jobType.includes(worker.jobType)) return false;
-    // Salary (only when known)
     if (
       worker.salaryExpectation > 0 &&
       (worker.salaryExpectation < filters.salaryRange[0] || worker.salaryExpectation > filters.salaryRange[1])
     ) {
       return false;
     }
-    // Experience
     if (filters.experience) {
-      if (filters.experience === 'fresh') {
+      if (filters.experience === 'fresh' || filters.experience === '0-1') {
         if (worker.experience > 2) return false;
-      } else if (filters.experience === 'experienced') {
+      } else if (
+        filters.experience === 'experienced' ||
+        filters.experience === 'ex_abroad' ||
+        filters.experience === 'with_experience' ||
+        filters.experience === '5+'
+      ) {
         if (worker.experience <= 2) return false;
+      } else if (filters.experience === '1-3') {
+        if (worker.experience < 1 || worker.experience > 3) return false;
+      } else if (filters.experience === '3-5') {
+        if (worker.experience < 3 || worker.experience > 5) return false;
       }
     }
-    // Service Type
-    if (filters.serviceType.length > 0 && !filters.serviceType.includes(worker.serviceType)) return false;
+    // Only apply when the worker actually has a backend service type.
+    if (
+      filters.serviceType.length > 0 &&
+      worker.serviceType &&
+      !filters.serviceType.includes(worker.serviceType)
+    ) {
+      return false;
+    }
 
     return true;
   });
@@ -147,7 +205,12 @@ export default function CVBrowser() {
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Filters Sidebar */}
           <div className="w-full lg:w-72 flex-shrink-0 lg:sticky lg:top-24 lg:self-start">
-            <CVFilterPanel filters={filters} setFilters={setFilters} />
+            <CVFilterPanel
+              filters={filters}
+              setFilters={setFilters}
+              options={filterOptions}
+              loading={filtersLoading}
+            />
           </div>
 
           {/* Gallery Area */}
