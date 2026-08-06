@@ -26,4 +26,6 @@ export const serverEnv = {
 /** Public (browser-safe) values only. */
 export const publicEnv = {
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://alsaffar-service.vercel.app',
+  /** ERP auth UI (login / register). No trailing slash. */
+  portalUrl: (process.env.NEXT_PUBLIC_PORTAL_URL ?? 'http://localhost/alsaffar-backend').replace(/\/$/, ''),
 } as const;

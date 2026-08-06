@@ -7,6 +7,7 @@ import { usePathname } from '@/i18n/navigation';
 import { Menu, X, Phone } from 'lucide-react';
 import LanguageSwitcher from '@/components/shared/LanguageSwitcher';
 import { useSite } from '@/components/site/SiteProvider';
+import { publicEnv } from '@/lib/env';
 
 const WhatsAppIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -154,10 +155,22 @@ export default function Header() {
           <div className="flex items-center gap-3">
             <LanguageSwitcher />
             <a
+              href={`${publicEnv.portalUrl}/login?portal=customer`}
+              className="hidden md:inline-flex items-center px-3.5 py-2 rounded-lg text-sm font-bold text-brand-dark hover:text-brand-orange hover:bg-brand-light transition-colors"
+            >
+              {isAr ? 'تسجيل الدخول' : 'Sign in'}
+            </a>
+            <a
+              href={`${publicEnv.portalUrl}/register?portal=customer`}
+              className="hidden md:inline-flex items-center px-4 py-2 rounded-lg text-sm font-bold bg-brand-orange hover:bg-[#C47208] text-white transition-colors"
+            >
+              {isAr ? 'إنشاء حساب' : 'Sign up'}
+            </a>
+            <a
               href={waHref}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden md:flex items-center gap-2 bg-[#25D366] hover:bg-[#1ebe5d] text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors duration-200"
+              className="hidden xl:flex items-center gap-2 bg-[#25D366] hover:bg-[#1ebe5d] text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors duration-200"
             >
               <WhatsAppIcon />
               <span>WhatsApp</span>
@@ -190,22 +203,38 @@ export default function Header() {
                 {link.label}
               </Link>
             ))}
-            <div className="pt-2 pb-1 border-t border-gray-100 mt-1 flex gap-3">
-              <a
-                href={phoneHref}
-                className="flex-1 text-center py-2.5 rounded-lg border border-brand-orange text-brand-orange text-sm font-bold"
-              >
-                {isAr ? 'اتصل بنا' : 'Call Us'}
-              </a>
-              <a
-                href={waHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-[#25D366] text-white text-sm font-bold"
-              >
-                <WhatsAppIcon />
-                WhatsApp
-              </a>
+            <div className="pt-2 pb-1 border-t border-gray-100 mt-1 flex flex-col gap-2">
+              <div className="flex gap-3">
+                <a
+                  href={`${publicEnv.portalUrl}/login?portal=customer`}
+                  className="flex-1 text-center py-2.5 rounded-lg border border-brand-orange text-brand-orange text-sm font-bold"
+                >
+                  {isAr ? 'تسجيل الدخول' : 'Sign in'}
+                </a>
+                <a
+                  href={`${publicEnv.portalUrl}/register?portal=customer`}
+                  className="flex-1 text-center py-2.5 rounded-lg bg-brand-orange text-white text-sm font-bold"
+                >
+                  {isAr ? 'إنشاء حساب' : 'Sign up'}
+                </a>
+              </div>
+              <div className="flex gap-3">
+                <a
+                  href={phoneHref}
+                  className="flex-1 text-center py-2.5 rounded-lg border border-gray-200 text-brand-dark text-sm font-bold"
+                >
+                  {isAr ? 'اتصل بنا' : 'Call Us'}
+                </a>
+                <a
+                  href={waHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-[#25D366] text-white text-sm font-bold"
+                >
+                  <WhatsAppIcon />
+                  WhatsApp
+                </a>
+              </div>
             </div>
           </nav>
         </div>
