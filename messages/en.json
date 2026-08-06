@@ -299,6 +299,7 @@
       "male": "Male",
       "female": "Female",
       "age": "Age",
+      "years": "yrs",
       "jobType": "Job Type",
       "salary": "Salary (SAR)",
       "experience": "Experience",

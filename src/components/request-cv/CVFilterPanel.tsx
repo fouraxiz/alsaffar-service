@@ -2,7 +2,7 @@
 
 import { useTranslations, useLocale } from 'next-intl';
 import { ChevronDown, ChevronUp, X } from 'lucide-react';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 export type FilterOption = {
   value: string;
@@ -28,12 +28,127 @@ export type FilterOptions = {
   serviceTypes: FilterOption[];
 };
 
+export const AGE_MIN = 18;
+export const AGE_MAX = 65;
+export const DEFAULT_AGE_RANGE: [number, number] = [AGE_MIN, AGE_MAX];
+
 type Props = {
   filters: FilterState;
   setFilters: React.Dispatch<React.SetStateAction<FilterState>>;
   options: FilterOptions;
   loading?: boolean;
 };
+
+function AgeRangeBar({
+  value,
+  onChange,
+  label,
+  yearsLabel,
+}: {
+  value: [number, number];
+  onChange: (next: [number, number]) => void;
+  label: string;
+  yearsLabel: string;
+}) {
+  const [min, max] = value;
+  const span = AGE_MAX - AGE_MIN;
+
+  const setMin = useCallback(
+    (raw: number) => {
+      const next = Math.min(Math.max(raw, AGE_MIN), max - 1);
+      onChange([next, max]);
+    },
+    [max, onChange],
+  );
+
+  const setMax = useCallback(
+    (raw: number) => {
+      const next = Math.max(Math.min(raw, AGE_MAX), min + 1);
+      onChange([min, next]);
+    },
+    [min, onChange],
+  );
+
+  const leftPct = ((min - AGE_MIN) / span) * 100;
+  const rightPct = ((max - AGE_MIN) / span) * 100;
+
+  return (
+    <div>
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <h4 className="text-sm font-bold text-gray-700">{label}</h4>
+        <span className="rounded-full bg-brand-orange/10 px-2.5 py-0.5 text-xs font-bold text-brand-orange">
+          {min} – {max} {yearsLabel}
+        </span>
+      </div>
+
+      <div className="relative h-8 select-none px-1">
+        <div className="absolute start-1 end-1 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-gray-200" />
+        <div
+          className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-brand-orange"
+          style={{ insetInlineStart: `${leftPct}%`, width: `${Math.max(rightPct - leftPct, 0)}%` }}
+        />
+
+        <input
+          type="range"
+          min={AGE_MIN}
+          max={AGE_MAX}
+          step={1}
+          value={min}
+          aria-label={`${label} min`}
+          onChange={(e) => setMin(Number(e.target.value))}
+          className="age-range-thumb pointer-events-none absolute inset-x-0 top-0 z-[2] h-8 w-full appearance-none bg-transparent [&::-moz-range-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:pointer-events-auto"
+        />
+        <input
+          type="range"
+          min={AGE_MIN}
+          max={AGE_MAX}
+          step={1}
+          value={max}
+          aria-label={`${label} max`}
+          onChange={(e) => setMax(Number(e.target.value))}
+          className="age-range-thumb pointer-events-none absolute inset-x-0 top-0 z-[3] h-8 w-full appearance-none bg-transparent [&::-moz-range-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:pointer-events-auto"
+        />
+      </div>
+
+      <div className="mt-1 flex justify-between px-0.5 text-[11px] font-semibold text-gray-400">
+        <span>{AGE_MIN}</span>
+        <span>{AGE_MAX}</span>
+      </div>
+
+      <style>{`
+        .age-range-thumb::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 18px;
+          height: 18px;
+          border-radius: 9999px;
+          background: #e8870a;
+          border: 2px solid #fff;
+          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+          cursor: pointer;
+        }
+        .age-range-thumb::-moz-range-thumb {
+          width: 18px;
+          height: 18px;
+          border-radius: 9999px;
+          background: #e8870a;
+          border: 2px solid #fff;
+          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+          cursor: pointer;
+        }
+        .age-range-thumb::-webkit-slider-runnable-track {
+          background: transparent;
+          height: 8px;
+        }
+        .age-range-thumb::-moz-range-track {
+          background: transparent;
+          height: 8px;
+          border: none;
+        }
+      `}</style>
+    </div>
+  );
+}
 
 export default function CVFilterPanel({ filters, setFilters, options, loading }: Props) {
   const t = useTranslations('requestCV.filters');
@@ -76,7 +191,7 @@ export default function CVFilterPanel({ filters, setFilters, options, loading }:
     setFilters({
       nationality: [],
       gender: null,
-      ageRange: [20, 55],
+      ageRange: DEFAULT_AGE_RANGE,
       jobType: [],
       salaryRange: [1000, 5000],
       experience: null,
@@ -84,12 +199,16 @@ export default function CVFilterPanel({ filters, setFilters, options, loading }:
     });
   };
 
+  const ageActive =
+    filters.ageRange[0] !== DEFAULT_AGE_RANGE[0] || filters.ageRange[1] !== DEFAULT_AGE_RANGE[1];
+
   const activeFilterCount =
     filters.nationality.length +
     (filters.gender ? 1 : 0) +
     filters.jobType.length +
     (filters.experience ? 1 : 0) +
-    filters.serviceType.length;
+    filters.serviceType.length +
+    (ageActive ? 1 : 0);
 
   const browseExperience = options.experienceRanges.filter((r) =>
     ['fresh', 'experienced', 'ex_abroad', 'with_experience'].includes(r.value),
@@ -166,23 +285,7 @@ export default function CVFilterPanel({ filters, setFilters, options, loading }:
               <div className="h-px bg-white/60" />
               <div>
                 <div className="mb-3 h-3 w-20 rounded-full bg-brand-dark/10" />
-                <div className="flex flex-wrap gap-2">
-                  {[90, 76, 84, 68].map((w, i) => (
-                    <div
-                      key={i}
-                      className="h-8 rounded-lg bg-white/70 shadow-sm backdrop-blur-sm"
-                      style={{ width: w }}
-                    />
-                  ))}
-                </div>
-              </div>
-              <div className="h-px bg-white/60" />
-              <div>
-                <div className="mb-3 h-3 w-16 rounded-full bg-brand-dark/10" />
-                <div className="flex gap-2">
-                  <div className="h-10 flex-1 rounded-xl bg-white/70 backdrop-blur-sm" />
-                  <div className="h-10 flex-1 rounded-xl bg-white/70 backdrop-blur-sm" />
-                </div>
+                <div className="h-8 rounded-full bg-white/70" />
               </div>
             </div>
           </div>
@@ -272,6 +375,14 @@ export default function CVFilterPanel({ filters, setFilters, options, loading }:
                 </div>
               </>
             )}
+
+            <div className="h-px bg-gray-100" />
+            <AgeRangeBar
+              value={filters.ageRange}
+              onChange={(ageRange) => setFilters((prev) => ({ ...prev, ageRange }))}
+              label={t('age')}
+              yearsLabel={t('years')}
+            />
 
             {experienceOptions.length > 0 && (
               <>

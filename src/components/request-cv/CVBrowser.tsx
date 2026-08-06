@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { LayoutGrid, AlignJustify } from 'lucide-react';
-import { WorkerCV } from '@/data/cvData';
-import CVFilterPanel, { FilterState, FilterOptions } from './CVFilterPanel';
+import { WorkerCV, NATIONALITIES_LIST, JOB_TYPES, SERVICE_TYPES, EXPERIENCE_RANGES } from '@/data/cvData';
+import CVFilterPanel, { FilterState, FilterOptions, DEFAULT_AGE_RANGE } from './CVFilterPanel';
 import CVGallery from './CVGallery';
 import CVGallerySkeleton from './CVGallerySkeleton';
 import CVDetailModal from './CVDetailModal';
@@ -15,13 +15,58 @@ import PageBanner from '@/components/shared/PageBanner';
 
 export type FlowState = 'browsing' | 'viewing' | 'action' | 'upload' | 'success';
 
-const EMPTY_FILTER_OPTIONS: FilterOptions = {
-  nationalities: [],
-  jobTypes: [],
-  genders: [],
-  experienceRanges: [],
-  serviceTypes: [],
+/** Always keep the previous filter chips available (ERP + static fallback). */
+const FALLBACK_FILTER_OPTIONS: FilterOptions = {
+  nationalities: NATIONALITIES_LIST.map((n) => ({
+    value: n.code,
+    label_en: n.en,
+    label_ar: n.ar,
+  })),
+  jobTypes: JOB_TYPES.map((j) => ({
+    value: j.key,
+    label_en: j.en,
+    label_ar: j.ar,
+  })),
+  genders: [
+    { value: 'female', label_en: 'Female', label_ar: 'أنثى' },
+    { value: 'male', label_en: 'Male', label_ar: 'ذكر' },
+  ],
+  experienceRanges: EXPERIENCE_RANGES.map((e) => ({
+    value: e.key,
+    label_en: e.en,
+    label_ar: e.ar,
+  })),
+  serviceTypes: SERVICE_TYPES.map((s) => ({
+    value: s.key,
+    label_en: s.en,
+    label_ar: s.ar,
+  })),
 };
+
+function withFilterFallbacks(partial: Partial<FilterOptions>): FilterOptions {
+  return {
+    nationalities:
+      partial.nationalities && partial.nationalities.length > 0
+        ? partial.nationalities
+        : FALLBACK_FILTER_OPTIONS.nationalities,
+    jobTypes:
+      partial.jobTypes && partial.jobTypes.length > 0
+        ? partial.jobTypes
+        : FALLBACK_FILTER_OPTIONS.jobTypes,
+    genders:
+      partial.genders && partial.genders.length > 0
+        ? partial.genders
+        : FALLBACK_FILTER_OPTIONS.genders,
+    experienceRanges:
+      partial.experienceRanges && partial.experienceRanges.length > 0
+        ? partial.experienceRanges
+        : FALLBACK_FILTER_OPTIONS.experienceRanges,
+    serviceTypes:
+      partial.serviceTypes && partial.serviceTypes.length > 0
+        ? partial.serviceTypes
+        : FALLBACK_FILTER_OPTIONS.serviceTypes,
+  };
+}
 
 export default function CVBrowser() {
   const t = useTranslations('requestCV');
@@ -35,7 +80,7 @@ export default function CVBrowser() {
   // Worker CVs come from the live ERP feed via our /api/workers route handler
   // (token stays server-side). `null` = still loading.
   const [workers, setWorkers] = useState<WorkerCV[] | null>(null);
-  const [filterOptions, setFilterOptions] = useState<FilterOptions>(EMPTY_FILTER_OPTIONS);
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>(FALLBACK_FILTER_OPTIONS);
   const [filtersLoading, setFiltersLoading] = useState(true);
 
   useEffect(() => {
@@ -58,37 +103,73 @@ export default function CVBrowser() {
     fetch('/api/lookups', { cache: 'no-store' })
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
-        if (!active || !data) return;
-        setFilterOptions({
-          nationalities: (data.countries ?? []).map((c: { value?: string; code?: string; iso2?: string; label_en?: string; label_ar?: string; nationality_label?: string; name?: string; name_ar?: string }) => ({
-            value: String(c.value || c.code || c.iso2 || '').toLowerCase(),
-            label_en: c.label_en || c.nationality_label || c.name || null,
-            label_ar: c.label_ar || c.name_ar || c.label_en || c.name || null,
-          })).filter((c: { value: string }) => !!c.value),
-          jobTypes: (data.categories ?? []).map((j: { value?: string; slug?: string; label_en?: string; label_ar?: string; name?: string; name_ar?: string }) => ({
-            value: String(j.value || j.slug || '').toLowerCase(),
-            label_en: j.label_en || j.name || null,
-            label_ar: j.label_ar || j.name_ar || j.label_en || j.name || null,
-          })).filter((j: { value: string }) => !!j.value),
-          genders: (data.genders ?? []).map((g: { value?: string; label_en?: string; label_ar?: string }) => ({
-            value: String(g.value || ''),
-            label_en: g.label_en || null,
-            label_ar: g.label_ar || g.label_en || null,
-          })).filter((g: { value: string }) => !!g.value),
-          experienceRanges: (data.experience_ranges ?? []).map((e: { value?: string; label_en?: string; label_ar?: string }) => ({
-            value: String(e.value || ''),
-            label_en: e.label_en || null,
-            label_ar: e.label_ar || e.label_en || null,
-          })).filter((e: { value: string }) => !!e.value),
-          serviceTypes: (data.service_types ?? []).map((s: { value?: string; label_en?: string; label_ar?: string }) => ({
-            value: String(s.value || ''),
-            label_en: s.label_en || null,
-            label_ar: s.label_ar || s.label_en || null,
-          })).filter((s: { value: string }) => !!s.value),
-        });
+        if (!active) return;
+        if (!data) {
+          setFilterOptions(FALLBACK_FILTER_OPTIONS);
+          return;
+        }
+        setFilterOptions(
+          withFilterFallbacks({
+            nationalities: (data.countries ?? [])
+              .map(
+                (c: {
+                  value?: string;
+                  code?: string;
+                  iso2?: string;
+                  label_en?: string;
+                  label_ar?: string;
+                  nationality_label?: string;
+                  name?: string;
+                  name_ar?: string;
+                }) => ({
+                  value: String(c.value || c.code || c.iso2 || '').toLowerCase(),
+                  label_en: c.label_en || c.nationality_label || c.name || null,
+                  label_ar: c.label_ar || c.name_ar || c.label_en || c.name || null,
+                }),
+              )
+              .filter((c: { value: string }) => !!c.value),
+            jobTypes: (data.categories ?? [])
+              .map(
+                (j: {
+                  value?: string;
+                  slug?: string;
+                  label_en?: string;
+                  label_ar?: string;
+                  name?: string;
+                  name_ar?: string;
+                }) => ({
+                  value: String(j.value || j.slug || '').toLowerCase(),
+                  label_en: j.label_en || j.name || null,
+                  label_ar: j.label_ar || j.name_ar || j.label_en || j.name || null,
+                }),
+              )
+              .filter((j: { value: string }) => !!j.value),
+            genders: (data.genders ?? [])
+              .map((g: { value?: string; label_en?: string; label_ar?: string }) => ({
+                value: String(g.value || ''),
+                label_en: g.label_en || null,
+                label_ar: g.label_ar || g.label_en || null,
+              }))
+              .filter((g: { value: string }) => !!g.value),
+            experienceRanges: (data.experience_ranges ?? [])
+              .map((e: { value?: string; label_en?: string; label_ar?: string }) => ({
+                value: String(e.value || ''),
+                label_en: e.label_en || null,
+                label_ar: e.label_ar || e.label_en || null,
+              }))
+              .filter((e: { value: string }) => !!e.value),
+            serviceTypes: (data.service_types ?? [])
+              .map((s: { value?: string; label_en?: string; label_ar?: string }) => ({
+                value: String(s.value || ''),
+                label_en: s.label_en || null,
+                label_ar: s.label_ar || s.label_en || null,
+              }))
+              .filter((s: { value: string }) => !!s.value),
+          }),
+        );
       })
       .catch(() => {
-        if (active) setFilterOptions(EMPTY_FILTER_OPTIONS);
+        if (active) setFilterOptions(FALLBACK_FILTER_OPTIONS);
       })
       .finally(() => {
         if (active) setFiltersLoading(false);
@@ -103,7 +184,7 @@ export default function CVBrowser() {
   const [filters, setFilters] = useState<FilterState>({
     nationality: [],
     gender: null,
-    ageRange: [20, 55],
+    ageRange: DEFAULT_AGE_RANGE,
     jobType: [],
     salaryRange: [1000, 5000],
     experience: null,
@@ -153,7 +234,7 @@ export default function CVBrowser() {
     setFilters({
       nationality: [],
       gender: null,
-      ageRange: [20, 55],
+      ageRange: DEFAULT_AGE_RANGE,
       jobType: [],
       salaryRange: [1000, 5000],
       experience: null,

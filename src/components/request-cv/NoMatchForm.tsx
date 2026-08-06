@@ -29,6 +29,7 @@ export default function NoMatchForm({ filters, onClose }: Props) {
     const parts = [];
     if (filters.nationality.length > 0) parts.push(`Nationalities: ${filters.nationality.join(', ')}`);
     if (filters.gender) parts.push(`Gender: ${filters.gender}`);
+    if (filters.ageRange) parts.push(`Age: ${filters.ageRange[0]}-${filters.ageRange[1]}`);
     if (filters.jobType.length > 0) parts.push(`Jobs: ${filters.jobType.join(', ')}`);
     if (filters.experience) parts.push(`Experience: ${filters.experience}`);
     if (filters.serviceType.length > 0) parts.push(`Service Types: ${filters.serviceType.join(', ')}`);
