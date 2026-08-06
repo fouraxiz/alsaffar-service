@@ -26,17 +26,4 @@ export const serverEnv = {
 /** Public (browser-safe) values only. */
 export const publicEnv = {
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://alsaffar-service.vercel.app',
-  /**
-   * @deprecated Prefer resolvePortalUrl() / usePortalUrl() so local vs live
-   * switches from the page hostname. Kept for any legacy imports.
-   */
-  portalUrl: (
-    process.env.NEXT_PUBLIC_PORTAL_URL_LIVE ??
-    process.env.NEXT_PUBLIC_PORTAL_URL ??
-    'https://alsaffar.4axizerp.com'
-  ).replace(/\/$/, ''),
-  portalUrlLocal: (process.env.NEXT_PUBLIC_PORTAL_URL_LOCAL ?? 'http://localhost/alsaffar-backend').replace(
-    /\/$/,
-    ''
-  ),
 } as const;
