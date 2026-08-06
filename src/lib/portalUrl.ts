@@ -9,15 +9,21 @@
  * - NEXT_PUBLIC_PORTAL_URL_LIVE or NEXT_PUBLIC_PORTAL_URL (default: https://alsaffar.4axizerp.com)
  */
 
-const LOCAL_PORTAL = (
-  process.env.NEXT_PUBLIC_PORTAL_URL_LOCAL ?? 'http://localhost/alsaffar-backend'
-).replace(/\/$/, '');
+function cleanBase(value: string | undefined, fallback: string): string {
+  const raw = (value ?? '').trim();
+  if (!raw || raw === '/') return fallback;
+  return raw.replace(/\/$/, '');
+}
 
-const LIVE_PORTAL = (
-  process.env.NEXT_PUBLIC_PORTAL_URL_LIVE ??
-  process.env.NEXT_PUBLIC_PORTAL_URL ??
+const LOCAL_PORTAL = cleanBase(
+  process.env.NEXT_PUBLIC_PORTAL_URL_LOCAL,
+  'http://localhost/alsaffar-backend'
+);
+
+const LIVE_PORTAL = cleanBase(
+  process.env.NEXT_PUBLIC_PORTAL_URL_LIVE || process.env.NEXT_PUBLIC_PORTAL_URL,
   'https://alsaffar.4axizerp.com'
-).replace(/\/$/, '');
+);
 
 function isLocalHostname(hostname: string): boolean {
   return (
@@ -38,7 +44,6 @@ export function resolvePortalUrl(hostname?: string | null): string {
     return LIVE_PORTAL;
   }
 
-  // SSR without host: production → live, otherwise local.
   if (process.env.VERCEL_ENV === 'production' || process.env.NODE_ENV === 'production') {
     return LIVE_PORTAL;
   }
@@ -50,3 +55,15 @@ export const portalDefaults = {
   local: LOCAL_PORTAL,
   live: LIVE_PORTAL,
 } as const;
+
+export type PortalKind = 'customer' | 'vendor';
+
+/** Absolute ERP auth URLs (path-based — query strings are not required). */
+export function portalAuthUrl(
+  baseUrl: string,
+  action: 'login' | 'register',
+  portal: PortalKind
+): string {
+  const base = cleanBase(baseUrl, LIVE_PORTAL);
+  return `${base}/${action}/${portal}`;
+}

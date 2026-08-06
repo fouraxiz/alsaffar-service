@@ -8,6 +8,7 @@ import { Menu, X, Phone } from 'lucide-react';
 import LanguageSwitcher from '@/components/shared/LanguageSwitcher';
 import { useSite } from '@/components/site/SiteProvider';
 import { usePortalUrl } from '@/hooks/usePortalUrl';
+import { portalAuthUrl } from '@/lib/portalUrl';
 
 const WhatsAppIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -157,25 +158,25 @@ export default function Header() {
             <LanguageSwitcher />
             <div className="hidden md:flex items-center gap-1.5">
               <a
-                href={`${portalUrl}/login?portal=customer`}
+                href={portalAuthUrl(portalUrl, 'login', 'customer')}
                 className="inline-flex items-center px-3 py-2 rounded-lg text-xs font-bold text-brand-dark hover:text-brand-orange hover:bg-brand-light transition-colors"
               >
                 {isAr ? 'عميل' : 'Customer'} {isAr ? 'دخول' : 'Sign In'}
               </a>
               <a
-                href={`${portalUrl}/register?portal=customer`}
+                href={portalAuthUrl(portalUrl, 'register', 'customer')}
                 className="inline-flex items-center px-3 py-2 rounded-lg text-xs font-bold border border-brand-orange text-brand-orange hover:bg-brand-light transition-colors"
               >
                 {isAr ? 'تسجيل عميل' : 'Customer Sign up'}
               </a>
               <a
-                href={`${portalUrl}/login?portal=vendor`}
+                href={portalAuthUrl(portalUrl, 'login', 'vendor')}
                 className="inline-flex items-center px-3 py-2 rounded-lg text-xs font-bold text-brand-dark hover:text-brand-orange hover:bg-brand-light transition-colors"
               >
                 {isAr ? 'مورد' : 'Vendor'} {isAr ? 'دخول' : 'Sign In'}
               </a>
               <a
-                href={`${portalUrl}/register?portal=vendor`}
+                href={portalAuthUrl(portalUrl, 'register', 'vendor')}
                 className="inline-flex items-center px-3 py-2 rounded-lg text-xs font-bold bg-brand-orange hover:bg-[#C47208] text-white transition-colors"
               >
                 {isAr ? 'تسجيل مورد' : 'Vendor Sign up'}
@@ -221,25 +222,25 @@ export default function Header() {
             <div className="pt-2 pb-1 border-t border-gray-100 mt-1 flex flex-col gap-2">
               <div className="grid grid-cols-2 gap-2">
                 <a
-                  href={`${portalUrl}/login?portal=customer`}
+                  href={portalAuthUrl(portalUrl, 'login', 'customer')}
                   className="text-center py-2.5 rounded-lg border border-brand-orange text-brand-orange text-xs font-bold"
                 >
                   {isAr ? 'دخول عميل' : 'Customer Sign In'}
                 </a>
                 <a
-                  href={`${portalUrl}/register?portal=customer`}
+                  href={portalAuthUrl(portalUrl, 'register', 'customer')}
                   className="text-center py-2.5 rounded-lg bg-brand-orange text-white text-xs font-bold"
                 >
                   {isAr ? 'تسجيل عميل' : 'Customer Sign up'}
                 </a>
                 <a
-                  href={`${portalUrl}/login?portal=vendor`}
+                  href={portalAuthUrl(portalUrl, 'login', 'vendor')}
                   className="text-center py-2.5 rounded-lg border border-brand-dark text-brand-dark text-xs font-bold"
                 >
                   {isAr ? 'دخول مورد' : 'Vendor Sign In'}
                 </a>
                 <a
-                  href={`${portalUrl}/register?portal=vendor`}
+                  href={portalAuthUrl(portalUrl, 'register', 'vendor')}
                   className="text-center py-2.5 rounded-lg bg-brand-dark text-white text-xs font-bold"
                 >
                   {isAr ? 'تسجيل مورد' : 'Vendor Sign up'}
