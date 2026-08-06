@@ -12,9 +12,17 @@ import LiveChatBar from '@/components/shared/LiveChatBar';
 import JsonLd from '@/components/seo/JsonLd';
 import SilhouetteBackdrop from '@/components/home/SilhouetteBackdrop';
 import { SiteProvider } from '@/components/site/SiteProvider';
+import { PortalUrlProvider } from '@/components/site/PortalUrlProvider';
 import { getSite } from '@/lib/getSite';
+import { serverEnv } from '@/lib/env';
+import {
+  isLocalHostname,
+  portalDefaults,
+  resolvePortalUrlFromServer,
+} from '@/lib/portalUrl';
 import { SITE_URL, buildAlternates, BRAND_KEYWORDS_EN, BRAND_KEYWORDS_AR } from '@/lib/seo';
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 
 const cairo = Cairo({
   subsets: ['arabic', 'latin'],
@@ -82,20 +90,28 @@ export default async function LocaleLayout({ children, params }: Props) {
   const messages = await getMessages();
   const { site } = await getSite();
 
+  const hostHeader = (await headers()).get('host') ?? '';
+  const hostname = hostHeader.split(':')[0] ?? '';
+  const portalUrl = isLocalHostname(hostname)
+    ? portalDefaults.local
+    : resolvePortalUrlFromServer(serverEnv.erp.baseUrl);
+
   return (
     <NextIntlClientProvider messages={messages} locale={locale}>
       <SiteProvider initialSite={site}>
-        <JsonLd locale={locale} />
-        <DirectionProvider />
-        <div style={{ fontFamily: cairo.style.fontFamily }} className="flex flex-col min-h-screen relative pb-[70px]">
-          <SilhouetteBackdrop className="fixed inset-0 -z-10" />
-          <Header />
-          <MotionBanner />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <FloatingSidebar />
-          <LiveChatBar />
-        </div>
+        <PortalUrlProvider initialPortalUrl={portalUrl}>
+          <JsonLd locale={locale} />
+          <DirectionProvider />
+          <div style={{ fontFamily: cairo.style.fontFamily }} className="flex flex-col min-h-screen relative pb-[70px]">
+            <SilhouetteBackdrop className="fixed inset-0 -z-10" />
+            <Header />
+            <MotionBanner />
+            <main className="flex-1">{children}</main>
+            <Footer />
+            <FloatingSidebar />
+            <LiveChatBar />
+          </div>
+        </PortalUrlProvider>
       </SiteProvider>
     </NextIntlClientProvider>
   );

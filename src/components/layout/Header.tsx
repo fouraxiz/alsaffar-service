@@ -7,7 +7,7 @@ import { usePathname } from '@/i18n/navigation';
 import { Menu, X, Phone } from 'lucide-react';
 import LanguageSwitcher from '@/components/shared/LanguageSwitcher';
 import { useSite } from '@/components/site/SiteProvider';
-import { usePortalUrl } from '@/hooks/usePortalUrl';
+import { usePortalUrl } from '@/components/site/PortalUrlProvider';
 import { portalAuthUrl } from '@/lib/portalUrl';
 
 const WhatsAppIcon = () => (
