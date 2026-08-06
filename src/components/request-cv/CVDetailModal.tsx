@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import { useReactToPrint } from 'react-to-print';
+import { useState } from 'react';
 
 import { useTranslations, useLocale } from 'next-intl';
 import { WorkerCV } from '@/data/cvData';
-import { X, Download, PlayCircle, MapPin, CheckCircle2 } from 'lucide-react';
+import { X, Download, PlayCircle, CheckCircle2, LogIn } from 'lucide-react';
 import WorkerPhoto from './WorkerPhoto';
-import CVPrintTemplate from './CVPrintTemplate';
+import { usePortalUrl } from '@/components/site/PortalUrlProvider';
+import { portalAuthUrl } from '@/lib/portalUrl';
 
 type Props = {
   worker: WorkerCV;
@@ -15,29 +15,24 @@ type Props = {
   onProceed: () => void;
 };
 
-export default function CVDetailModal({ worker, onClose, onProceed }: Props) {
+export default function CVDetailModal({ worker, onClose }: Props) {
   const t = useTranslations('requestCV.detail');
   const locale = useLocale();
   const isAr = locale === 'ar';
+  const portalUrl = usePortalUrl();
 
-  const [isDownloading, setIsDownloading] = useState(false);
   const [isPlayingVideo, setIsPlayingVideo] = useState(false);
-  const cvRef = useRef<HTMLDivElement>(null);
+  const [showLoginGate, setShowLoginGate] = useState(false);
 
-  const handleDownloadPDF = useReactToPrint({
-    contentRef: cvRef,
-    documentTitle: `${worker.name.replace(/\s+/g, '_')}_CV`,
-    pageStyle: `
-      @page { size: A4 portrait; margin: 0; }
-      @media print { html, body { margin: 0; padding: 0; } }
-    `,
-  });
+  const customerLoginUrl = portalAuthUrl(portalUrl, 'login', 'customer');
+
+  /** Public site has no customer session — require ERP customer login first. */
+  const requireCustomerLogin = () => {
+    setShowLoginGate(true);
+  };
 
   return (
     <>
-    <div aria-hidden="true" style={{ position: 'fixed', left: '-10000px', top: 0, zIndex: -1 }}>
-      <CVPrintTemplate ref={cvRef} worker={worker} locale={locale} />
-    </div>
     <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 pointer-events-auto">
       {/* Backdrop */}
       <div
@@ -101,15 +96,11 @@ export default function CVDetailModal({ worker, onClose, onProceed }: Props) {
 
             <div className="p-4 md:p-6 mt-auto print:hidden">
               <button
-                onClick={() => handleDownloadPDF()}
-                disabled={isDownloading}
-                className="w-full flex items-center justify-center gap-2 bg-white border-2 border-brand-orange text-brand-orange hover:bg-orange-50 py-3 rounded-xl font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                {isDownloading ? (
-                  <span className="animate-spin border-2 border-brand-orange border-t-transparent rounded-full w-4 h-4"></span>
-                ) : (
-                  <Download size={18} />
-                )}
-                {isDownloading ? 'Preparing PDF...' : t('downloadPDF')}
+                type="button"
+                onClick={() => requireCustomerLogin()}
+                className="w-full flex items-center justify-center gap-2 bg-white border-2 border-brand-orange text-brand-orange hover:bg-orange-50 py-3 rounded-xl font-bold transition-colors">
+                <Download size={18} />
+                {t('downloadPDF')}
               </button>
             </div>
           </div>
@@ -201,12 +192,14 @@ export default function CVDetailModal({ worker, onClose, onProceed }: Props) {
             {/* Action Buttons */}
             <div className="mt-auto pt-4 border-t border-gray-100 flex flex-col sm:flex-row gap-3 print:hidden">
               <button
-                onClick={onProceed}
+                type="button"
+                onClick={() => requireCustomerLogin()}
                 className="flex-1 bg-brand-orange hover:bg-brand-orange-dark text-white py-3.5 rounded-xl font-bold text-lg shadow-lg shadow-orange-200 transition-all duration-200 hover:-translate-y-0.5"
               >
                 {t('selectWorker')}
               </button>
               <button
+                type="button"
                 onClick={onClose}
                 className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3.5 rounded-xl font-bold text-lg transition-colors"
               >
@@ -216,6 +209,35 @@ export default function CVDetailModal({ worker, onClose, onProceed }: Props) {
 
           </div>
         </div>
+
+        {/* Login required gate */}
+        {showLoginGate && (
+          <div className="absolute inset-0 z-20 flex items-center justify-center bg-brand-dark/50 p-4 backdrop-blur-[2px]">
+            <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl text-center">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-orange-100 text-brand-orange">
+                <LogIn size={22} />
+              </div>
+              <h3 className="mb-2 text-lg font-black text-brand-dark">{t('loginRequiredTitle')}</h3>
+              <p className="mb-6 text-sm leading-relaxed text-gray-600">{t('loginRequiredMessage')}</p>
+              <div className="flex flex-col gap-2">
+                <a
+                  href={customerLoginUrl}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-orange px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-brand-orange-dark"
+                >
+                  <LogIn size={16} />
+                  {t('loginRequiredCta')}
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setShowLoginGate(false)}
+                  className="rounded-xl bg-gray-100 px-4 py-3 text-sm font-bold text-gray-700 transition-colors hover:bg-gray-200"
+                >
+                  {t('loginRequiredCancel')}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
     </>

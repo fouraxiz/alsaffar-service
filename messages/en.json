@@ -336,7 +336,11 @@
       "maritalStatus": "Marital Status",
       "about": "About",
       "selectWorker": "Select This Worker",
-      "backToBrowse": "Back to Browse"
+      "backToBrowse": "Back to Browse",
+      "loginRequiredTitle": "Sign in required",
+      "loginRequiredMessage": "Please sign in with your customer account first to download the PDF or select this worker.",
+      "loginRequiredCta": "Customer Sign In",
+      "loginRequiredCancel": "Cancel"
     },
     "actions": {
       "title": "How would you like to proceed?",
