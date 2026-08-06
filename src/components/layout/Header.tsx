@@ -4,24 +4,36 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useTranslations, useLocale } from 'next-intl';
 import { usePathname } from '@/i18n/navigation';
-import { Menu, X, Phone, ChevronDown } from 'lucide-react';
+import { Menu, X, Phone, ChevronDown, LayoutDashboard } from 'lucide-react';
 import LanguageSwitcher from '@/components/shared/LanguageSwitcher';
 import { useSite } from '@/components/site/SiteProvider';
 import { usePortalUrl } from '@/components/site/PortalUrlProvider';
-import { portalAuthUrl, type PortalKind } from '@/lib/portalUrl';
+import { usePortalSession } from '@/components/site/PortalSessionProvider';
+import { portalAuthUrl, portalDashboardUrl, type PortalKind } from '@/lib/portalUrl';
 
 type AuthAction = 'login' | 'register';
+
+function useReturnUrl() {
+  const pathname = usePathname();
+  const [returnUrl, setReturnUrl] = useState('');
+  useEffect(() => {
+    setReturnUrl(window.location.href.split('#')[0]);
+  }, [pathname]);
+  return returnUrl;
+}
 
 function AuthDropdown({
   action,
   portalUrl,
   isAr,
   variant,
+  returnUrl,
 }: {
   action: AuthAction;
   portalUrl: string;
   isAr: boolean;
   variant: 'outline' | 'solid';
+  returnUrl: string;
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -77,7 +89,7 @@ function AuthDropdown({
             <a
               key={opt.portal}
               role="menuitem"
-              href={portalAuthUrl(portalUrl, action, opt.portal)}
+              href={portalAuthUrl(portalUrl, action, opt.portal, action === 'login' ? returnUrl : null)}
               className="block px-3.5 py-2 text-xs font-bold text-brand-dark hover:bg-brand-light hover:text-brand-orange transition-colors"
               onClick={() => setOpen(false)}
             >
@@ -93,9 +105,11 @@ function AuthDropdown({
 function MobileAuthLinks({
   portalUrl,
   isAr,
+  returnUrl,
 }: {
   portalUrl: string;
   isAr: boolean;
+  returnUrl: string;
 }) {
   const [openAction, setOpenAction] = useState<AuthAction | null>(null);
 
@@ -131,7 +145,12 @@ function MobileAuthLinks({
                 {(['customer', 'vendor'] as PortalKind[]).map((portal) => (
                   <a
                     key={portal}
-                    href={portalAuthUrl(portalUrl, row.action, portal)}
+                    href={portalAuthUrl(
+                      portalUrl,
+                      row.action,
+                      portal,
+                      row.action === 'login' ? returnUrl : null
+                    )}
                     className="text-center py-2.5 rounded-lg border border-gray-200 text-brand-dark text-xs font-bold hover:border-brand-orange hover:text-brand-orange transition-colors"
                   >
                     {roleLabel(portal)}
@@ -143,6 +162,32 @@ function MobileAuthLinks({
         );
       })}
     </div>
+  );
+}
+
+function DashboardButton({
+  portalUrl,
+  portal,
+  isAr,
+  className,
+}: {
+  portalUrl: string;
+  portal: PortalKind;
+  isAr: boolean;
+  className?: string;
+}) {
+  const label = isAr ? 'لوحة التحكم' : 'My Dashboard';
+  return (
+    <a
+      href={portalDashboardUrl(portalUrl, portal)}
+      className={
+        className ??
+        'inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold bg-brand-orange hover:bg-[#C47208] text-white border border-brand-orange transition-colors'
+      }
+    >
+      <LayoutDashboard size={16} />
+      {label}
+    </a>
   );
 }
 
@@ -190,6 +235,8 @@ export default function Header() {
   const pathname = usePathname();
   const site = useSite();
   const portalUrl = usePortalUrl();
+  const { portal } = usePortalSession();
+  const returnUrl = useReturnUrl();
   const isAr = locale === 'ar';
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -293,8 +340,26 @@ export default function Header() {
               <LanguageSwitcher />
             </div>
             <div className="hidden md:flex items-center gap-3">
-              <AuthDropdown action="login" portalUrl={portalUrl} isAr={isAr} variant="outline" />
-              <AuthDropdown action="register" portalUrl={portalUrl} isAr={isAr} variant="solid" />
+              {portal ? (
+                <DashboardButton portalUrl={portalUrl} portal={portal} isAr={isAr} />
+              ) : (
+                <>
+                  <AuthDropdown
+                    action="login"
+                    portalUrl={portalUrl}
+                    isAr={isAr}
+                    variant="outline"
+                    returnUrl={returnUrl}
+                  />
+                  <AuthDropdown
+                    action="register"
+                    portalUrl={portalUrl}
+                    isAr={isAr}
+                    variant="solid"
+                    returnUrl={returnUrl}
+                  />
+                </>
+              )}
             </div>
             <a
               href={waHref}
@@ -333,7 +398,16 @@ export default function Header() {
               </Link>
             ))}
             <div className="pt-2 pb-1 border-t border-gray-100 mt-1 flex flex-col gap-2">
-              <MobileAuthLinks portalUrl={portalUrl} isAr={isAr} />
+              {portal ? (
+                <DashboardButton
+                  portalUrl={portalUrl}
+                  portal={portal}
+                  isAr={isAr}
+                  className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-bold bg-brand-orange text-white"
+                />
+              ) : (
+                <MobileAuthLinks portalUrl={portalUrl} isAr={isAr} returnUrl={returnUrl} />
+              )}
 
               <div className="flex gap-3">
                 <a

@@ -13,6 +13,7 @@ import JsonLd from '@/components/seo/JsonLd';
 import SilhouetteBackdrop from '@/components/home/SilhouetteBackdrop';
 import { SiteProvider } from '@/components/site/SiteProvider';
 import { PortalUrlProvider } from '@/components/site/PortalUrlProvider';
+import { PortalSessionProvider } from '@/components/site/PortalSessionProvider';
 import { getSite } from '@/lib/getSite';
 import { serverEnv } from '@/lib/env';
 import {
@@ -100,6 +101,7 @@ export default async function LocaleLayout({ children, params }: Props) {
     <NextIntlClientProvider messages={messages} locale={locale}>
       <SiteProvider initialSite={site}>
         <PortalUrlProvider initialPortalUrl={portalUrl}>
+          <PortalSessionProvider>
           <JsonLd locale={locale} />
           <DirectionProvider />
           <div style={{ fontFamily: cairo.style.fontFamily }} className="flex flex-col min-h-screen relative pb-[70px]">
@@ -111,6 +113,7 @@ export default async function LocaleLayout({ children, params }: Props) {
             <FloatingSidebar />
             <LiveChatBar />
           </div>
+          </PortalSessionProvider>
         </PortalUrlProvider>
       </SiteProvider>
     </NextIntlClientProvider>

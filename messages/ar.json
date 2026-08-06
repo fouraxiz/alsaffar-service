@@ -338,7 +338,7 @@
       "selectWorker": "اختيار هذا السيرة الذاتية",
       "backToBrowse": "العودة للتصفح",
       "loginRequiredTitle": "تسجيل الدخول مطلوب",
-      "loginRequiredMessage": "يرجى تسجيل الدخول بحساب العميل أولاً لتحميل ملف PDF أو اختيار هذا العامل.",
+      "loginRequiredMessage": "يرجى تسجيل الدخول بحساب العميل أولاً لتحميل ملف PDF أو اختيار هذا العامل. بعد تسجيل الدخول ستعود إلى هذه الصفحة.",
       "loginRequiredCta": "تسجيل دخول العميل",
       "loginRequiredCancel": "إلغاء"
     },

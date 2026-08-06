@@ -109,8 +109,17 @@ export type PortalKind = 'customer' | 'vendor';
 export function portalAuthUrl(
   baseUrl: string,
   action: 'login' | 'register',
-  portal: PortalKind
+  portal: PortalKind,
+  redirectTo?: string | null
 ): string {
   const base = cleanBase(baseUrl, LIVE_PORTAL);
-  return `${base}/${action}/${portal}`;
+  const url = `${base}/${action}/${portal}`;
+  if (!redirectTo) return url;
+  return `${url}?redirect=${encodeURIComponent(redirectTo)}`;
+}
+
+/** ERP dashboard URL after customer/vendor login. */
+export function portalDashboardUrl(baseUrl: string, portal: PortalKind): string {
+  const base = cleanBase(baseUrl, LIVE_PORTAL);
+  return portal === 'vendor' ? `${base}/vendor-portal` : `${base}/customer-portal`;
 }
