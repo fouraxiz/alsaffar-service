@@ -7,7 +7,7 @@ import { usePathname } from '@/i18n/navigation';
 import { Menu, X, Phone } from 'lucide-react';
 import LanguageSwitcher from '@/components/shared/LanguageSwitcher';
 import { useSite } from '@/components/site/SiteProvider';
-import { publicEnv } from '@/lib/env';
+import { usePortalUrl } from '@/hooks/usePortalUrl';
 
 const WhatsAppIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -52,6 +52,7 @@ export default function Header() {
   const locale = useLocale();
   const pathname = usePathname();
   const site = useSite();
+  const portalUrl = usePortalUrl();
   const isAr = locale === 'ar';
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -152,20 +153,34 @@ export default function Header() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <LanguageSwitcher />
-            <a
-              href={`${publicEnv.portalUrl}/login?portal=customer`}
-              className="hidden md:inline-flex items-center px-3.5 py-2 rounded-lg text-sm font-bold text-brand-dark hover:text-brand-orange hover:bg-brand-light transition-colors"
-            >
-              {isAr ? 'تسجيل الدخول' : 'Sign in'}
-            </a>
-            <a
-              href={`${publicEnv.portalUrl}/register?portal=customer`}
-              className="hidden md:inline-flex items-center px-4 py-2 rounded-lg text-sm font-bold bg-brand-orange hover:bg-[#C47208] text-white transition-colors"
-            >
-              {isAr ? 'إنشاء حساب' : 'Sign up'}
-            </a>
+            <div className="hidden md:flex items-center gap-1.5">
+              <a
+                href={`${portalUrl}/login?portal=customer`}
+                className="inline-flex items-center px-3 py-2 rounded-lg text-xs font-bold text-brand-dark hover:text-brand-orange hover:bg-brand-light transition-colors"
+              >
+                {isAr ? 'عميل' : 'Customer'} {isAr ? 'دخول' : 'Sign In'}
+              </a>
+              <a
+                href={`${portalUrl}/register?portal=customer`}
+                className="inline-flex items-center px-3 py-2 rounded-lg text-xs font-bold border border-brand-orange text-brand-orange hover:bg-brand-light transition-colors"
+              >
+                {isAr ? 'تسجيل عميل' : 'Customer Sign up'}
+              </a>
+              <a
+                href={`${portalUrl}/login?portal=vendor`}
+                className="inline-flex items-center px-3 py-2 rounded-lg text-xs font-bold text-brand-dark hover:text-brand-orange hover:bg-brand-light transition-colors"
+              >
+                {isAr ? 'مورد' : 'Vendor'} {isAr ? 'دخول' : 'Sign In'}
+              </a>
+              <a
+                href={`${portalUrl}/register?portal=vendor`}
+                className="inline-flex items-center px-3 py-2 rounded-lg text-xs font-bold bg-brand-orange hover:bg-[#C47208] text-white transition-colors"
+              >
+                {isAr ? 'تسجيل مورد' : 'Vendor Sign up'}
+              </a>
+            </div>
             <a
               href={waHref}
               target="_blank"
@@ -204,18 +219,30 @@ export default function Header() {
               </Link>
             ))}
             <div className="pt-2 pb-1 border-t border-gray-100 mt-1 flex flex-col gap-2">
-              <div className="flex gap-3">
+              <div className="grid grid-cols-2 gap-2">
                 <a
-                  href={`${publicEnv.portalUrl}/login?portal=customer`}
-                  className="flex-1 text-center py-2.5 rounded-lg border border-brand-orange text-brand-orange text-sm font-bold"
+                  href={`${portalUrl}/login?portal=customer`}
+                  className="text-center py-2.5 rounded-lg border border-brand-orange text-brand-orange text-xs font-bold"
                 >
-                  {isAr ? 'تسجيل الدخول' : 'Sign in'}
+                  {isAr ? 'دخول عميل' : 'Customer Sign In'}
                 </a>
                 <a
-                  href={`${publicEnv.portalUrl}/register?portal=customer`}
-                  className="flex-1 text-center py-2.5 rounded-lg bg-brand-orange text-white text-sm font-bold"
+                  href={`${portalUrl}/register?portal=customer`}
+                  className="text-center py-2.5 rounded-lg bg-brand-orange text-white text-xs font-bold"
                 >
-                  {isAr ? 'إنشاء حساب' : 'Sign up'}
+                  {isAr ? 'تسجيل عميل' : 'Customer Sign up'}
+                </a>
+                <a
+                  href={`${portalUrl}/login?portal=vendor`}
+                  className="text-center py-2.5 rounded-lg border border-brand-dark text-brand-dark text-xs font-bold"
+                >
+                  {isAr ? 'دخول مورد' : 'Vendor Sign In'}
+                </a>
+                <a
+                  href={`${portalUrl}/register?portal=vendor`}
+                  className="text-center py-2.5 rounded-lg bg-brand-dark text-white text-xs font-bold"
+                >
+                  {isAr ? 'تسجيل مورد' : 'Vendor Sign up'}
                 </a>
               </div>
               <div className="flex gap-3">
