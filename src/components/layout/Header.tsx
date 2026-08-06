@@ -1,14 +1,150 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useTranslations, useLocale } from 'next-intl';
 import { usePathname } from '@/i18n/navigation';
-import { Menu, X, Phone } from 'lucide-react';
+import { Menu, X, Phone, ChevronDown } from 'lucide-react';
 import LanguageSwitcher from '@/components/shared/LanguageSwitcher';
 import { useSite } from '@/components/site/SiteProvider';
 import { usePortalUrl } from '@/components/site/PortalUrlProvider';
-import { portalAuthUrl } from '@/lib/portalUrl';
+import { portalAuthUrl, type PortalKind } from '@/lib/portalUrl';
+
+type AuthAction = 'login' | 'register';
+
+function AuthDropdown({
+  action,
+  portalUrl,
+  isAr,
+  variant,
+}: {
+  action: AuthAction;
+  portalUrl: string;
+  isAr: boolean;
+  variant: 'outline' | 'solid';
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const label = action === 'login'
+    ? (isAr ? 'دخول' : 'Sign In')
+    : (isAr ? 'تسجيل' : 'Sign Up');
+  const options: { portal: PortalKind; label: string }[] = [
+    { portal: 'customer', label: isAr ? 'عميل' : 'Customer' },
+    { portal: 'vendor', label: isAr ? 'مورد' : 'Vendor' },
+  ];
+
+  useEffect(() => {
+    if (!open) return;
+    const onPointerDown = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('mousedown', onPointerDown);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onPointerDown);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+
+  const btnClass =
+    variant === 'solid'
+      ? 'bg-brand-orange hover:bg-[#C47208] text-white border border-brand-orange'
+      : 'bg-white border border-brand-orange text-brand-orange hover:bg-brand-light';
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        aria-haspopup="menu"
+        className={`inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-colors ${btnClass}`}
+      >
+        {label}
+        <ChevronDown size={14} className={`transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+      {open && (
+        <div
+          role="menu"
+          className="absolute end-0 top-full mt-1.5 min-w-[9.5rem] rounded-lg border border-gray-100 bg-white py-1 shadow-lg z-50"
+        >
+          {options.map((opt) => (
+            <a
+              key={opt.portal}
+              role="menuitem"
+              href={portalAuthUrl(portalUrl, action, opt.portal)}
+              className="block px-3.5 py-2 text-xs font-bold text-brand-dark hover:bg-brand-light hover:text-brand-orange transition-colors"
+              onClick={() => setOpen(false)}
+            >
+              {opt.label}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MobileAuthLinks({
+  portalUrl,
+  isAr,
+}: {
+  portalUrl: string;
+  isAr: boolean;
+}) {
+  const [openAction, setOpenAction] = useState<AuthAction | null>(null);
+
+  const rows: { action: AuthAction; label: string; solid: boolean }[] = [
+    { action: 'login', label: isAr ? 'دخول' : 'Sign In', solid: false },
+    { action: 'register', label: isAr ? 'تسجيل' : 'Sign Up', solid: true },
+  ];
+
+  const roleLabel = (portal: PortalKind) =>
+    portal === 'customer' ? (isAr ? 'عميل' : 'Customer') : (isAr ? 'مورد' : 'Vendor');
+
+  return (
+    <div className="flex flex-col gap-2">
+      {rows.map((row) => {
+        const expanded = openAction === row.action;
+        return (
+          <div key={row.action} className="flex flex-col gap-1.5">
+            <button
+              type="button"
+              onClick={() => setOpenAction(expanded ? null : row.action)}
+              aria-expanded={expanded}
+              className={`w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-bold transition-colors ${
+                row.solid
+                  ? 'bg-brand-orange text-white border border-brand-orange'
+                  : 'bg-white border border-brand-orange text-brand-orange'
+              }`}
+            >
+              {row.label}
+              <ChevronDown size={14} className={`transition-transform ${expanded ? 'rotate-180' : ''}`} />
+            </button>
+            {expanded && (
+              <div className="grid grid-cols-2 gap-2">
+                {(['customer', 'vendor'] as PortalKind[]).map((portal) => (
+                  <a
+                    key={portal}
+                    href={portalAuthUrl(portalUrl, row.action, portal)}
+                    className="text-center py-2.5 rounded-lg border border-gray-200 text-brand-dark text-xs font-bold hover:border-brand-orange hover:text-brand-orange transition-colors"
+                  >
+                    {roleLabel(portal)}
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 const WhatsAppIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -90,9 +226,8 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed top-0 inset-x-0 z-40 transition-all duration-300 ${
-        scrolled ? 'bg-white shadow-md' : 'bg-white/95 backdrop-blur-sm'
-      }`}
+      className={`fixed top-0 inset-x-0 z-40 transition-all duration-300 ${scrolled ? 'bg-white shadow-md' : 'bg-white/95 backdrop-blur-sm'
+        }`}
     >
       <div className="bg-brand-dark text-white text-xs py-2 hidden md:block">
         <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
@@ -143,11 +278,10 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors duration-200 ${
-                  isActive(link.href)
+                className={`px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors duration-200 ${isActive(link.href)
                     ? 'text-brand-orange bg-brand-light'
                     : 'text-brand-dark hover:text-brand-orange hover:bg-brand-light'
-                }`}
+                  }`}
               >
                 {link.label}
               </Link>
@@ -155,32 +289,12 @@ export default function Header() {
           </nav>
 
           <div className="flex items-center gap-2">
-            <LanguageSwitcher />
-            <div className="hidden md:flex items-center gap-1.5">
-              <a
-                href={portalAuthUrl(portalUrl, 'login', 'customer')}
-                className="inline-flex items-center px-3 py-2 rounded-lg text-xs font-bold text-brand-dark hover:text-brand-orange hover:bg-brand-light transition-colors"
-              >
-                {isAr ? 'عميل' : 'Customer'} {isAr ? 'دخول' : 'Sign In'}
-              </a>
-              <a
-                href={portalAuthUrl(portalUrl, 'register', 'customer')}
-                className="inline-flex items-center px-3 py-2 rounded-lg text-xs font-bold border border-brand-orange text-brand-orange hover:bg-brand-light transition-colors"
-              >
-                {isAr ? 'تسجيل عميل' : 'Customer Sign up'}
-              </a>
-              <a
-                href={portalAuthUrl(portalUrl, 'login', 'vendor')}
-                className="inline-flex items-center px-3 py-2 rounded-lg text-xs font-bold text-brand-dark hover:text-brand-orange hover:bg-brand-light transition-colors"
-              >
-                {isAr ? 'مورد' : 'Vendor'} {isAr ? 'دخول' : 'Sign In'}
-              </a>
-              <a
-                href={portalAuthUrl(portalUrl, 'register', 'vendor')}
-                className="inline-flex items-center px-3 py-2 rounded-lg text-xs font-bold bg-brand-orange hover:bg-[#C47208] text-white transition-colors"
-              >
-                {isAr ? 'تسجيل مورد' : 'Vendor Sign up'}
-              </a>
+            <div className="me-2 md:me-4">
+              <LanguageSwitcher />
+            </div>
+            <div className="hidden md:flex items-center gap-3">
+              <AuthDropdown action="login" portalUrl={portalUrl} isAr={isAr} variant="outline" />
+              <AuthDropdown action="register" portalUrl={portalUrl} isAr={isAr} variant="solid" />
             </div>
             <a
               href={waHref}
@@ -210,42 +324,17 @@ export default function Header() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
-                className={`px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${
-                  isActive(link.href)
+                className={`px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${isActive(link.href)
                     ? 'text-brand-orange bg-brand-light'
                     : 'text-brand-dark hover:text-brand-orange hover:bg-brand-light'
-                }`}
+                  }`}
               >
                 {link.label}
               </Link>
             ))}
             <div className="pt-2 pb-1 border-t border-gray-100 mt-1 flex flex-col gap-2">
-              <div className="grid grid-cols-2 gap-2">
-                <a
-                  href={portalAuthUrl(portalUrl, 'login', 'customer')}
-                  className="text-center py-2.5 rounded-lg border border-brand-orange text-brand-orange text-xs font-bold"
-                >
-                  {isAr ? 'دخول عميل' : 'Customer Sign In'}
-                </a>
-                <a
-                  href={portalAuthUrl(portalUrl, 'register', 'customer')}
-                  className="text-center py-2.5 rounded-lg bg-brand-orange text-white text-xs font-bold"
-                >
-                  {isAr ? 'تسجيل عميل' : 'Customer Sign up'}
-                </a>
-                <a
-                  href={portalAuthUrl(portalUrl, 'login', 'vendor')}
-                  className="text-center py-2.5 rounded-lg border border-brand-dark text-brand-dark text-xs font-bold"
-                >
-                  {isAr ? 'دخول مورد' : 'Vendor Sign In'}
-                </a>
-                <a
-                  href={portalAuthUrl(portalUrl, 'register', 'vendor')}
-                  className="text-center py-2.5 rounded-lg bg-brand-dark text-white text-xs font-bold"
-                >
-                  {isAr ? 'تسجيل مورد' : 'Vendor Sign up'}
-                </a>
-              </div>
+              <MobileAuthLinks portalUrl={portalUrl} isAr={isAr} />
+
               <div className="flex gap-3">
                 <a
                   href={phoneHref}
