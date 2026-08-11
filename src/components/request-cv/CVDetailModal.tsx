@@ -174,6 +174,22 @@ export default function CVDetailModal({ worker, onClose, onProceed }: Props) {
               </div>
             </div>
 
+            {(worker.experienceCountries?.length ?? 0) > 0 && (
+              <div className="mb-6">
+                <div className="text-[11px] text-gray-400 font-bold uppercase mb-2">{t('experienceCountries')}</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {worker.experienceCountries!.map((c, i) => (
+                    <span key={`${c.iso2 || c.en}-${i}`} className="inline-flex items-center gap-1.5 bg-gray-100 text-gray-700 text-xs px-2.5 py-1 rounded-md font-medium">
+                      {c.iso2 ? (
+                        <img src={`https://flagcdn.com/w20/${c.iso2}.png`} alt="" className="h-3 w-4 object-cover rounded-sm" />
+                      ) : null}
+                      {isAr ? (c.ar || c.en) : c.en}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Bio */}
             <div className="mb-6">
               <h4 className="text-sm font-bold text-gray-900 mb-2">{t('about')}</h4>
@@ -186,11 +202,11 @@ export default function CVDetailModal({ worker, onClose, onProceed }: Props) {
             <div className="grid grid-cols-2 gap-y-4 gap-x-6 mb-6">
               <div>
                 <div className="text-[11px] text-gray-400 font-bold uppercase mb-1">{t('religion')}</div>
-                <div className="text-sm font-semibold text-gray-900">{isAr ? worker.religionAr : worker.religion}</div>
+                <div className="text-sm font-semibold text-gray-900">{isAr ? (worker.religionAr || '—') : (worker.religion || '—')}</div>
               </div>
               <div>
                 <div className="text-[11px] text-gray-400 font-bold uppercase mb-1">{t('maritalStatus')}</div>
-                <div className="text-sm font-semibold text-gray-900">{isAr ? worker.maritalStatusAr : worker.maritalStatus}</div>
+                <div className="text-sm font-semibold text-gray-900">{isAr ? (worker.maritalStatusAr || '—') : (worker.maritalStatus || '—')}</div>
               </div>
               <div className="col-span-2">
                 <div className="text-[11px] text-gray-400 font-bold uppercase mb-1">{t('languages')}</div>
@@ -203,6 +219,50 @@ export default function CVDetailModal({ worker, onClose, onProceed }: Props) {
                 </div>
               </div>
             </div>
+
+            {/* Education */}
+            {(worker.educationHistory?.length ?? 0) > 0 && (
+              <div className="mb-6">
+                <h4 className="text-sm font-bold text-gray-900 mb-3">{t('education')}</h4>
+                <div className="space-y-3">
+                  {worker.educationHistory!.map((row, i) => (
+                    <div key={i} className="border-s-2 border-brand-orange/40 ps-3">
+                      <div className="text-[11px] font-bold uppercase text-gray-400">
+                        {[row.from, row.to].filter(Boolean).join(' - ') || '—'}
+                      </div>
+                      <div className="text-sm font-bold text-brand-dark">{row.institution || '—'}</div>
+                      {row.degree ? <div className="text-sm text-gray-700">{row.degree}</div> : null}
+                      {row.description ? <p className="mt-1 text-xs text-gray-500 whitespace-pre-wrap">{row.description}</p> : null}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Work Experience */}
+            {(worker.workExperiences?.length ?? 0) > 0 && (
+              <div className="mb-6">
+                <h4 className="text-sm font-bold text-gray-900 mb-3">{t('workExperience')}</h4>
+                <div className="space-y-4">
+                  {worker.workExperiences!.map((row, i) => (
+                    <div key={i} className="border-s-2 border-emerald-300 ps-3">
+                      <div className="text-[11px] font-bold uppercase text-gray-400">
+                        {[row.from, row.to].filter(Boolean).join(' - ') || '—'}
+                      </div>
+                      <div className="text-sm font-bold text-brand-dark">{row.company || '—'}</div>
+                      {row.title ? <div className="text-sm text-gray-700">{row.title}</div> : null}
+                      {row.description ? (
+                        <ul className="mt-2 list-disc ps-4 space-y-1 text-xs text-gray-600">
+                          {row.description.split(/\n+/).filter(Boolean).map((line, li) => (
+                            <li key={li}>{line}</li>
+                          ))}
+                        </ul>
+                      ) : null}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Skills */}
             <div className="mb-8">

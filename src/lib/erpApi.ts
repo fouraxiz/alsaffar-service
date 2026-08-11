@@ -26,6 +26,22 @@ export type ErpNationality = {
 export type ErpCategory = { en: string | null; ar: string | null };
 export type ErpLanguage = { name: string; proficiency: string | null };
 
+export type ErpEducationEntry = {
+  from?: string | null;
+  to?: string | null;
+  institution?: string | null;
+  degree?: string | null;
+  description?: string | null;
+};
+
+export type ErpWorkExperienceEntry = {
+  from?: string | null;
+  to?: string | null;
+  company?: string | null;
+  title?: string | null;
+  description?: string | null;
+};
+
 export type ErpWorker = {
   worker_code: string;
   first_name: string | null;
@@ -39,6 +55,10 @@ export type ErpWorker = {
   category: ErpCategory;
   experience_years: number | null;
   skill_level: string | null;
+  experience_countries?: Array<{ en: string | null; ar: string | null; iso2?: string | null }>;
+  education?: string | null;
+  education_history?: ErpEducationEntry[];
+  work_experiences?: ErpWorkExperienceEntry[];
   skills: string[];
   languages: ErpLanguage[];
   available: boolean;
@@ -48,6 +68,8 @@ export type ErpWorker = {
   salary_expectation?: number | null;
   bio?: string | null;
   bio_ar?: string | null;
+  religion?: string | null;
+  marital_status?: string | null;
   job_type?: string | null;
 };
 

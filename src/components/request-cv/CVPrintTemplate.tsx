@@ -213,6 +213,14 @@ const CVPrintTemplate = forwardRef<HTMLDivElement, Props>(({ worker, locale = 'e
                   <span style={{ color: TEXT_MUTED }}>{isAr ? 'الخبرة' : 'Experience'}</span>
                   <span>{worker.experience} {isAr ? 'سنوات' : 'YRS'}</span>
                 </div>
+                {(worker.experienceCountries?.length ?? 0) > 0 && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', borderBottom: '1px solid #eee', paddingBottom: '4px' }}>
+                    <span style={{ color: TEXT_MUTED }}>{isAr ? 'دول الخبرة' : 'Exp. Countries'}</span>
+                    <span style={{ fontSize: '10.5px', lineHeight: 1.4 }}>
+                      {worker.experienceCountries!.map((c) => (isAr ? (c.ar || c.en) : c.en)).filter(Boolean).join(', ')}
+                    </span>
+                  </div>
+                )}
                 <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #eee', paddingBottom: '4px' }}>
                   <span style={{ color: TEXT_MUTED }}>{isAr ? 'الديانة' : 'Religion'}</span>
                   <span>{isAr ? worker.religionAr : worker.religion}</span>
@@ -239,26 +247,21 @@ const CVPrintTemplate = forwardRef<HTMLDivElement, Props>(({ worker, locale = 'e
             )}
 
             {/* EDUCATION */}
-            <div>
-              <SectionTitleLeft title={isAr ? 'التعليم' : 'EDUCATION'} />
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <EducationItem
-                  date="2029 - 2030"
-                  school={isAr ? 'جامعة بورسيل' : 'BORCELLE UNIVERSITY'}
-                  lines={[
-                    isAr ? 'ماجستير في إدارة الأعمال' : 'Master of Business Management'
-                  ]}
-                />
-                <EducationItem
-                  date="2025 - 2029"
-                  school={isAr ? 'جامعة بورسيل' : 'BORCELLE UNIVERSITY'}
-                  lines={[
-                    isAr ? 'بكالوريوس في الأعمال' : 'Bachelor of Business',
-                    'GPA: 3.8 / 4.0'
-                  ]}
-                />
+            {(worker.educationHistory?.length ?? 0) > 0 && (
+              <div>
+                <SectionTitleLeft title={isAr ? 'التعليم' : 'EDUCATION'} />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {worker.educationHistory!.map((row, i) => (
+                    <EducationItem
+                      key={i}
+                      date={[row.from, row.to].filter(Boolean).join(' - ') || '—'}
+                      school={row.institution || '—'}
+                      lines={[row.degree, row.description].filter(Boolean) as string[]}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* SKILLS */}
             {skills.length > 0 && (
@@ -284,41 +287,32 @@ const CVPrintTemplate = forwardRef<HTMLDivElement, Props>(({ worker, locale = 'e
             </div>
 
             {/* WORK EXPERIENCE */}
-            <div>
-              <SectionTitleRight title={isAr ? 'خبرة العمل' : 'WORK EXPERIENCE'} />
-              <div style={{
-                borderInlineStart: `1.5px solid ${TEXT_MAIN}`,
-                paddingInlineStart: '20px',
-                position: 'relative',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '16px'
-              }}>
-                <ExperienceItem
-                  date="2030 - PRESENT"
-                  company="Borcelle Studio"
-                  title={isAr ? `مدير ومختص ${worker.jobTypeAr}` : `${worker.jobType} Manager & Specialist`}
-                  bullets={[
-                    isAr ? 'تطوير وتنفيذ استراتيجيات وحملات تسويقية شاملة.' : 'Develop and execute comprehensive marketing strategies and campaigns that align with the company\'s goals and objectives.',
-                    isAr ? 'قيادة وتوجيه وإدارة فريق تسويق عالي الأداء.' : 'Lead, mentor, and manage a high-performing marketing team, fostering a collaborative and results-driven work environment.',
-                    isAr ? 'مراقبة اتساق العلامة التجارية عبر قنوات التسويق.' : 'Monitor brand consistency across marketing channels and materials.'
-                  ]}
-                />
-
-                {worker.experience >= 3 && (
-                  <ExperienceItem
-                    date="2025 - 2029"
-                    company="Fauget Studio"
-                    title={isAr ? `مدير ومختص ${worker.jobTypeAr}` : `${worker.jobType} Manager & Specialist`}
-                    bullets={[
-                      isAr ? 'إنشاء وإدارة ميزانية التسويق بشكل فعال.' : 'Create and manage the marketing budget, ensuring efficient allocation of resources and optimizing ROI.',
-                      isAr ? 'الإشراف على أبحاث السوق لتحديد الاتجاهات الناشئة.' : 'Oversee market research to identify emerging trends, customer needs, and competitor strategies.',
-                      isAr ? 'مراقبة اتساق العلامة التجارية عبر قنوات التسويق.' : 'Monitor brand consistency across marketing channels and materials.'
-                    ]}
-                  />
-                )}
+            {(worker.workExperiences?.length ?? 0) > 0 && (
+              <div>
+                <SectionTitleRight title={isAr ? 'خبرة العمل' : 'WORK EXPERIENCE'} />
+                <div style={{
+                  borderInlineStart: `1.5px solid ${TEXT_MAIN}`,
+                  paddingInlineStart: '20px',
+                  position: 'relative',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '16px'
+                }}>
+                  {worker.workExperiences!.map((row, i) => (
+                    <ExperienceItem
+                      key={i}
+                      date={[row.from, row.to].filter(Boolean).join(' - ') || '—'}
+                      company={row.company || '—'}
+                      title={row.title || jobTitle}
+                      bullets={(row.description || '')
+                        .split(/\n+/)
+                        .map((line) => line.trim())
+                        .filter(Boolean)}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* REFERENCE */}
             <div style={{ marginTop: 'auto' }}>

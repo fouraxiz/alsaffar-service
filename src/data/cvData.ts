@@ -1,3 +1,19 @@
+export type EducationEntry = {
+  from?: string | null;
+  to?: string | null;
+  institution: string;
+  degree: string;
+  description?: string;
+};
+
+export type WorkExperienceEntry = {
+  from?: string | null;
+  to?: string | null;
+  company: string;
+  title: string;
+  description?: string;
+};
+
 export type WorkerCV = {
   id: string;
   name: string;
@@ -10,6 +26,7 @@ export type WorkerCV = {
   jobType: string;
   jobTypeAr: string;
   experience: number;
+  experienceCountries?: Array<{ en: string; ar: string; iso2?: string }>;
   salaryExpectation: number;
   visaType: 'new' | 'transfer' | 'visit';
   serviceType: 'new_visa' | 'transfer' | 'monthly_rent' | 'hourly_rent' | string;
@@ -23,6 +40,8 @@ export type WorkerCV = {
   religionAr?: string;
   maritalStatus?: string;
   maritalStatusAr?: string;
+  educationHistory?: EducationEntry[];
+  workExperiences?: WorkExperienceEntry[];
   hasVideo: boolean;
   videoUrl?: string;
   photoUrl: string;

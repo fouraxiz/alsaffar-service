@@ -73,6 +73,36 @@ export function mapApiWorkerToCV(w: ErpWorker): WorkerCV {
 
   const jobSlug = slug(w.job_type || catEn);
 
+  const educationHistory = (w.education_history ?? [])
+    .map((row) => ({
+      from: row.from ?? null,
+      to: row.to ?? null,
+      institution: (row.institution ?? '').trim(),
+      degree: (row.degree ?? '').trim(),
+      description: (row.description ?? '').trim() || undefined,
+    }))
+    .filter((row) => row.institution || row.degree);
+
+  const workExperiences = (w.work_experiences ?? [])
+    .map((row) => ({
+      from: row.from ?? null,
+      to: row.to ?? null,
+      company: (row.company ?? '').trim(),
+      title: (row.title ?? '').trim(),
+      description: (row.description ?? '').trim() || undefined,
+    }))
+    .filter((row) => row.company || row.title);
+
+  const religion = (w.religion ?? '').trim() || undefined;
+  const maritalRaw = (w.marital_status ?? '').toLowerCase().trim();
+  const maritalLabels: Record<string, string> = {
+    single: 'Single',
+    married: 'Married',
+    divorced: 'Divorced',
+    widowed: 'Widowed',
+  };
+  const maritalStatus = maritalLabels[maritalRaw] || (w.marital_status ?? '').trim() || undefined;
+
   return {
     id: w.worker_code,
     name,
@@ -85,6 +115,13 @@ export function mapApiWorkerToCV(w: ErpWorker): WorkerCV {
     jobType: jobSlug,
     jobTypeAr: catAr,
     experience: typeof w.experience_years === 'number' ? w.experience_years : 0,
+    experienceCountries: (w.experience_countries ?? [])
+      .map((c) => ({
+        en: (c.en ?? '').trim(),
+        ar: (c.ar ?? c.en ?? '').trim(),
+        iso2: c.iso2 ?? undefined,
+      }))
+      .filter((c) => c.en || c.ar),
     salaryExpectation: typeof w.salary_expectation === 'number' ? w.salary_expectation : 0,
     visaType: 'new',
     // Not inventing a service — empty until ERP exposes one on the worker.
@@ -95,6 +132,12 @@ export function mapApiWorkerToCV(w: ErpWorker): WorkerCV {
     skillsAr: w.skills ?? [],
     bio: w.bio ?? '',
     bioAr: w.bio_ar ?? w.bio ?? '',
+    religion,
+    religionAr: religion,
+    maritalStatus,
+    maritalStatusAr: maritalStatus,
+    educationHistory,
+    workExperiences,
     hasVideo: !!w.video_url,
     videoUrl: w.video_url ?? undefined,
     photoUrl: w.photo_url ?? '',
