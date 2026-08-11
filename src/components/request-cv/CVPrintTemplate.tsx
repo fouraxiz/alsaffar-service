@@ -48,7 +48,7 @@ const CVPrintTemplate = forwardRef<HTMLDivElement, Props>(({ worker, locale = 'e
       `}</style>
 
       {/* ════════ MILK SHADOW BACKGROUND ════════ */}
-      <div 
+      <div
         style={{
           position: 'absolute',
           inset: 0,

@@ -37,7 +37,7 @@ export default function CVGallery({ workers, onSelect, viewMode = 'grid' }: Prop
     return (
       <div className="flex flex-col gap-4">
         {workers.map((worker) => (
-          <div 
+          <div
             key={worker.id}
             onClick={() => onSelect(worker)}
             className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-brand-orange transition-all duration-300 overflow-hidden cursor-pointer group flex flex-col sm:flex-row h-auto"
@@ -50,10 +50,10 @@ export default function CVGallery({ workers, onSelect, viewMode = 'grid' }: Prop
                 className="object-cover transition-transform duration-500 group-hover:scale-105"
                 iconSize={48}
               />
-              
+
               <div className="absolute top-3 start-3 shadow-sm bg-white p-1 rounded">
                 <div className="relative w-7 h-5 rounded-sm overflow-hidden flex items-center justify-center bg-gray-50">
-                  <img 
+                  <img
                     src={`https://flagcdn.com/w40/${worker.nationality}.png`}
                     alt={isAr ? worker.nationalityNameAr : worker.nationalityNameEn}
                     className="w-full h-full object-cover"
@@ -101,11 +101,11 @@ export default function CVGallery({ workers, onSelect, viewMode = 'grid' }: Prop
                   <div className="text-[10px] text-gray-400 uppercase font-bold">Salary</div>
                   <div className="text-sm font-bold text-brand-orange">{worker.salaryExpectation}</div>
                 </div>
-                
+
                 <div className="w-full sm:w-auto mt-2 sm:mt-0 sm:ms-auto">
-                   <div className="w-full sm:w-auto bg-gray-50 group-hover:bg-brand-orange text-gray-600 group-hover:text-white px-4 py-2 rounded-lg flex items-center justify-center text-sm font-bold transition-colors">
-                     {t('viewFullCV')}
-                   </div>
+                  <div className="w-full sm:w-auto bg-gray-50 group-hover:bg-brand-orange text-gray-600 group-hover:text-white px-4 py-2 rounded-lg flex items-center justify-center text-sm font-bold transition-colors">
+                    {t('viewFullCV')}
+                  </div>
                 </div>
               </div>
             </div>
@@ -118,7 +118,7 @@ export default function CVGallery({ workers, onSelect, viewMode = 'grid' }: Prop
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
       {workers.map((worker) => (
-        <div 
+        <div
           key={worker.id}
           onClick={() => onSelect(worker)}
           className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-brand-orange transition-all duration-300 overflow-hidden cursor-pointer group flex flex-col h-full"
@@ -131,11 +131,11 @@ export default function CVGallery({ workers, onSelect, viewMode = 'grid' }: Prop
               className="object-cover transition-transform duration-500 group-hover:scale-105"
               iconSize={48}
             />
-            
+
             {/* Nationality Flag Badge */}
             <div className="absolute top-3 start-3 shadow-sm bg-white p-1 rounded">
               <div className="relative w-7 h-5 rounded-sm overflow-hidden flex items-center justify-center bg-gray-50">
-                <img 
+                <img
                   src={`https://flagcdn.com/w40/${worker.nationality}.png`}
                   alt={isAr ? worker.nationalityNameAr : worker.nationalityNameEn}
                   className="w-full h-full object-cover"
