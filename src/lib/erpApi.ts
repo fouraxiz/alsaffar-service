@@ -75,7 +75,7 @@ export type ErpWorker = {
 
 export type ErpWorkerListResponse = {
   data: ErpWorker[];
-  meta?: { total?: number; per_page?: number; current_page?: number };
+  meta?: { total?: number; per_page?: number; current_page?: number; last_page?: number };
 };
 
 export type ErpCountry = {

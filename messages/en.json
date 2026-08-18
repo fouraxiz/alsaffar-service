@@ -308,6 +308,7 @@
     "noMatch": {
       "title": "Can't Find What You're Looking For?",
       "description": "Please provide your details and what you need, and our team will find the right candidate for you.",
+      "appliedFilters": "Your filters",
       "descLabel": "What are you looking for?",
       "descPlaceholder": "Describe the ideal worker, specific skills, or requirements...",
       "phoneLabel": "Phone Number",
@@ -315,14 +316,16 @@
       "idLabel": "ID Number",
       "idPlaceholder": "Enter Your ID number",
       "submit": "Submit Request",
+      "submitError": "Could not send your request. Please try again.",
       "successTitle": "Request Received",
       "successDesc": "We have received your requirements. Our recruitment specialist will contact you shortly with suitable profiles.",
+      "adjustFilters": "Adjust filters",
       "backToBrowse": "Back to Browsing"
     },
     "gallery": {
       "showing": "Showing {count} workers",
       "noResults": "No workers match your filters.",
-      "tryAdjusting": "Try adjusting your criteria or contact us directly.",
+      "tryAdjusting": "Tell us what you need and our team will follow up.",
       "viewFullCV": "View Full CV"
     },
     "detail": {

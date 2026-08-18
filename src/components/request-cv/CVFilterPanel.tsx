@@ -31,6 +31,20 @@ export type FilterOptions = {
 export const AGE_MIN = 18;
 export const AGE_MAX = 65;
 export const DEFAULT_AGE_RANGE: [number, number] = [AGE_MIN, AGE_MAX];
+export const DEFAULT_SALARY_RANGE: [number, number] = [1000, 5000];
+
+/** True when the visitor has narrowed the catalog (not just the default ranges). */
+export function hasActiveFilters(filters: FilterState): boolean {
+  return (
+    filters.nationality.length > 0 ||
+    filters.gender != null ||
+    filters.jobType.length > 0 ||
+    filters.experience != null ||
+    filters.serviceType.length > 0 ||
+    filters.ageRange[0] !== DEFAULT_AGE_RANGE[0] ||
+    filters.ageRange[1] !== DEFAULT_AGE_RANGE[1]
+  );
+}
 
 type Props = {
   filters: FilterState;
@@ -193,7 +207,7 @@ export default function CVFilterPanel({ filters, setFilters, options, loading }:
       gender: null,
       ageRange: DEFAULT_AGE_RANGE,
       jobType: [],
-      salaryRange: [1000, 5000],
+      salaryRange: DEFAULT_SALARY_RANGE,
       experience: null,
       serviceType: [],
     });

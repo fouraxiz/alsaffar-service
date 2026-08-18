@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { LayoutGrid, AlignJustify } from 'lucide-react';
 import { WorkerCV, NATIONALITIES_LIST, JOB_TYPES, SERVICE_TYPES, EXPERIENCE_RANGES } from '@/data/cvData';
-import CVFilterPanel, { FilterState, FilterOptions, DEFAULT_AGE_RANGE } from './CVFilterPanel';
+import CVFilterPanel, { FilterState, FilterOptions, DEFAULT_AGE_RANGE, DEFAULT_SALARY_RANGE, hasActiveFilters } from './CVFilterPanel';
 import CVGallery from './CVGallery';
 import CVGallerySkeleton from './CVGallerySkeleton';
 import CVDetailModal from './CVDetailModal';
@@ -76,6 +76,7 @@ export default function CVBrowser() {
   const [selectedCV, setSelectedCV] = useState<WorkerCV | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showRequestForm, setShowRequestForm] = useState(false);
+  const [skippedFilterKey, setSkippedFilterKey] = useState<string | null>(null);
 
   // Worker CVs come from the live ERP feed via our /api/workers route handler
   // (token stays server-side). `null` = still loading.
@@ -186,7 +187,7 @@ export default function CVBrowser() {
     gender: null,
     ageRange: DEFAULT_AGE_RANGE,
     jobType: [],
-    salaryRange: [1000, 5000],
+    salaryRange: DEFAULT_SALARY_RANGE,
     experience: null,
     serviceType: [],
   });
@@ -231,16 +232,32 @@ export default function CVBrowser() {
   });
 
   const handleClearFilters = () => {
+    setSkippedFilterKey(null);
+    setShowRequestForm(false);
     setFilters({
       nationality: [],
       gender: null,
       ageRange: DEFAULT_AGE_RANGE,
       jobType: [],
-      salaryRange: [1000, 5000],
+      salaryRange: [...DEFAULT_SALARY_RANGE],
       experience: null,
       serviceType: [],
     });
   };
+
+  const filterKey = useMemo(() => JSON.stringify(filters), [filters]);
+  const outOfScope = !isLoading && filteredWorkers.length === 0 && hasActiveFilters(filters);
+
+  // Out-of-scope filters: auto-open the mandatory lead form so the team can follow up.
+  useEffect(() => {
+    if (!outOfScope) {
+      setShowRequestForm(false);
+      return;
+    }
+    if (skippedFilterKey === filterKey) return;
+    const timer = window.setTimeout(() => setShowRequestForm(true), 450);
+    return () => window.clearTimeout(timer);
+  }, [outOfScope, filterKey, skippedFilterKey]);
 
   // Handlers
   const handleSelectWorker = (worker: WorkerCV) => {
@@ -332,25 +349,31 @@ export default function CVBrowser() {
               <div className="bg-white border border-gray-200 rounded-2xl p-10 text-center">
                 <p className="text-lg font-bold text-brand-dark mb-2">{t('gallery.noResults')}</p>
                 <p className="text-gray-500 mb-6">{t('gallery.tryAdjusting')}</p>
-                <button
-                  onClick={() => setShowRequestForm(true)}
-                  className="inline-flex items-center justify-center gap-2 bg-brand-orange hover:bg-brand-orange-dark text-white font-bold px-6 py-3 rounded-xl transition-colors"
-                >
-                  {t('noMatch.title')}
-                </button>
+                {hasActiveFilters(filters) && (
+                  <button
+                    onClick={() => {
+                      setSkippedFilterKey(null);
+                      setShowRequestForm(true);
+                    }}
+                    className="inline-flex items-center justify-center gap-2 bg-brand-orange hover:bg-brand-orange-dark text-white font-bold px-6 py-3 rounded-xl transition-colors"
+                  >
+                    {t('noMatch.title')}
+                  </button>
+                )}
               </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* Request-specific-worker form: opens only when the user clicks the button */}
       {showRequestForm && (
         <NoMatchForm
           filters={filters}
-          onClose={() => {
+          options={filterOptions}
+          onClose={handleClearFilters}
+          onAdjustFilters={() => {
+            setSkippedFilterKey(filterKey);
             setShowRequestForm(false);
-            handleClearFilters();
           }}
         />
       )}
