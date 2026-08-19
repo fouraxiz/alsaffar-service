@@ -225,6 +225,8 @@ export function fetchWorkers(query: WorkerQuery = {}): Promise<ErpWorkerListResp
   return erpFetch<ErpWorkerListResponse>('/workers', {
     query: { ...query },
     revalidate: 0,
+    // Live ERP list + signed photo URLs often exceeds the default 8s read timeout.
+    timeoutMs: 25000,
   });
 }
 

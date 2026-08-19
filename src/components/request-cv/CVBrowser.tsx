@@ -197,12 +197,6 @@ export default function CVBrowser() {
     if (filters.gender && worker.gender !== filters.gender) return false;
     if (worker.age > 0 && (worker.age < filters.ageRange[0] || worker.age > filters.ageRange[1])) return false;
     if (filters.jobType.length > 0 && !filters.jobType.includes(worker.jobType)) return false;
-    if (
-      worker.salaryExpectation > 0 &&
-      (worker.salaryExpectation < filters.salaryRange[0] || worker.salaryExpectation > filters.salaryRange[1])
-    ) {
-      return false;
-    }
     if (filters.experience) {
       if (filters.experience === 'fresh' || filters.experience === '0-1') {
         if (worker.experience > 2) return false;
