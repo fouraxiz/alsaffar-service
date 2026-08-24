@@ -42,7 +42,10 @@ export default function MotionBanner() {
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (!active || !Array.isArray(data?.banners)) return;
-        setApiBanners(data.banners as ApiBanner[]);
+        // Top strip only — home_hero feeds the large Hero rotator, not this marquee.
+        setApiBanners(
+          (data.banners as ApiBanner[]).filter((b) => b.placement !== 'home_hero')
+        );
       })
       .catch(() => {
         /* keep visual marquee */
