@@ -192,6 +192,22 @@ export default function CVBrowser() {
     serviceType: [],
   });
 
+  // Deep-link from promo banners: /request-cv?nationality=tz
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const nationality = params.get('nationality');
+    if (!nationality) return;
+    const codes = nationality
+      .split(',')
+      .map((c) => {
+        const code = c.trim().toLowerCase();
+        return code === 'bn' ? 'bd' : code;
+      })
+      .filter(Boolean);
+    if (codes.length === 0) return;
+    setFilters((prev) => ({ ...prev, nationality: codes }));
+  }, []);
+
   const filteredWorkers = (workers ?? []).filter((worker) => {
     if (filters.nationality.length > 0 && !filters.nationality.includes(worker.nationality)) return false;
     if (filters.gender && worker.gender !== filters.gender) return false;

@@ -103,6 +103,11 @@ export type ErpBanner = {
   title: { en: string | null; ar: string | null };
   image: string | null;
   link_url: string | null;
+  link?: {
+    type: string;
+    nationality: string | null;
+    href: string | null;
+  } | null;
   placement: string | null;
 };
 

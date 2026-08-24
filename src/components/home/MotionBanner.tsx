@@ -2,14 +2,30 @@
 
 import { useLocale } from 'next-intl';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 
 type ApiBanner = {
   title: { en: string | null; ar: string | null };
   image: string | null;
   link_url: string | null;
+  link?: {
+    type: string;
+    nationality: string | null;
+    href: string | null;
+  } | null;
   placement: string | null;
 };
+
+function resolveHref(banner: ApiBanner, locale: string): string | null {
+  const raw = banner.link?.href || banner.link_url;
+  if (!raw) return null;
+  if (/^https?:\/\//i.test(raw)) return raw;
+  const path = raw.startsWith('/') ? raw : `/${raw}`;
+  // Locale-prefixed internal paths: /en/request-cv?nationality=tz
+  if (path.startsWith('/en/') || path.startsWith('/ar/')) return path;
+  return `/${locale}${path}`;
+}
 
 export default function MotionBanner() {
   const locale = useLocale();
@@ -18,6 +34,7 @@ export default function MotionBanner() {
   const [apiBanners, setApiBanners] = useState<ApiBanner[]>([]);
   // Fallback demo toggle only when ERP has no live banners.
   const [demoCampaign, setDemoCampaign] = useState(false);
+  const [slide, setSlide] = useState(0);
 
   useEffect(() => {
     let active = true;
@@ -35,12 +52,22 @@ export default function MotionBanner() {
     };
   }, []);
 
-  const campaignItems = useMemo(() => {
+  const imageBanners = useMemo(
+    () => apiBanners.filter((b) => !!b.image),
+    [apiBanners],
+  );
+
+  const textCampaignItems = useMemo(() => {
+    if (imageBanners.length > 0) return [] as Array<{ text: string; href: string | null }>;
     const fromApi = apiBanners
-      .map((b) => (isAr ? b.title?.ar : b.title?.en)?.trim())
-      .filter((t): t is string => !!t);
+      .map((b) => {
+        const text = ((isAr ? b.title?.ar : b.title?.en) || b.title?.en || '').trim();
+        if (!text) return null;
+        return { text, href: resolveHref(b, locale) };
+      })
+      .filter((item): item is { text: string; href: string | null } => !!item);
     if (fromApi.length > 0) return fromApi;
-    return isAr
+    const demo = isAr
       ? [
           '🚀 خصم 20% على باقات الاستقدام للشركات هذا الأسبوع!',
           '🌟 استقدم الآن وادفع لاحقاً - حملة الصيف',
@@ -51,9 +78,19 @@ export default function MotionBanner() {
           '🌟 Hire Now, Pay Later - Summer Campaign',
           '👨‍🔧 Immediate Available Workers for Transfer',
         ];
-  }, [apiBanners, isAr]);
+    return demo.map((text) => ({ text, href: null as string | null }));
+  }, [apiBanners, imageBanners.length, isAr, locale]);
 
+  const showImageStrip = imageBanners.length > 0;
   const hasActiveCampaign = apiBanners.length > 0 || demoCampaign;
+
+  useEffect(() => {
+    if (imageBanners.length <= 1) return;
+    const id = window.setInterval(() => {
+      setSlide((s) => (s + 1) % imageBanners.length);
+    }, 6000);
+    return () => window.clearInterval(id);
+  }, [imageBanners.length]);
 
   const visualItems = [
     { src: '/images/3d/worker_office.png', alt: 'Professional Staffing', text: isAr ? 'كوادر مهنية' : 'Professional Staffing', icon: '🏢' },
@@ -61,8 +98,16 @@ export default function MotionBanner() {
     { src: '/images/3d/worker_engineer.png', alt: 'Skilled Workers', text: isAr ? 'عمالة ماهرة' : 'Skilled Workers', icon: '⚡' },
   ];
 
-  const repeatedCampaign = [...campaignItems, ...campaignItems, ...campaignItems, ...campaignItems];
+  const repeatedCampaign = [...textCampaignItems, ...textCampaignItems, ...textCampaignItems, ...textCampaignItems];
   const repeatedVisuals = [...visualItems, ...visualItems, ...visualItems, ...visualItems, ...visualItems];
+
+  const activeImage = imageBanners[slide] || imageBanners[0];
+  const activeHref = activeImage ? resolveHref(activeImage, locale) : null;
+  const activeTitle =
+    (isAr ? activeImage?.title?.ar : activeImage?.title?.en)?.trim() ||
+    activeImage?.title?.en ||
+    'Promotion';
+  const erpImageUnoptimized = !!(activeImage?.image && !activeImage.image.includes('images.unsplash.com'));
 
   return (
     <>
@@ -70,10 +115,14 @@ export default function MotionBanner() {
         className="w-full relative overflow-hidden mt-[64px] md:mt-[96px] motion-banner-wrapper sticky top-[64px] md:top-[96px] z-30"
         dir="ltr"
       >
-
         <style>{`
         .motion-banner-wrapper {
-          height: ${hasActiveCampaign ? '70px' : '130px'};
+          height: ${showImageStrip ? '160px' : hasActiveCampaign ? '70px' : '130px'};
+        }
+        @media (min-width: 768px) {
+          .motion-banner-wrapper {
+            height: ${showImageStrip ? '220px' : hasActiveCampaign ? '70px' : '130px'};
+          }
         }
         .banner-card {
           transform: scale(1.08);
@@ -91,6 +140,7 @@ export default function MotionBanner() {
           font-size: 11px;
         }
       `}</style>
+
         {/* Animated gradient background */}
         <div className="absolute inset-0 z-0" style={{
           background: 'linear-gradient(135deg, #0d1a0a 0%, #1a2f10 25%, #243a18 50%, #1a2f10 75%, #0d1a0a 100%)',
@@ -98,44 +148,34 @@ export default function MotionBanner() {
           animation: 'gradientShift 8s ease infinite',
         }} />
 
-        {/* Subtle grid pattern overlay */}
-        <div className="absolute inset-0 z-[1] opacity-[0.06]" style={{
-          backgroundImage: 'linear-gradient(rgba(232,135,10,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(232,135,10,0.5) 1px, transparent 1px)',
-          backgroundSize: '30px 30px',
-        }} />
-
-        {/* Floating particles */}
-        <div className="absolute inset-0 z-[2] overflow-hidden pointer-events-none">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="absolute rounded-full" style={{
-              width: `${3 + i * 2}px`,
-              height: `${3 + i * 2}px`,
-              background: 'radial-gradient(circle, rgba(232,135,10,0.6), transparent)',
-              left: `${10 + i * 16}%`,
-              top: `${20 + (i % 3) * 25}%`,
-              animation: `floatParticle ${3 + i * 0.7}s ease-in-out infinite alternate`,
-              animationDelay: `${i * 0.5}s`,
+        {!showImageStrip && (
+          <>
+            <div className="absolute inset-0 z-[1] opacity-[0.06]" style={{
+              backgroundImage: 'linear-gradient(rgba(232,135,10,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(232,135,10,0.5) 1px, transparent 1px)',
+              backgroundSize: '30px 30px',
             }} />
-          ))}
-        </div>
+            <div className="absolute inset-0 z-[2] overflow-hidden pointer-events-none">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="absolute rounded-full" style={{
+                  width: `${3 + i * 2}px`,
+                  height: `${3 + i * 2}px`,
+                  background: 'radial-gradient(circle, rgba(232,135,10,0.6), transparent)',
+                  left: `${10 + i * 16}%`,
+                  top: `${20 + (i % 3) * 25}%`,
+                  animation: `floatParticle ${3 + i * 0.7}s ease-in-out infinite alternate`,
+                  animationDelay: `${i * 0.5}s`,
+                }} />
+              ))}
+            </div>
+          </>
+        )}
 
-        {/* Top accent line - orange glow */}
         <div className="absolute top-0 left-0 right-0 h-[2px] z-[5]" style={{
           background: 'linear-gradient(90deg, transparent 0%, #E8870A 30%, #f5a623 50%, #E8870A 70%, transparent 100%)',
           boxShadow: '0 0 10px rgba(232,135,10,0.4), 0 0 20px rgba(232,135,10,0.2)',
         }} />
-
-        {/* Bottom accent line */}
         <div className="absolute bottom-0 left-0 right-0 h-[1px] z-[5]" style={{
           background: 'linear-gradient(90deg, transparent 0%, rgba(232,135,10,0.3) 50%, transparent 100%)',
-        }} />
-
-        {/* Edge fade gradients */}
-        <div className="absolute inset-y-0 left-0 w-32 md:w-48 z-[8] pointer-events-none" style={{
-          background: 'linear-gradient(90deg, #0d1a0a 0%, transparent 100%)',
-        }} />
-        <div className="absolute inset-y-0 right-0 w-32 md:w-48 z-[8] pointer-events-none" style={{
-          background: 'linear-gradient(270deg, #0d1a0a 0%, transparent 100%)',
         }} />
 
         <style>{`
@@ -179,20 +219,81 @@ export default function MotionBanner() {
         }
       `}</style>
 
-        {/* Content */}
         <div className="relative z-[6] flex items-center h-full">
-          {hasActiveCampaign ? (
-            /* --- CAMPAIGN MODE --- */
-            <div className="animate-marquee-banner gap-16 px-6 items-center h-full py-3">
-              {repeatedCampaign.map((text, i) => (
-                <div key={i} className="flex items-center gap-4">
-                  <span className="flex items-center justify-center w-7 h-7 rounded-full bg-brand-orange/20 border border-brand-orange/40 text-brand-orange text-sm" style={{
-                    animation: 'pulseRing 2s infinite',
-                    animationDelay: `${(i % 3) * 0.6}s`,
-                  }}>✦</span>
-                  <span dir={isAr ? 'rtl' : 'ltr'} className="shimmer-text font-black text-sm md:text-base tracking-wide">{text}</span>
+          {showImageStrip && activeImage?.image ? (
+            /* --- UPLOADED BANNER IMAGES (full art, no circular crop) --- */
+            <div className="relative w-full h-full">
+              {activeHref ? (
+                <Link
+                  href={activeHref}
+                  className="absolute inset-0 block focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange"
+                  aria-label={activeTitle}
+                >
+                  <Image
+                    src={activeImage.image}
+                    alt={activeTitle}
+                    fill
+                    priority
+                    sizes="100vw"
+                    className="object-contain object-center"
+                    unoptimized={erpImageUnoptimized}
+                  />
+                </Link>
+              ) : (
+                <div className="absolute inset-0">
+                  <Image
+                    src={activeImage.image}
+                    alt={activeTitle}
+                    fill
+                    priority
+                    sizes="100vw"
+                    className="object-contain object-center"
+                    unoptimized={erpImageUnoptimized}
+                  />
                 </div>
-              ))}
+              )}
+
+              {imageBanners.length > 1 && (
+                <div className="absolute bottom-2 left-1/2 z-10 flex -translate-x-1/2 gap-1.5">
+                  {imageBanners.map((_, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      aria-label={`Banner ${i + 1}`}
+                      onClick={() => setSlide(i)}
+                      className={`h-1.5 rounded-full transition-all ${
+                        i === slide ? 'w-6 bg-brand-orange' : 'w-1.5 bg-white/50 hover:bg-white/80'
+                      }`}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : hasActiveCampaign ? (
+            /* --- TEXT CAMPAIGN MODE (titles only / demo) --- */
+            <div className="animate-marquee-banner gap-16 px-6 items-center h-full py-3">
+              {repeatedCampaign.map((item, i) => {
+                const inner = (
+                  <>
+                    <span className="flex items-center justify-center w-7 h-7 rounded-full bg-brand-orange/20 border border-brand-orange/40 text-brand-orange text-sm" style={{
+                      animation: 'pulseRing 2s infinite',
+                      animationDelay: `${(i % 3) * 0.6}s`,
+                    }}>✦</span>
+                    <span dir={isAr ? 'rtl' : 'ltr'} className="shimmer-text font-black text-sm md:text-base tracking-wide">{item.text}</span>
+                  </>
+                );
+                return (
+                  <div key={i} className="flex items-center gap-4">
+                    {item.href ? (
+                      <Link href={item.href} className="flex items-center gap-4 hover:opacity-90">
+                        {inner}
+                      </Link>
+                    ) : (
+                      inner
+                    )}
+                  </div>
+                );
+              })}
             </div>
           ) : (
             /* --- 3D VISUALS MODE --- */
@@ -205,7 +306,6 @@ export default function MotionBanner() {
                     backdropFilter: 'blur(8px)',
                   }}
                 >
-                  {/* Glowing avatar */}
                   <div className="relative shrink-0">
                     <div className="absolute -inset-1 rounded-full opacity-100" style={{
                       background: 'conic-gradient(from 0deg, #E8870A, #1A1F00, #E8870A)',
@@ -223,8 +323,6 @@ export default function MotionBanner() {
                       />
                     </div>
                   </div>
-
-                  {/* Text with icon */}
                   <div className="flex flex-col pe-4">
                     <span className="banner-label text-brand-orange/80 font-medium tracking-widest uppercase">
                       {item.icon} {isAr ? 'الصّفّار' : 'ALSAFFAR'}
@@ -236,8 +334,6 @@ export default function MotionBanner() {
                       {item.text}
                     </span>
                   </div>
-
-                  {/* Decorative arrow */}
                   <div className="text-brand-orange/40 group-hover:text-brand-orange/80 transition-colors text-lg">
                     ›
                   </div>
@@ -248,7 +344,6 @@ export default function MotionBanner() {
         </div>
       </div>
 
-      {/* Demo toggle only when CMS has no live banners */}
       {apiBanners.length === 0 ? (
         <button
           type="button"
