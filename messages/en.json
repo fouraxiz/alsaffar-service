@@ -347,6 +347,9 @@
       "loginRequiredTitle": "Sign in required",
       "loginRequiredMessage": "Please sign in with your customer account first to download the PDF or select this worker. After sign in you will return to this page.",
       "loginRequiredCta": "Customer Sign In",
+      "loginRequiredTitle": "Log in required",
+      "loginRequiredMessage": "Please log in with your customer account first to download the PDF or select this worker. After log in you will return to this page.",
+      "loginRequiredCta": "Customer Log In",
       "loginRequiredCancel": "Cancel"
     },
     "actions": {

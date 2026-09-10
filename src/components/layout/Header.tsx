@@ -39,6 +39,7 @@ function AuthDropdown({
   const ref = useRef<HTMLDivElement>(null);
   const label = action === 'login'
     ? (isAr ? 'دخول' : 'Sign In')
+    ? (isAr ? 'دخول' : 'Log In')
     : (isAr ? 'تسجيل' : 'Sign Up');
   const options: { portal: PortalKind; label: string }[] = [
     { portal: 'customer', label: isAr ? 'عميل' : 'Customer' },
@@ -115,6 +116,7 @@ function MobileAuthLinks({
 
   const rows: { action: AuthAction; label: string; solid: boolean }[] = [
     { action: 'login', label: isAr ? 'دخول' : 'Sign In', solid: false },
+    { action: 'login', label: isAr ? 'دخول' : 'Log In', solid: false },
     { action: 'register', label: isAr ? 'تسجيل' : 'Sign Up', solid: true },
   ];
 
