@@ -11,10 +11,27 @@ const WhatsAppIcon = ({ size = 20 }: { size?: number }) => (
   </svg>
 );
 
-export default function Hero() {
+export interface HeroContentProps {
+  title?: string;
+  titleHighlight?: string;
+  subtitle?: string;
+}
+
+interface HeroProps {
+  initialContent?: HeroContentProps | null;
+}
+
+export default function Hero({ initialContent }: HeroProps = {}) {
   const t = useTranslations('hero');
   const locale = useLocale();
   const isAr = locale === 'ar';
+
+  const title = initialContent?.title || t('title');
+  const titleHighlight =
+    initialContent?.titleHighlight !== undefined
+      ? initialContent.titleHighlight
+      : t('titleHighlight');
+  const subtitle = initialContent?.subtitle || t('subtitle');
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-white/60 via-brand-light/55 to-orange-50/60">
@@ -43,11 +60,13 @@ export default function Hero() {
             </div>
 
             <h1 className="text-3xl sm:text-4xl xl:text-5xl font-black text-brand-dark leading-tight mb-5">
-              {t('title')}{' '}
-              <span className="text-brand-orange block mt-1">{t('titleHighlight')}</span>
+              {title}{' '}
+              {titleHighlight && (
+                <span className="text-brand-orange block mt-1">{titleHighlight}</span>
+              )}
             </h1>
 
-            <p className="text-gray-600 text-lg leading-relaxed mb-8 max-w-lg">{t('subtitle')}</p>
+            <p className="text-gray-600 text-lg leading-relaxed mb-8 max-w-lg">{subtitle}</p>
 
             {/* Contact CTA buttons */}
             <div className="flex flex-wrap gap-2 mb-8">

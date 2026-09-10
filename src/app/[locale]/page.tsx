@@ -8,18 +8,22 @@ import CTABanner from '@/components/home/CTABanner';
 import WhatsAppPopup from '@/components/shared/WhatsAppPopup';
 import GuaranteeInfo from '@/components/home/GuaranteeInfo';
 import { getServices } from '@/lib/getServices';
+import { getHomeHeroContent } from '@/lib/getPageContent';
 
 type Props = {params: Promise<{locale: string}>};
 
 export default async function HomePage({params}: Props) {
   const {locale} = await params;
   setRequestLocale(locale);
-  const { services } = await getServices();
+  const [{ services }, { hero }] = await Promise.all([
+    getServices(),
+    getHomeHeroContent(locale),
+  ]);
 
   return (
     <>
       <WhatsAppPopup />
-      <Hero />
+      <Hero initialContent={hero} />
       <ServicesSection initialServices={services} />
       <NationalityFlags />
       <TrustBadgesTop />
