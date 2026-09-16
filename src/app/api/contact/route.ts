@@ -3,27 +3,35 @@ import { Resend } from 'resend';
 import { postLead, erpEnabled } from '@/lib/erpApi';
 
 /**
- * Best-effort mirror of a contact submission into the ERP CRM as a Lead.
- * Never throws to the caller — email is the source of truth for the reply,
- * the CRM lead is an additive capture. Runs server-side so no token leaks.
+ * Mirror a contact submission into the ERP CRM as a Lead.
+ * CRM is a first-class capture path (not gated on email success).
  */
 async function mirrorLeadToCrm(payload: {
   name: string;
   phone: string;
   service: string;
   message: string;
-}): Promise<void> {
-  if (!erpEnabled()) return;
+}): Promise<boolean> {
+  if (!erpEnabled()) return false;
   try {
     await postLead({
       name: payload.name,
       phone: payload.phone,
-      service_type: payload.service || null,
+      service_key: payload.service || null,
       message: payload.message || null,
-      source: 'website-contact',
+      // Structured blocks are built on the ERP side from dedicated fields.
+      id_number: null,
+      filters: null,
+      utm: {
+        utm_source: 'website',
+        utm_medium: 'contact',
+        landing_path: '/contact',
+      },
     });
+    return true;
   } catch (err) {
-    console.error('[contact] CRM lead mirror failed (non-fatal):', err);
+    console.error('[contact] CRM lead mirror failed:', err);
+    return false;
   }
 }
 
@@ -70,24 +78,21 @@ export async function POST(request: Request) {
     );
   }
 
+  let emailed = false;
+  let crm = false;
+
+  // 1) Always try CRM first so leads appear even when email is misconfigured.
+  crm = await mirrorLeadToCrm({ name, phone, service, message });
+
+  // 2) Best-effort email to the team (non-blocking for CRM success).
   const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) {
-    console.error('[contact] RESEND_API_KEY is not set');
-    return NextResponse.json(
-      { error: 'Email service is not configured.' },
-      { status: 500 }
-    );
-  }
+  if (apiKey) {
+    const to = process.env.CONTACT_TO_EMAIL || 'support@alsaffar.pro';
+    const from = process.env.CONTACT_FROM_EMAIL || 'Alsaffar Website <onboarding@resend.dev>';
+    const serviceLabel = service || '—';
+    const messageLabel = message || '—';
 
-  const to = process.env.CONTACT_TO_EMAIL || 'support@alsaffar.pro';
-  // From must be a verified domain in Resend; falls back to Resend's shared
-  // sandbox sender until alsaffar.pro is verified.
-  const from = process.env.CONTACT_FROM_EMAIL || 'Alsaffar Website <onboarding@resend.dev>';
-
-  const serviceLabel = service || '—';
-  const messageLabel = message || '—';
-
-  const html = `
+    const html = `
     <div style="font-family: Arial, sans-serif; color: #1A1F00; line-height: 1.6;">
       <h2 style="margin: 0 0 16px;">New contact message — Alsaffar website</h2>
       <table style="border-collapse: collapse;">
@@ -100,26 +105,33 @@ export async function POST(request: Request) {
     </div>
   `;
 
-  try {
-    const resend = new Resend(apiKey);
-    const { error } = await resend.emails.send({
-      from,
-      to,
-      subject: `New contact message from ${name}`,
-      html,
-    });
-
-    if (error) {
-      console.error('[contact] Resend error:', error);
-      return NextResponse.json({ error: 'Failed to send message.' }, { status: 502 });
+    try {
+      const resend = new Resend(apiKey);
+      const { error } = await resend.emails.send({
+        from,
+        to,
+        subject: `New contact message from ${name}`,
+        html,
+      });
+      if (error) {
+        console.error('[contact] Resend error:', error);
+      } else {
+        emailed = true;
+      }
+    } catch (err) {
+      console.error('[contact] Email failed:', err);
     }
-
-    // Additive: also capture the enquiry as a CRM lead (best-effort, non-fatal).
-    await mirrorLeadToCrm({ name, phone, service, message });
-
-    return NextResponse.json({ ok: true });
-  } catch (err) {
-    console.error('[contact] Unexpected error:', err);
-    return NextResponse.json({ error: 'Failed to send message.' }, { status: 500 });
+  } else {
+    console.warn('[contact] RESEND_API_KEY is not set — skipping email; CRM path used if enabled.');
   }
+
+  if (!emailed && !crm) {
+    if (!apiKey && !erpEnabled()) {
+      console.warn('[contact] No email or CRM configured; accepting for local/demo.');
+      return NextResponse.json({ ok: true });
+    }
+    return NextResponse.json({ error: 'Failed to send message.' }, { status: 502 });
+  }
+
+  return NextResponse.json({ ok: true, crm, emailed });
 }

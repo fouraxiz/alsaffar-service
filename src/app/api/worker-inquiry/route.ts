@@ -52,25 +52,23 @@ export async function POST(request: Request) {
     );
   }
 
-  const messageParts = [
-    `Recruit request for worker ${workerCode}`,
-    workerName ? `Worker name: ${workerName}` : null,
-    city ? `City: ${city}` : null,
-    address ? `Address: ${address}` : null,
-  ].filter(Boolean);
+  // Message = customer intent only; city/address/worker go in structured meta for note blocks.
+  const customerMessage = `Recruit request for worker ${workerCode}${workerName ? ` (${workerName})` : ''}`;
 
   const outbound = new FormData();
   outbound.append('worker_code', workerCode);
   outbound.append('name', name);
   outbound.append('phone', phone);
   if (email) outbound.append('email', email);
-  outbound.append('message', messageParts.join(' | '));
+  outbound.append('message', customerMessage);
   outbound.append('locale', locale);
   outbound.append('utm[utm_source]', 'website');
   outbound.append('utm[utm_medium]', 'continue-to-recruit');
   outbound.append('utm[landing_path]', '/request-cv');
   outbound.append('utm[worker_code]', workerCode);
   if (workerName) outbound.append('utm[worker_name]', workerName);
+  if (city) outbound.append('utm[city]', city);
+  if (address) outbound.append('utm[address]', address);
   outbound.append('visa', visa, visa.name);
   outbound.append('national_id', nationalId, nationalId.name);
 

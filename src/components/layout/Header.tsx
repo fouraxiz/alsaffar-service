@@ -37,8 +37,8 @@ function AuthDropdown({
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  // Log In = existing account · Sign Up = new account (clearer than Sign In / Sign Up)
   const label = action === 'login'
-    ? (isAr ? 'دخول' : 'Sign In')
     ? (isAr ? 'دخول' : 'Log In')
     : (isAr ? 'تسجيل' : 'Sign Up');
   const options: { portal: PortalKind; label: string }[] = [
@@ -115,7 +115,6 @@ function MobileAuthLinks({
   const [openAction, setOpenAction] = useState<AuthAction | null>(null);
 
   const rows: { action: AuthAction; label: string; solid: boolean }[] = [
-    { action: 'login', label: isAr ? 'دخول' : 'Sign In', solid: false },
     { action: 'login', label: isAr ? 'دخول' : 'Log In', solid: false },
     { action: 'register', label: isAr ? 'تسجيل' : 'Sign Up', solid: true },
   ];
