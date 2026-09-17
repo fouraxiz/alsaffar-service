@@ -36,7 +36,7 @@ export default function MotionBanner() {
   const [isHovered, setIsHovered] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const singleTrackRef = useRef<HTMLDivElement>(null);
+  const measureTrackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let active = true;
@@ -56,15 +56,6 @@ export default function MotionBanner() {
     return () => {
       active = false;
     };
-  }, []);
-
-  // Check if all images fit in 1 line or if they overflow
-  const checkOverflow = useCallback(() => {
-    if (!containerRef.current || !singleTrackRef.current) return;
-    const containerWidth = containerRef.current.clientWidth;
-    const trackWidth = singleTrackRef.current.scrollWidth;
-    // If content width exceeds container width minus small buffer, it overflows
-    setIsOverflowing(trackWidth > containerWidth - 16);
   }, []);
 
   const imageBanners = useMemo(() => {
@@ -98,6 +89,19 @@ export default function MotionBanner() {
     return [];
   }, [apiBanners, demoMode]);
 
+  // STABLE overflow checker: measures the permanent offscreen track that never mutates
+  const checkOverflow = useCallback(() => {
+    if (!containerRef.current || !measureTrackRef.current) return;
+    const containerWidth = containerRef.current.clientWidth;
+    const contentWidth = measureTrackRef.current.scrollWidth;
+
+    if (containerWidth <= 0 || contentWidth <= 0) return;
+
+    // True overflow: only when content exceeds container width with 24px safety margin
+    const overflows = contentWidth > containerWidth - 24;
+    setIsOverflowing((prev) => (prev !== overflows ? overflows : prev));
+  }, []);
+
   const textCampaignItems = useMemo(() => {
     if (imageBanners.length > 0) return [] as Array<{ text: string; href: string | null }>;
     const fromApi = apiBanners
@@ -130,7 +134,7 @@ export default function MotionBanner() {
   const showImageStrip = imageBanners.length > 0;
   const hasActiveCampaign = textCampaignItems.length > 0;
 
-  // Observe container size and track width to toggle between 1-line static and auto-scroll
+  // Measure overflow accurately and smoothly without rapid re-render loops
   useEffect(() => {
     if (!showImageStrip) return;
 
@@ -145,8 +149,8 @@ export default function MotionBanner() {
     observer.observe(container);
     window.addEventListener('resize', checkOverflow);
 
-    const t1 = setTimeout(checkOverflow, 150);
-    const t2 = setTimeout(checkOverflow, 600);
+    const t1 = setTimeout(checkOverflow, 200);
+    const t2 = setTimeout(checkOverflow, 800);
 
     return () => {
       observer.disconnect();
@@ -159,13 +163,14 @@ export default function MotionBanner() {
   // For continuous seamless marquee when overflowing
   const repeatedBanners = useMemo(() => {
     if (imageBanners.length === 0) return [];
+    // Ensure sufficient items to span full screen width before duplicating
     if (imageBanners.length === 1) return [...imageBanners, ...imageBanners, ...imageBanners, ...imageBanners];
     if (imageBanners.length === 2) return [...imageBanners, ...imageBanners];
     return imageBanners;
   }, [imageBanners]);
 
   const marqueeDuration = useMemo(() => {
-    return Math.max(22, repeatedBanners.length * 10);
+    return Math.max(25, repeatedBanners.length * 12);
   }, [repeatedBanners.length]);
 
   const visualItems = [
@@ -183,17 +188,16 @@ export default function MotionBanner() {
     const isExternal = href?.startsWith('http');
 
     const cardContent = (
-      <div className="relative h-full flex-shrink-0 flex items-center justify-center rounded-xl p-1 md:p-1.5 transition-all duration-300 group/banner overflow-hidden border border-white/15 hover:border-brand-orange/70 bg-black/25 hover:bg-black/40 backdrop-blur-xs shadow-[0_2px_12px_rgba(0,0,0,0.35)] hover:shadow-[0_4px_20px_rgba(232,135,10,0.25)] hover:scale-[1.02]">
-        {/* Subtle orange accent glow on hover */}
-        <div className="absolute inset-0 opacity-0 group-hover/banner:opacity-100 transition-opacity duration-300 pointer-events-none bg-gradient-to-r from-brand-orange/10 via-transparent to-brand-orange/10" />
+      <div className="relative h-full flex-shrink-0 flex items-center justify-center rounded-2xl p-1 md:p-1.5 transition-all duration-300 group/banner overflow-hidden border border-brand-orange/30 hover:border-brand-orange bg-gradient-to-b from-white/[0.08] to-white/[0.02] hover:from-white/[0.14] hover:to-white/[0.05] backdrop-blur-sm shadow-[0_4px_16px_rgba(0,0,0,0.35)] hover:shadow-[0_6px_24px_rgba(232,135,10,0.25)] hover:scale-[1.03]">
+        {/* Subtle top gold accent line */}
+        <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-brand-orange/60 to-transparent opacity-60 group-hover/banner:opacity-100 transition-opacity" />
 
         {/* Banner image with preserved aspect ratio */}
         <img
           src={banner.image || ''}
           alt={title}
           title={title}
-          onLoad={checkOverflow}
-          className="h-full w-auto max-h-full object-contain rounded-lg block select-none pointer-events-none"
+          className="h-full w-auto max-h-full object-contain rounded-xl block select-none pointer-events-none"
         />
       </div>
     );
@@ -203,7 +207,7 @@ export default function MotionBanner() {
         <Link
           key={key}
           href={href}
-          className="h-full flex-shrink-0 block focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange rounded-xl"
+          className="h-full flex-shrink-0 block focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange rounded-2xl"
           aria-label={title}
           target={isExternal ? '_blank' : undefined}
           rel={isExternal ? 'noopener noreferrer' : undefined}
@@ -228,16 +232,16 @@ export default function MotionBanner() {
       >
         <style>{`
         .motion-banner-wrapper {
-          height: ${showImageStrip ? '92px' : hasActiveCampaign ? '70px' : '130px'};
+          height: ${showImageStrip ? '100px' : hasActiveCampaign ? '70px' : '130px'};
         }
         @media (min-width: 640px) {
           .motion-banner-wrapper {
-            height: ${showImageStrip ? '108px' : hasActiveCampaign ? '70px' : '130px'};
+            height: ${showImageStrip ? '120px' : hasActiveCampaign ? '70px' : '130px'};
           }
         }
         @media (min-width: 768px) {
           .motion-banner-wrapper {
-            height: ${showImageStrip ? '124px' : hasActiveCampaign ? '70px' : '130px'};
+            height: ${showImageStrip ? '140px' : hasActiveCampaign ? '70px' : '130px'};
           }
         }
         .banner-card {
@@ -255,16 +259,16 @@ export default function MotionBanner() {
         .banner-label {
           font-size: 11px;
         }
-        @keyframes bannerStripScroll {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
+        @keyframes bannerMarqueeScroll {
+          0% { transform: translate3d(0, 0, 0); }
+          100% { transform: translate3d(-50%, 0, 0); }
         }
         .banner-marquee-track {
           display: flex;
           align-items: center;
           white-space: nowrap;
           width: max-content;
-          animation: bannerStripScroll linear infinite;
+          animation: bannerMarqueeScroll linear infinite;
           will-change: transform;
         }
         .banner-marquee-track:hover {
@@ -274,17 +278,8 @@ export default function MotionBanner() {
           animation-play-state: paused !important;
         }
         @keyframes marquee-scroll {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-        @keyframes gradientShift {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-        @keyframes floatParticle {
-          0% { transform: translateY(0) scale(1); opacity: 0.4; }
-          100% { transform: translateY(-15px) scale(1.5); opacity: 0.8; }
+          0% { transform: translate3d(0, 0, 0); }
+          100% { transform: translate3d(-50%, 0, 0); }
         }
         @keyframes shimmer {
           0% { background-position: -200% center; }
@@ -300,6 +295,7 @@ export default function MotionBanner() {
           white-space: nowrap;
           width: max-content;
           animation: marquee-scroll 40s linear infinite;
+          will-change: transform;
         }
         .animate-marquee-banner:hover {
           animation-play-state: paused;
@@ -313,13 +309,11 @@ export default function MotionBanner() {
         }
       `}</style>
 
-        {/* Luxury animated gradient background */}
+        {/* Stable Luxury deep green gradient background */}
         <div
           className="absolute inset-0 z-0"
           style={{
-            background: 'linear-gradient(135deg, #0d1a0a 0%, #1a2f10 25%, #243a18 50%, #1a2f10 75%, #0d1a0a 100%)',
-            backgroundSize: '400% 400%',
-            animation: 'gradientShift 8s ease infinite',
+            background: 'linear-gradient(135deg, #091307 0%, #13240c 50%, #091307 100%)',
           }}
         />
 
@@ -344,8 +338,6 @@ export default function MotionBanner() {
                     background: 'radial-gradient(circle, rgba(232,135,10,0.6), transparent)',
                     left: `${10 + i * 16}%`,
                     top: `${20 + (i % 3) * 25}%`,
-                    animation: `floatParticle ${3 + i * 0.7}s ease-in-out infinite alternate`,
-                    animationDelay: `${i * 0.5}s`,
                   }}
                 />
               ))}
@@ -368,42 +360,52 @@ export default function MotionBanner() {
           }}
         />
 
+        {/* Permanent hidden measurement track to reliably test if banners fit in 1 line */}
+        {showImageStrip && (
+          <div
+            ref={measureTrackRef}
+            aria-hidden="true"
+            className="absolute left-0 top-0 opacity-0 pointer-events-none -z-50 flex items-center gap-4 sm:gap-6 md:gap-8 flex-nowrap"
+            style={{ visibility: 'hidden', height: '100%', width: 'max-content' }}
+          >
+            {imageBanners.map((banner, i) => (
+              <div key={`measure-${i}`} className="h-full flex-shrink-0 flex items-center">
+                <img
+                  src={banner.image || ''}
+                  alt=""
+                  onLoad={checkOverflow}
+                  className="h-full w-auto object-contain"
+                />
+              </div>
+            ))}
+          </div>
+        )}
+
         <div ref={containerRef} className="relative z-[6] flex items-center h-full w-full overflow-hidden">
           {showImageStrip ? (
-            /* --- UPLOADED IMAGE BANNERS (All images at 1 line, auto-moves if not set in 1 line) --- */
+            /* --- UPLOADED IMAGE BANNERS --- */
             <div
-              className="relative w-full h-full flex items-center overflow-hidden py-1.5 md:py-2"
+              className="relative w-full h-full flex items-center overflow-hidden py-1.5 md:py-2.5"
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
               onTouchStart={() => setIsHovered(true)}
               onTouchEnd={() => setIsHovered(false)}
             >
-              {/* If images fit in 1 line: show centered in 1 line without auto-movement */}
+              {/* If images fit in 1 line: show centered in 1 line without any scrolling */}
               {!isOverflowing ? (
-                <div
-                  ref={singleTrackRef}
-                  className="flex items-center justify-center gap-3 sm:gap-4 md:gap-6 h-full w-full px-4"
-                >
+                <div className="flex items-center justify-center gap-4 sm:gap-6 md:gap-8 h-full w-full px-4">
                   {imageBanners.map((banner, i) => renderBannerCard(banner, `static-${i}`))}
                 </div>
               ) : (
-                /* If NOT set in 1 line (overflowing): line auto moves horizontally in a smooth loop */
+                /* If NOT set in 1 line (overflows container): smoothly auto-move horizontally */
                 <div className="relative w-full h-full flex items-center overflow-hidden">
                   {/* Left & right edge fade masks */}
-                  <div className="absolute left-0 top-0 bottom-0 w-8 md:w-20 z-10 pointer-events-none bg-gradient-to-r from-[#0d1a0a] via-[#0d1a0a]/80 to-transparent" />
-                  <div className="absolute right-0 top-0 bottom-0 w-8 md:w-20 z-10 pointer-events-none bg-gradient-to-l from-[#0d1a0a] via-[#0d1a0a]/80 to-transparent" />
+                  <div className="absolute left-0 top-0 bottom-0 w-8 md:w-20 z-10 pointer-events-none bg-gradient-to-r from-[#091307] via-[#091307]/80 to-transparent" />
+                  <div className="absolute right-0 top-0 bottom-0 w-8 md:w-20 z-10 pointer-events-none bg-gradient-to-l from-[#091307] via-[#091307]/80 to-transparent" />
 
-                  {/* Hidden measurement track to monitor size changes */}
+                  {/* Hardware-accelerated continuous moving marquee track */}
                   <div
-                    ref={singleTrackRef}
-                    className="absolute opacity-0 pointer-events-none -z-50 flex gap-3 sm:gap-4 md:gap-6 h-full"
-                  >
-                    {imageBanners.map((banner, i) => renderBannerCard(banner, `measure-${i}`))}
-                  </div>
-
-                  {/* Continuous moving marquee track */}
-                  <div
-                    className={`banner-marquee-track gap-3 sm:gap-4 md:gap-6 h-full px-2 ${
+                    className={`banner-marquee-track gap-4 sm:gap-6 md:gap-8 h-full px-2 ${
                       isHovered ? 'banner-marquee-paused' : ''
                     }`}
                     style={{
