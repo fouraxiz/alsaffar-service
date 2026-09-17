@@ -99,16 +99,14 @@ export async function POST(request: Request) {
 
   if (erpEnabled()) {
     try {
-      const messageParts = [
-        description ? `Request: ${description}` : null,
-        idNumber ? `ID: ${idNumber}` : null,
-        filters ? `Filters: ${filters}` : null,
-      ].filter(Boolean);
-
+      // Keep message = what the customer wrote. Bio + filters are separate fields
+      // so the ERP lead notes can show titled blocks (bio / message / filter history).
       await postLead({
         name: 'Website visitor',
         phone,
-        message: messageParts.join(' | ') || 'Specific worker request',
+        message: description || 'Specific worker request',
+        id_number: idNumber || null,
+        filters: filters || null,
         service_key: 'browse-cv-no-match',
         utm: {
           utm_source: 'website',
