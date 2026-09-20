@@ -322,9 +322,9 @@ export function fetchBanners(placement?: string): Promise<ErpBannerListResponse>
   });
 }
 
-/** READ: published page + visible sections. */
+/** READ: published page + visible sections. Fresh on every request so panel edits reflect immediately. */
 export function fetchPageContent(page: string): Promise<{ success?: boolean; data: ErpPageContent }> {
-  return erpFetch<{ success?: boolean; data: ErpPageContent }>(`/content/${encodeURIComponent(page)}`);
+  return erpFetch<{ success?: boolean; data: ErpPageContent }>(`/content/${encodeURIComponent(page)}`, { revalidate: 0 });
 }
 
 /** READ: visible sections across published pages. */
