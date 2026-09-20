@@ -112,10 +112,34 @@ export default function LiveChatBar() {
       addBotMessage(getQuestion(nextStep, text, isAr));
       setChatStep(nextStep);
     } else {
-      // Phase 2: show summary, open WhatsApp, show confirmation.
+      // Phase 2: CRM lead + summary + WhatsApp confirmation.
       setChatStep(5);
 
       const d = newData;
+      const notes = d.notes && !/^(none|لا|no)$/i.test(d.notes.trim()) ? d.notes.trim() : '';
+      const crmMessage = [
+        'Live chat consultation request',
+        `Country: ${d.country}`,
+        notes ? `Notes: ${notes}` : null,
+      ]
+        .filter(Boolean)
+        .join('\n');
+
+      // Capture in CRM Leads (same bridge as Contact Us). Do not block WhatsApp.
+      fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: d.name,
+          phone: d.phone,
+          service: d.service,
+          message: crmMessage,
+          medium: 'chatbot',
+          source: 'chatbot',
+          landing_path: typeof window !== 'undefined' ? window.location.pathname : '/',
+        }),
+      }).catch(() => {});
+
       const summary = isAr
         ? `✅ شكراً على معلوماتك! إليك ملخص طلبك:\n\n👤 الاسم: ${d.name}\n🌍 الدولة: ${d.country}\n🔧 الخدمة: ${d.service}\n📞 الهاتف: ${d.phone}\n📝 ملاحظات: ${d.notes}\n\nجارٍ فتح واتساب لتأكيد طلبك...`
         : `✅ Thank you! Here is your consultation request:\n\n👤 Name: ${d.name}\n🌍 Country: ${d.country}\n🔧 Service: ${d.service}\n📞 Phone: ${d.phone}\n📝 Notes: ${d.notes}\n\nOpening WhatsApp to confirm your request...`;

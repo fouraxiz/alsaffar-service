@@ -36,7 +36,10 @@ export default function NationalityFlags() {
   const [hovered, setHovered] = useState<string | null>(null);
 
   const [selectedNationality, setSelectedNationality] = useState<Nationality | null>(null);
-  const [formState, setFormState] = useState<'idle' | 'submitting' | 'success'>('idle');
+  const [formState, setFormState] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [formName, setFormName] = useState('');
+  const [formPhone, setFormPhone] = useState('');
+  const [formError, setFormError] = useState('');
 
   // Start empty — options come from Manpower via /api/countries (lookups).
   const [nationalities, setNationalities] = useState<Nationality[]>([]);
@@ -70,16 +73,55 @@ export default function NationalityFlags() {
 
   const handleCloseModal = () => {
     setSelectedNationality(null);
-    setTimeout(() => setFormState('idle'), 300); // Reset form state after animation
+    setTimeout(() => {
+      setFormState('idle');
+      setFormName('');
+      setFormPhone('');
+      setFormError('');
+    }, 300);
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!selectedNationality) return;
+
+    const name = formName.trim();
+    const phone = formPhone.trim();
+    if (!name || !phone) {
+      setFormError(isAr ? 'الاسم ورقم الهاتف مطلوبان.' : 'Name and phone are required.');
+      return;
+    }
+
+    setFormError('');
     setFormState('submitting');
-    // Simulate API call for form submission
-    setTimeout(() => {
+
+    const natLabel = isAr ? selectedNationality.nameAr : selectedNationality.nameEn;
+    const catLabel = isAr
+      ? categoryLabels[selectedNationality.category].ar
+      : categoryLabels[selectedNationality.category].en;
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          phone,
+          service: `nationality-${selectedNationality.code}`,
+          message: `Nationality CV request: ${natLabel} (${catLabel})`,
+          medium: 'nationality',
+          source: 'website',
+          landing_path: `/${locale}`,
+        }),
+      });
+      if (!res.ok) {
+        throw new Error('submit failed');
+      }
       setFormState('success');
-    }, 1500);
+    } catch {
+      setFormState('error');
+      setFormError(isAr ? 'تعذر إرسال الطلب. حاول مرة أخرى.' : 'Could not submit. Please try again.');
+    }
   };
 
   return (
@@ -246,6 +288,8 @@ export default function NationalityFlags() {
                     <input
                       type="text"
                       required
+                      value={formName}
+                      onChange={(e) => setFormName(e.target.value)}
                       placeholder={tForm('namePlaceholder')}
                       className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:border-brand-orange focus:ring-1 focus:ring-brand-orange outline-none transition-colors text-sm"
                     />
@@ -254,11 +298,16 @@ export default function NationalityFlags() {
                     <input
                       type="tel"
                       required
+                      value={formPhone}
+                      onChange={(e) => setFormPhone(e.target.value)}
                       placeholder={tForm('phonePlaceholder')}
                       className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:border-brand-orange focus:ring-1 focus:ring-brand-orange outline-none transition-colors text-sm"
                       dir="ltr"
                     />
                   </div>
+                  {formError ? (
+                    <p className="text-sm text-red-600 font-medium">{formError}</p>
+                  ) : null}
                   <button
                     type="submit"
                     disabled={formState === 'submitting'}

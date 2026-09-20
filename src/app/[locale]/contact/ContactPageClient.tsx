@@ -48,7 +48,13 @@ export default function ContactPageClient() {
       fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, website }),
+        body: JSON.stringify({
+          ...form,
+          website,
+          medium: 'contact',
+          source: 'website',
+          landing_path: `/${locale}/contact`,
+        }),
       }).catch(() => {});
 
       // Always open WhatsApp regardless of email result.

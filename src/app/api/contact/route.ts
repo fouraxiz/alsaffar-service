@@ -3,14 +3,17 @@ import { Resend } from 'resend';
 import { postLead, erpEnabled } from '@/lib/erpApi';
 
 /**
- * Mirror a contact submission into the ERP CRM as a Lead.
- * CRM is a first-class capture path (not gated on email success).
+ * Mirror a public website message into the ERP CRM as a Lead.
+ * Used by Contact Us, live chat, nationality requests, and similar forms.
  */
 async function mirrorLeadToCrm(payload: {
   name: string;
   phone: string;
   service: string;
   message: string;
+  medium: string;
+  source: string;
+  landingPath: string;
 }): Promise<boolean> {
   if (!erpEnabled()) return false;
   try {
@@ -19,13 +22,12 @@ async function mirrorLeadToCrm(payload: {
       phone: payload.phone,
       service_key: payload.service || null,
       message: payload.message || null,
-      // Structured blocks are built on the ERP side from dedicated fields.
       id_number: null,
       filters: null,
       utm: {
-        utm_source: 'website',
-        utm_medium: 'contact',
-        landing_path: '/contact',
+        utm_source: payload.source,
+        utm_medium: payload.medium,
+        landing_path: payload.landingPath,
       },
     });
     return true;
@@ -40,6 +42,10 @@ type ContactPayload = {
   phone?: string;
   service?: string;
   message?: string;
+  /** CRM attribution — contact | chatbot | nationality | … */
+  medium?: string;
+  source?: string;
+  landing_path?: string;
   // Honeypot — must stay empty. Bots tend to fill every field.
   website?: string;
 };
@@ -64,6 +70,9 @@ export async function POST(request: Request) {
   const phone = (body.phone ?? '').trim();
   const service = (body.service ?? '').trim();
   const message = (body.message ?? '').trim();
+  const medium = (body.medium ?? 'contact').trim() || 'contact';
+  const source = (body.source ?? 'website').trim() || 'website';
+  const landingPath = (body.landing_path ?? '/contact').trim() || '/contact';
 
   // Honeypot: silently accept so the bot thinks it succeeded, but send nothing.
   if (body.website && body.website.trim() !== '') {
@@ -82,7 +91,15 @@ export async function POST(request: Request) {
   let crm = false;
 
   // 1) Always try CRM first so leads appear even when email is misconfigured.
-  crm = await mirrorLeadToCrm({ name, phone, service, message });
+  crm = await mirrorLeadToCrm({
+    name,
+    phone,
+    service,
+    message,
+    medium,
+    source,
+    landingPath,
+  });
 
   // 2) Best-effort email to the team (non-blocking for CRM success).
   const apiKey = process.env.RESEND_API_KEY;
@@ -91,14 +108,16 @@ export async function POST(request: Request) {
     const from = process.env.CONTACT_FROM_EMAIL || 'Alsaffar Website <onboarding@resend.dev>';
     const serviceLabel = service || '—';
     const messageLabel = message || '—';
+    const channelLabel = medium === 'contact' ? 'Contact form' : medium;
 
     const html = `
     <div style="font-family: Arial, sans-serif; color: #1A1F00; line-height: 1.6;">
-      <h2 style="margin: 0 0 16px;">New contact message — Alsaffar website</h2>
+      <h2 style="margin: 0 0 16px;">New website message — Alsaffar (${escapeHtml(channelLabel)})</h2>
       <table style="border-collapse: collapse;">
         <tr><td style="padding: 4px 12px 4px 0; font-weight: bold;">Name</td><td>${escapeHtml(name)}</td></tr>
         <tr><td style="padding: 4px 12px 4px 0; font-weight: bold;">Phone</td><td>${escapeHtml(phone)}</td></tr>
         <tr><td style="padding: 4px 12px 4px 0; font-weight: bold;">Service</td><td>${escapeHtml(serviceLabel)}</td></tr>
+        <tr><td style="padding: 4px 12px 4px 0; font-weight: bold;">Channel</td><td>${escapeHtml(channelLabel)}</td></tr>
       </table>
       <p style="margin: 16px 0 4px; font-weight: bold;">Message</p>
       <p style="margin: 0; white-space: pre-wrap;">${escapeHtml(messageLabel)}</p>
@@ -110,7 +129,7 @@ export async function POST(request: Request) {
       const { error } = await resend.emails.send({
         from,
         to,
-        subject: `New contact message from ${name}`,
+        subject: `New ${channelLabel} message from ${name}`,
         html,
       });
       if (error) {
