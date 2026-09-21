@@ -15,6 +15,7 @@ import { SiteProvider } from '@/components/site/SiteProvider';
 import { PortalUrlProvider } from '@/components/site/PortalUrlProvider';
 import { PortalSessionProvider } from '@/components/site/PortalSessionProvider';
 import { getSite } from '@/lib/getSite';
+import { getBanners } from '@/lib/getBanners';
 import { serverEnv } from '@/lib/env';
 import {
   isLocalHostname,
@@ -88,8 +89,15 @@ export default async function LocaleLayout({ children, params }: Props) {
   }
 
   setRequestLocale(locale);
+  const bannersPromise = getBanners('strip');
   const messages = await getMessages();
   const { site } = await getSite();
+  // Use banners in the first paint only if they arrived with site data.
+  // Never delay the page for a slow ERP; MotionBanner will skeleton + fetch.
+  const bannersResult = await Promise.race([
+    bannersPromise,
+    Promise.resolve(null),
+  ]);
 
   const hostHeader = (await headers()).get('host') ?? '';
   const hostname = hostHeader.split(':')[0] ?? '';
@@ -107,7 +115,7 @@ export default async function LocaleLayout({ children, params }: Props) {
           <div style={{ fontFamily: cairo.style.fontFamily }} className="flex flex-col min-h-screen relative pb-[70px]">
             <SilhouetteBackdrop className="fixed inset-0 -z-10" />
             <Header />
-            <MotionBanner />
+            <MotionBanner initialBanners={bannersResult?.banners} />
             <main className="flex-1">{children}</main>
             <Footer />
             <FloatingSidebar />
