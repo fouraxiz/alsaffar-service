@@ -39,7 +39,6 @@ function hasRenderableCampaign(banners: ApiBanner[]): boolean {
 }
 
 function BannerCard({ banner, locale, isAr }: { banner: ApiBanner; locale: string; isAr: boolean }) {
-  const [loaded, setLoaded] = useState(false);
   const href = resolveHref(banner, locale);
   const title = ((isAr ? banner.title?.ar : banner.title?.en) || banner.title?.en || 'Promotion').trim();
   const isExternal = href?.startsWith('http');
@@ -48,21 +47,11 @@ function BannerCard({ banner, locale, isAr }: { banner: ApiBanner; locale: strin
     <div className="relative h-full flex-shrink-0 flex items-center justify-center rounded-2xl p-1 md:p-1.5 transition-all duration-300 group/banner overflow-hidden border border-brand-orange/30 hover:border-brand-orange bg-gradient-to-b from-white/[0.08] to-white/[0.02] hover:from-white/[0.14] hover:to-white/[0.05] backdrop-blur-sm shadow-[0_4px_16px_rgba(0,0,0,0.35)] hover:shadow-[0_6px_24px_rgba(232,135,10,0.25)] hover:scale-[1.03]">
       <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-brand-orange/60 to-transparent opacity-60 group-hover/banner:opacity-100 transition-opacity" />
 
-      {!loaded && (
-        <div
-          aria-hidden="true"
-          className="absolute inset-1 rounded-xl banner-skeleton-shimmer"
-        />
-      )}
-
       <img
         src={banner.image || ''}
         alt={title}
         title={title}
-        onLoad={() => setLoaded(true)}
-        className={`h-full w-auto max-h-full object-contain rounded-xl block select-none pointer-events-none transition-opacity duration-300 ${
-          loaded ? 'opacity-100' : 'opacity-0'
-        }`}
+        className="h-full w-auto max-h-full object-contain rounded-xl block select-none pointer-events-none"
       />
     </div>
   );
@@ -117,6 +106,7 @@ export default function MotionBanner({ initialBanners }: MotionBannerProps) {
 
   useEffect(() => {
     let active = true;
+
     fetch('/api/banners?placement=strip')
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
@@ -134,8 +124,12 @@ export default function MotionBanner({ initialBanners }: MotionBannerProps) {
       .finally(() => {
         if (active) setIsLoading(false);
       });
+
+    const safetyId = window.setTimeout(() => setIsLoading(false), 8000);
+
     return () => {
       active = false;
+      window.clearTimeout(safetyId);
     };
   }, []);
 
