@@ -45,16 +45,18 @@ function selectStripBanners(all: ApiBanner[]): ApiBanner[] {
 function VisualBannerCard({ item, isAr, index }: { item: VisualItem; isAr: boolean; index: number }) {
   const inner = (
     <div
-      className="banner-card group flex items-center gap-3 rounded-2xl px-2 py-1.5"
+      className="banner-card group flex items-center gap-3 rounded-2xl px-3"
       style={{
         background: 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(232,135,10,0.08) 100%)',
         border: '1px solid rgba(232,135,10,0.5)',
         backdropFilter: 'blur(8px)',
+        paddingTop: 8,
+        paddingBottom: 8,
       }}
     >
       <div className="relative shrink-0">
         <div
-          className="absolute -inset-1 rounded-full opacity-100"
+          className="absolute inset-0 rounded-full opacity-100"
           style={{
             background: 'conic-gradient(from 0deg, #E8870A, #1A1F00, #E8870A)',
             animation: 'pulseRing 2.5s infinite',
@@ -62,7 +64,7 @@ function VisualBannerCard({ item, isAr, index }: { item: VisualItem; isAr: boole
           }}
         />
         <div
-          className="banner-avatar relative rounded-full overflow-hidden border-2 border-brand-orange/60"
+          className="banner-avatar relative m-[3px] rounded-full overflow-hidden border-2 border-brand-orange/60"
           style={{
             boxShadow: '0 0 12px rgba(232,135,10,0.3)',
           }}
@@ -70,17 +72,17 @@ function VisualBannerCard({ item, isAr, index }: { item: VisualItem; isAr: boole
           <img src={item.src} alt={item.alt} className="object-cover object-center scale-110 w-full h-full" />
         </div>
       </div>
-      <div className="flex flex-col pe-4">
-        <span className="banner-label text-brand-orange/80 font-medium tracking-widest uppercase">
-          {item.icon} {isAr ? 'الصّفّار' : 'ALSAFFAR'}
-        </span>
-        <span
-          dir={isAr ? 'rtl' : 'ltr'}
-          className="banner-text-main font-bold tracking-wide text-white group-hover:text-brand-orange transition-colors"
-        >
-          {item.text}
-        </span>
-      </div>
+        <div className="flex flex-col pe-4 leading-none gap-1">
+          <span className="banner-label text-brand-orange/80 font-medium tracking-widest uppercase">
+            {item.icon} {isAr ? 'الصّفّار' : 'ALSAFFAR'}
+          </span>
+          <span
+            dir={isAr ? 'rtl' : 'ltr'}
+            className="banner-text-main font-bold tracking-wide text-white group-hover:text-brand-orange transition-colors"
+          >
+            {item.text}
+          </span>
+        </div>
       <div className="text-brand-orange/40 group-hover:text-brand-orange/80 transition-colors text-lg">›</div>
     </div>
   );
@@ -177,21 +179,20 @@ export default function MotionBanner({ initialBanners }: MotionBannerProps) {
 
   return (
     <div
-      className="w-full relative overflow-hidden mt-[64px] md:mt-[96px] motion-banner-wrapper sticky top-[64px] md:top-[96px] z-30 select-none"
+      className="w-full relative overflow-hidden mt-[64px] md:mt-[102px] motion-banner-wrapper sticky top-[64px] md:top-[102px] z-30 select-none"
       dir="ltr"
     >
       <style>{`
         .motion-banner-wrapper {
-          height: 130px;
+          height: 100px;
         }
         .banner-card {
-          transform: scale(1.08);
           border-color: rgba(232,135,10,0.5);
-          box-shadow: 0 4px 20px rgba(232,135,10,0.15);
+          box-shadow: 0 4px 16px rgba(232,135,10,0.12);
         }
         .banner-avatar {
-          width: 56px;
-          height: 56px;
+          width: 48px;
+          height: 48px;
         }
         .banner-text-main {
           font-size: 16px;
@@ -252,21 +253,23 @@ export default function MotionBanner({ initialBanners }: MotionBannerProps) {
       </div>
 
       <div
-        className="absolute top-0 left-0 right-0 h-[2px] z-[5]"
+        className="absolute top-0 left-0 right-0 h-[1px] z-[5]"
         style={{
           background: 'linear-gradient(90deg, transparent 0%, #E8870A 30%, #f5a623 50%, #E8870A 70%, transparent 100%)',
-          boxShadow: '0 0 10px rgba(232,135,10,0.4), 0 0 20px rgba(232,135,10,0.2)',
         }}
       />
       <div
         className="absolute bottom-0 left-0 right-0 h-[1px] z-[5]"
         style={{
-          background: 'linear-gradient(90deg, transparent 0%, rgba(232,135,10,0.3) 50%, transparent 100%)',
+          background: 'linear-gradient(90deg, transparent 0%, rgba(232,135,10,0.6) 50%, transparent 100%)',
         }}
       />
 
-      <div className="relative z-[6] flex items-center h-full w-full overflow-hidden">
-        <div className="animate-marquee-banner gap-8 px-6 items-center h-full py-3">
+      <div
+        className="relative z-[6] flex items-center justify-center h-full w-full overflow-hidden box-border"
+        style={{ paddingTop: 12, paddingBottom: 12 }}
+      >
+        <div className="animate-marquee-banner gap-8 px-6 items-center">
           {repeated.map((item, i) => (
             <VisualBannerCard key={`${item.src}-${item.text}-${i}`} item={item} isAr={isAr} index={i} />
           ))}
