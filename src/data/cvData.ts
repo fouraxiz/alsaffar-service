@@ -16,6 +16,8 @@ export type WorkExperienceEntry = {
 
 export type WorkerCV = {
   id: string;
+  /** 'rent' = from the Workers for Rent pool. */
+  listing?: 'rent' | 'hire';
   name: string;
   nameAr: string;
   nationality: string;

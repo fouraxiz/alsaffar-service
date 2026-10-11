@@ -262,6 +262,7 @@ export default function Header() {
     { href: `/${locale}/about`, label: t('about') },
     { href: `/${locale}/services`, label: t('services') },
     { href: `/${locale}/request-cv`, label: locale === 'ar' ? 'تصفح العمالة' : 'Browse CVs' },
+    { href: `/${locale}/request-cv?listing=rent`, label: locale === 'ar' ? 'عمالة للإيجار' : 'Workers for Rent' },
     { href: `/${locale}/why-us`, label: t('whyUs') },
     { href: `/${locale}/contact`, label: t('contact') },
   ];

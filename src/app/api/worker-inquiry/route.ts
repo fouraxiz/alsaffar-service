@@ -30,6 +30,7 @@ export async function POST(request: Request) {
 
   const visa = form.get('visa');
   const nationalId = form.get('national_id') ?? form.get('id');
+  const isRent = String(form.get('listing') ?? '') === 'rent';
 
   if (!workerCode || !name || !phone) {
     return NextResponse.json(
@@ -38,9 +39,10 @@ export async function POST(request: Request) {
     );
   }
 
-  if (!(visa instanceof File) || !(nationalId instanceof File)) {
+  // Renting needs the customer's National ID only; recruiting also needs the visa.
+  if (!(nationalId instanceof File) || (!isRent && !(visa instanceof File))) {
     return NextResponse.json(
-      { error: 'Visa and National ID documents are required.' },
+      { error: isRent ? 'National ID document is required.' : 'Visa and National ID documents are required.' },
       { status: 400 },
     );
   }
@@ -53,7 +55,7 @@ export async function POST(request: Request) {
   }
 
   // Message = customer intent only; city/address/worker go in structured meta for note blocks.
-  const customerMessage = `Recruit request for worker ${workerCode}${workerName ? ` (${workerName})` : ''}`;
+  const customerMessage = `${isRent ? 'Rent' : 'Recruit'} request for worker ${workerCode}${workerName ? ` (${workerName})` : ''}`;
 
   const outbound = new FormData();
   outbound.append('worker_code', workerCode);
@@ -63,13 +65,13 @@ export async function POST(request: Request) {
   outbound.append('message', customerMessage);
   outbound.append('locale', locale);
   outbound.append('utm[utm_source]', 'website');
-  outbound.append('utm[utm_medium]', 'continue-to-recruit');
+  outbound.append('utm[utm_medium]', isRent ? 'continue-to-rent' : 'continue-to-recruit');
   outbound.append('utm[landing_path]', '/request-cv');
   outbound.append('utm[worker_code]', workerCode);
   if (workerName) outbound.append('utm[worker_name]', workerName);
   if (city) outbound.append('utm[city]', city);
   if (address) outbound.append('utm[address]', address);
-  outbound.append('visa', visa, visa.name);
+  if (visa instanceof File) outbound.append('visa', visa, visa.name);
   outbound.append('national_id', nationalId, nationalId.name);
 
   try {

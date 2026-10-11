@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { LayoutGrid, AlignJustify } from 'lucide-react';
 import { WorkerCV, NATIONALITIES_LIST, JOB_TYPES, SERVICE_TYPES, EXPERIENCE_RANGES } from '@/data/cvData';
@@ -12,6 +13,7 @@ import CVActionSelection from './CVActionSelection';
 import DocumentUploadWizard from './DocumentUploadWizard';
 import NoMatchForm from './NoMatchForm';
 import PageBanner from '@/components/shared/PageBanner';
+import { isRentToken, listingFromParams, type WorkerListing } from '@/lib/workerListing';
 
 export type FlowState = 'browsing' | 'viewing' | 'action' | 'upload' | 'success';
 
@@ -83,10 +85,18 @@ export default function CVBrowser() {
   const [workers, setWorkers] = useState<WorkerCV[] | null>(null);
   const [filterOptions, setFilterOptions] = useState<FilterOptions>(FALLBACK_FILTER_OPTIONS);
   const [filtersLoading, setFiltersLoading] = useState(true);
+  // Recruitment CVs vs Workers for Rent - separate ERP pools. Driven by the URL
+  // (?listing=rent) so header links / service cards switch the tab even on this page.
+  const searchParams = useSearchParams();
+  const listing: WorkerListing = useMemo(
+    () => listingFromParams(new URLSearchParams(searchParams.toString())),
+    [searchParams],
+  );
 
   useEffect(() => {
     let active = true;
-    fetch('/api/workers', { cache: 'no-store' })
+    setWorkers(null);
+    fetch(`/api/workers${listing === 'rent' ? '?listing=rent' : ''}`, { cache: 'no-store' })
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (active) setWorkers((data?.workers as WorkerCV[]) ?? []);
@@ -97,7 +107,17 @@ export default function CVBrowser() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [listing]);
+
+  const switchListing = (next: WorkerListing) => {
+    if (next === listing) return;
+    const params = new URLSearchParams(window.location.search);
+    params.delete('service');
+    if (next === 'rent') params.set('listing', 'rent');
+    else params.delete('listing');
+    const qs = params.toString();
+    window.history.replaceState(null, '', `${window.location.pathname}${qs ? `?${qs}` : ''}`);
+  };
 
   useEffect(() => {
     let active = true;
@@ -165,7 +185,8 @@ export default function CVBrowser() {
                 label_en: s.label_en || null,
                 label_ar: s.label_ar || s.label_en || null,
               }))
-              .filter((s: { value: string }) => !!s.value),
+              // Rent has its own tab (separate ERP pool) - not a filter chip.
+              .filter((s: { value: string }) => !!s.value && !isRentToken(s.value)),
           }),
         );
       })
@@ -323,6 +344,23 @@ export default function CVBrowser() {
 
           {/* Gallery Area */}
           <div className="flex-1">
+            <div className="mb-4 inline-flex rounded-xl border border-gray-200 bg-white p-1 shadow-sm" role="tablist">
+              {([
+                ['hire', locale === 'ar' ? 'سير ذاتية للاستقدام' : 'Recruitment CVs'],
+                ['rent', locale === 'ar' ? 'عمالة للإيجار' : 'Workers for Rent'],
+              ] as const).map(([key, label]) => (
+                <button
+                  key={key}
+                  type="button"
+                  role="tab"
+                  aria-selected={listing === key}
+                  onClick={() => switchListing(key)}
+                  className={`rounded-lg px-4 py-2 text-sm font-bold transition-colors ${listing === key ? 'bg-brand-orange text-white shadow' : 'text-gray-600 hover:text-brand-dark'}`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
             <div className="flex items-center justify-between mb-4">
               <div className="text-sm font-semibold text-gray-500">
                 {isLoading
@@ -357,8 +395,16 @@ export default function CVBrowser() {
               <CVGallery workers={filteredWorkers} onSelect={handleSelectWorker} viewMode={viewMode} />
             ) : (
               <div className="bg-white border border-gray-200 rounded-2xl p-10 text-center">
-                <p className="text-lg font-bold text-brand-dark mb-2">{t('gallery.noResults')}</p>
-                <p className="text-gray-500 mb-6">{t('gallery.tryAdjusting')}</p>
+                <p className="text-lg font-bold text-brand-dark mb-2">
+                  {listing === 'rent' && !hasActiveFilters(filters)
+                    ? (locale === 'ar' ? 'لا توجد عمالة متاحة للإيجار حالياً.' : 'No workers available for rent right now.')
+                    : t('gallery.noResults')}
+                </p>
+                <p className="text-gray-500 mb-6">
+                  {listing === 'rent' && !hasActiveFilters(filters)
+                    ? (locale === 'ar' ? 'تواصل معنا وسنرسل لك السير الذاتية فور توفرها.' : 'Contact us and we will send you CVs as soon as workers are available.')
+                    : t('gallery.tryAdjusting')}
+                </p>
                 {hasActiveFilters(filters) && (
                   <button
                     onClick={() => {

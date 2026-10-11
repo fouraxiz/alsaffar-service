@@ -23,10 +23,15 @@ export default function CVActionSelection({ worker, onClose, onBack, onContinue 
   const locale = useLocale();
   const isAr = locale === 'ar';
 
+  const isRent = worker.listing === 'rent';
   const whatsappMessage = encodeURIComponent(
-    isAr 
-      ? `مرحباً، أود الاستفسار عن السيرة الذاتية لـ ${worker.nameAr} (رقم المرجع: ${worker.id})`
-      : `Hello, I am interested in recruiting ${worker.name} (Ref ID: ${worker.id})`
+    isAr
+      ? isRent
+        ? `مرحباً، أود استئجار ${worker.nameAr} (رقم المرجع: ${worker.id})`
+        : `مرحباً، أود الاستفسار عن السيرة الذاتية لـ ${worker.nameAr} (رقم المرجع: ${worker.id})`
+      : isRent
+        ? `Hello, I am interested in renting ${worker.name} (Ref ID: ${worker.id})`
+        : `Hello, I am interested in recruiting ${worker.name} (Ref ID: ${worker.id})`
   );
 
   return (

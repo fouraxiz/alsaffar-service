@@ -15,8 +15,13 @@ const ERP_MAX_PAGES = 20;
 export async function getWorkers(
   query: WorkerQuery = {},
 ): Promise<{ workers: WorkerCV[]; source: 'erp' | 'static' }> {
+  const rent = query.listing === 'rent';
+  // Demo data only stands in for the ERP. For rent, show only the demo rent CVs.
+  const staticWorkers = rent
+    ? mockWorkers.filter((w) => String(w.serviceType).includes('rent')).map((w) => ({ ...w, listing: 'rent' as const }))
+    : mockWorkers;
   if (!erpEnabled()) {
-    return { workers: mockWorkers, source: 'static' };
+    return { workers: staticWorkers, source: 'static' };
   }
   try {
     const { page: _ignoredPage, per_page: _ignoredPerPage, ...filters } = query;
@@ -36,11 +41,11 @@ export async function getWorkers(
     } while (page <= lastPage && page <= ERP_MAX_PAGES);
 
     const workers = mapApiWorkers(collected);
-    // If the ERP is reachable but empty, still prefer showing something.
-    if (workers.length === 0) return { workers: mockWorkers, source: 'static' };
+    // Rent pool empty is a real answer (nobody for rent right now) - never show demo CVs.
+    if (workers.length === 0 && !rent) return { workers: mockWorkers, source: 'static' };
     return { workers, source: 'erp' };
   } catch (err) {
     logErpFallback('getWorkers', err);
-    return { workers: mockWorkers, source: 'static' };
+    return { workers: rent ? [] : mockWorkers, source: 'static' };
   }
 }

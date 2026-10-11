@@ -2,6 +2,7 @@
 
 import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
+import { isRentToken, rentCvsHref } from '@/lib/workerListing';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { ArrowRight } from 'lucide-react';
@@ -124,12 +125,21 @@ export default function ServicesSection({ initialServices }: Props) {
                   <p className="text-gray-500 text-sm leading-relaxed mb-4">{descFor(service)}</p>
 
                   <div className="flex items-center gap-2">
-                    <Link
-                      href={`/${locale}/services`}
-                      className="flex-1 text-center py-2 rounded-lg border border-gray-200 text-brand-dark text-xs font-semibold hover:border-brand-orange hover:text-brand-orange transition-colors"
-                    >
-                      {t('learnMore')}
-                    </Link>
+                    {isRentToken(service.serviceKey) ? (
+                      <Link
+                        href={rentCvsHref(locale)}
+                        className="flex-1 text-center py-2 rounded-lg bg-brand-orange text-white text-xs font-semibold hover:bg-brand-orange-dark transition-colors"
+                      >
+                        {isAr ? 'عرض عمالة الإيجار' : 'View Rent CVs'}
+                      </Link>
+                    ) : (
+                      <Link
+                        href={`/${locale}/services`}
+                        className="flex-1 text-center py-2 rounded-lg border border-gray-200 text-brand-dark text-xs font-semibold hover:border-brand-orange hover:text-brand-orange transition-colors"
+                      >
+                        {t('learnMore')}
+                      </Link>
+                    )}
                     <a
                       href={`https://wa.me/966920021201?text=${encodeURIComponent(
                         isAr ? service.waMsgAr : service.waMsgEn,

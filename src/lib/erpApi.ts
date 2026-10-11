@@ -44,6 +44,9 @@ export type ErpWorkExperienceEntry = {
 
 export type ErpWorker = {
   worker_code: string;
+  /** 'rent' when served from the for-rent pool (PublicWorkerResource). */
+  listing?: 'rent' | 'hire' | string | null;
+  for_rent?: boolean | null;
   first_name: string | null;
   /** Sanitized human display name (EN) from ERP PublicWorkerResource. */
   name?: string | null;
@@ -141,6 +144,8 @@ export type ErpSitemapResponse = {
 };
 
 export type WorkerQuery = {
+  /** 'rent' = Workers for Rent pool; omitted = normal recruitment (hire) CVs. */
+  listing?: 'rent' | 'hire';
   category?: string;
   nationality?: string;
   gender?: string;

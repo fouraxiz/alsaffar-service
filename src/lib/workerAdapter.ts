@@ -105,6 +105,7 @@ export function mapApiWorkerToCV(w: ErpWorker): WorkerCV {
 
   return {
     id: w.worker_code,
+    listing: w.listing === 'rent' || w.for_rent ? 'rent' : 'hire',
     name,
     nameAr,
     nationality: resolveNationalityCode(w),

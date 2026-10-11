@@ -9,6 +9,7 @@ import PageBanner from '@/components/shared/PageBanner';
 import ServiceIcon from '@/components/shared/ServiceIcon';
 import { getServices } from '@/lib/getServices';
 import type { DisplayService } from '@/lib/serviceAdapter';
+import { isRentToken, rentCvsHref } from '@/lib/workerListing';
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -219,6 +220,15 @@ function ServicesContent({ services }: { services: DisplayService[] }) {
                             </li>
                           ))}
                         </ul>
+                      ) : null}
+                      {isRentToken(service.serviceKey) ? (
+                        <Link
+                          href={rentCvsHref(locale)}
+                          className="mt-5 inline-flex items-center gap-2 bg-brand-orange hover:bg-brand-orange-dark text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-colors"
+                        >
+                          {isAr ? 'عرض عمالة الإيجار' : 'View Workers for Rent'}
+                          <ArrowRight size={16} className="rtl:rotate-180" />
+                        </Link>
                       ) : null}
                     </div>
                   </div>

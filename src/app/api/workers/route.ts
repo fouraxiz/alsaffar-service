@@ -13,6 +13,7 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
   const sp = request.nextUrl.searchParams;
   const query: WorkerQuery = {
+    listing: sp.get('listing') === 'rent' ? 'rent' : undefined,
     category: sp.get('category') ?? undefined,
     nationality: sp.get('nationality') ?? undefined,
     gender: sp.get('gender') ?? undefined,

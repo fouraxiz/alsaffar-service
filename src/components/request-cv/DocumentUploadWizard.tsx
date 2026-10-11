@@ -34,6 +34,9 @@ export default function DocumentUploadWizard({ worker, onClose, onBack, onComple
     city: '',
   });
 
+  // Renting runs on our sponsorship - the customer's visa is only needed to recruit.
+  const isRent = worker.listing === 'rent';
+  const needsVisa = !isRent;
   const [files, setFiles] = useState<{ visa: File | null; id: File | null }>({
     visa: null,
     id: null,
@@ -58,7 +61,7 @@ export default function DocumentUploadWizard({ worker, onClose, onBack, onComple
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitError('');
-    if (!files.visa || !files.id) {
+    if ((needsVisa && !files.visa) || !files.id) {
       setSubmitError(isAr ? 'يرجى إرفاق المستندات المطلوبة.' : 'Please attach the required documents.');
       return;
     }
@@ -74,7 +77,8 @@ export default function DocumentUploadWizard({ worker, onClose, onBack, onComple
       fd.append('address', formData.address);
       fd.append('locale', isAr ? 'ar' : 'en');
       fd.append('website', website);
-      fd.append('visa', files.visa);
+      if (files.visa) fd.append('visa', files.visa);
+      fd.append('listing', isRent ? 'rent' : 'hire');
       fd.append('national_id', files.id);
 
       const res = await fetch('/api/worker-inquiry', {
@@ -255,7 +259,7 @@ export default function DocumentUploadWizard({ worker, onClose, onBack, onComple
             {/* Step 2: Documents */}
             {step === 2 && (
               <div className="animate-fade-in">
-                <FileUploadArea type="visa" label={t('visaCopy')} />
+                {needsVisa && <FileUploadArea type="visa" label={t('visaCopy')} />}
                 <FileUploadArea type="id" label={t('idCopy')} />
               </div>
             )}
@@ -325,7 +329,7 @@ export default function DocumentUploadWizard({ worker, onClose, onBack, onComple
               <button
                 type="button"
                 onClick={handleNext}
-                disabled={step === 2 && (!files.visa || !files.id)}
+                disabled={step === 2 && ((needsVisa && !files.visa) || !files.id)}
                 className="flex-1 py-3.5 rounded-xl font-bold text-white bg-brand-dark hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {t('next')}
