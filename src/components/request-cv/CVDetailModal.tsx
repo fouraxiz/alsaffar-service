@@ -10,7 +10,7 @@ import WorkerPhoto from './WorkerPhoto';
 import CVPrintTemplate from './CVPrintTemplate';
 import { usePortalUrl } from '@/components/site/PortalUrlProvider';
 import { usePortalSession } from '@/components/site/PortalSessionProvider';
-import { portalAuthUrl } from '@/lib/portalUrl';
+import { cleanBase, portalAuthUrl } from '@/lib/portalUrl';
 
 type Props = {
   worker: WorkerCV;
@@ -35,12 +35,20 @@ export default function CVDetailModal({ worker, onClose, onProceed }: Props) {
 
   const [isDownloading, setIsDownloading] = useState(false);
   const [isPlayingVideo, setIsPlayingVideo] = useState(false);
-  const [showLoginGate, setShowLoginGate] = useState(false);
+  // Which action asked for sign-in: download the PDF or select the worker.
+  const [loginGate, setLoginGate] = useState<null | 'pdf' | 'select'>(null);
   const cvRef = useRef<HTMLDivElement>(null);
 
   const returnUrl =
     typeof window !== 'undefined' ? window.location.href.split('#')[0] : '';
   const customerLoginUrl = portalAuthUrl(portalUrl, 'login', 'customer', returnUrl);
+
+  // Hire CVs: "Select" opens the customer portal with this worker pinned and the confirm
+  // dialog open (login, when needed, returns there) - the customer never searches again.
+  const isHire = worker.listing !== 'rent';
+  const pickPath = `/customer-portal/select-cv/pick/${encodeURIComponent(worker.id)}`;
+  const pickUrl = `${cleanBase(portalUrl, portalUrl)}${pickPath}`;
+  const selectLoginUrl = `${cleanBase(portalUrl, portalUrl)}/login/customer?next=${encodeURIComponent(pickPath)}`;
 
   const handleDownloadPDF = useReactToPrint({
     contentRef: cvRef,
@@ -56,7 +64,19 @@ export default function CVDetailModal({ worker, onClose, onProceed }: Props) {
       action();
       return;
     }
-    setShowLoginGate(true);
+    setLoginGate('pdf');
+  };
+
+  const handleSelect = () => {
+    if (!isHire) {
+      requireCustomerLogin(onProceed);
+      return;
+    }
+    if (portal === 'customer') {
+      window.location.href = pickUrl;
+      return;
+    }
+    setLoginGate('select');
   };
 
   return (
@@ -297,7 +317,7 @@ export default function CVDetailModal({ worker, onClose, onProceed }: Props) {
               <div className="mt-auto pt-4 border-t border-gray-100 flex flex-col sm:flex-row gap-3 print:hidden">
                 <button
                   type="button"
-                  onClick={() => requireCustomerLogin(onProceed)}
+                  onClick={handleSelect}
                   className="flex-1 bg-brand-orange hover:bg-brand-orange-dark text-white py-3.5 rounded-xl font-bold text-lg shadow-lg shadow-orange-200 transition-all duration-200 hover:-translate-y-0.5"
                 >
                   {t('selectWorker')}
@@ -314,25 +334,39 @@ export default function CVDetailModal({ worker, onClose, onProceed }: Props) {
             </div>
           </div>
 
-          {showLoginGate && (
+          {loginGate && (
             <div className="absolute inset-0 z-20 flex items-center justify-center bg-brand-dark/50 p-4 backdrop-blur-[2px]">
               <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl text-center">
                 <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-orange-100 text-brand-orange">
                   <LogIn size={22} />
                 </div>
                 <h3 className="mb-2 text-lg font-black text-brand-dark">{t('loginRequiredTitle')}</h3>
-                <p className="mb-6 text-sm leading-relaxed text-gray-600">{t('loginRequiredMessage')}</p>
+                <p className="mb-6 text-sm leading-relaxed text-gray-600">
+                  {loginGate === 'select' ? t('loginSelectMessage') : t('loginRequiredMessage')}
+                </p>
                 <div className="flex flex-col gap-2">
                   <a
-                    href={customerLoginUrl}
+                    href={loginGate === 'select' ? selectLoginUrl : customerLoginUrl}
                     className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-orange px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-brand-orange-dark"
                   >
                     <LogIn size={16} />
                     {t('loginRequiredCta')}
                   </a>
+                  {loginGate === 'select' && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setLoginGate(null);
+                        onProceed();
+                      }}
+                      className="rounded-xl border border-gray-200 px-4 py-3 text-sm font-bold text-gray-700 transition-colors hover:bg-gray-50"
+                    >
+                      {t('continueWithoutAccount')}
+                    </button>
+                  )}
                   <button
                     type="button"
-                    onClick={() => setShowLoginGate(false)}
+                    onClick={() => setLoginGate(null)}
                     className="rounded-xl bg-gray-100 px-4 py-3 text-sm font-bold text-gray-700 transition-colors hover:bg-gray-200"
                   >
                     {t('loginRequiredCancel')}

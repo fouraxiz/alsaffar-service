@@ -347,7 +347,9 @@
       "loginRequiredTitle": "تسجيل الدخول مطلوب",
       "loginRequiredMessage": "يرجى تسجيل الدخول بحساب العميل أولاً لتحميل ملف PDF أو اختيار هذا العامل. بعد تسجيل الدخول ستعود إلى هذه الصفحة.",
       "loginRequiredCta": "تسجيل دخول العميل",
-      "loginRequiredCancel": "إلغاء"
+      "loginRequiredCancel": "إلغاء",
+      "loginSelectMessage": "سجّل الدخول بحساب العميل وسيكون هذا العامل بانتظارك في بوابتك - فقط قم بالتأكيد دون الحاجة للبحث مرة أخرى.",
+      "continueWithoutAccount": "إرسال استفسار بدون حساب"
     },
     "actions": {
       "title": "كيف تود المتابعة؟",

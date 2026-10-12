@@ -350,7 +350,9 @@
       "loginRequiredTitle": "Log in required",
       "loginRequiredMessage": "Please log in with your customer account first to download the PDF or select this worker. After log in you will return to this page.",
       "loginRequiredCta": "Customer Log In",
-      "loginRequiredCancel": "Cancel"
+      "loginRequiredCancel": "Cancel",
+      "loginSelectMessage": "Log in with your customer account and this worker will be waiting for you in your portal - just confirm, no need to search again.",
+      "continueWithoutAccount": "Send an inquiry without an account"
     },
     "actions": {
       "title": "How would you like to proceed?",
