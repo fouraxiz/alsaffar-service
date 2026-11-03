@@ -4,8 +4,12 @@ import type {Metadata} from 'next';
 
 export const metadata: Metadata = {
   icons: {
-    icon: '/alsaffar-favicon.png',
-    apple: '/alsaffar-favicon.png',
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/alsaffar-favicon.png', type: 'image/png' },
+    ],
+    apple: [{ url: '/alsaffar-favicon.png' }],
+    shortcut: '/favicon.ico',
   },
 };
 

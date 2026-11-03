@@ -74,6 +74,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
       images: [ogImage],
     },
+    icons: {
+      icon: [
+        { url: '/favicon.ico', sizes: 'any' },
+        { url: '/alsaffar-favicon.png', type: 'image/png' },
+      ],
+      apple: [{ url: '/alsaffar-favicon.png' }],
+      shortcut: '/favicon.ico',
+    },
   };
 }
 
