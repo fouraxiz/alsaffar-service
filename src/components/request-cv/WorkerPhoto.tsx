@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import { User } from 'lucide-react';
 
@@ -29,7 +30,9 @@ export default function WorkerPhoto({
   // Sized for the gallery card by default (1→4 columns); avatars pass their own.
   sizes = '(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw',
 }: WorkerPhotoProps) {
-  if (!src) {
+  const [hasError, setHasError] = useState(false);
+
+  if (!src || hasError) {
     return (
       <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 text-gray-400">
         <User size={iconSize} strokeWidth={1.5} aria-label={alt} />
@@ -37,5 +40,15 @@ export default function WorkerPhoto({
     );
   }
 
-  return <Image src={src} alt={alt} fill className={className} sizes={sizes} />;
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      className={className}
+      sizes={sizes}
+      unoptimized
+      onError={() => setHasError(true)}
+    />
+  );
 }
