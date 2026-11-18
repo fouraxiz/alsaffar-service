@@ -93,6 +93,7 @@ export const NATIONALITIES_LIST = [
   { code: 'ke', en: 'Kenyan', ar: 'كينية' },
   { code: 'gh', en: 'Ghanaian', ar: 'غانية' },
   { code: 'tz', en: 'Tanzanian', ar: 'تنزانية' },
+  { code: 'bi', en: 'Burundian', ar: 'البوروندية' },
 ];
 
 export const mockWorkers: WorkerCV[] = [
@@ -121,8 +122,7 @@ export const mockWorkers: WorkerCV[] = [
     religionAr: 'مسيحية',
     maritalStatus: 'Single',
     maritalStatusAr: 'عزباء',
-    hasVideo: true,
-    videoUrl: '#',
+    hasVideo: false,
     photoUrl: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=300&h=300&fit=crop&crop=face',
   },
   {
@@ -150,8 +150,7 @@ export const mockWorkers: WorkerCV[] = [
     religionAr: 'مسلمة',
     maritalStatus: 'Married',
     maritalStatusAr: 'متزوجة',
-    hasVideo: true,
-    videoUrl: '#',
+    hasVideo: false,
     photoUrl: 'https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=300&h=300&fit=crop&crop=face',
   },
   {
@@ -207,8 +206,7 @@ export const mockWorkers: WorkerCV[] = [
     religionAr: 'مسيحية',
     maritalStatus: 'Single',
     maritalStatusAr: 'عزباء',
-    hasVideo: true,
-    videoUrl: '#',
+    hasVideo: false,
     photoUrl: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=300&h=300&fit=crop&crop=face',
   },
   {
@@ -236,8 +234,7 @@ export const mockWorkers: WorkerCV[] = [
     religionAr: 'هندوسي',
     maritalStatus: 'Married',
     maritalStatusAr: 'متزوج',
-    hasVideo: true,
-    videoUrl: '#',
+    hasVideo: false,
     photoUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300&h=300&fit=crop&crop=face',
   },
   {
@@ -321,8 +318,7 @@ export const mockWorkers: WorkerCV[] = [
     religionAr: 'هندوسي',
     maritalStatus: 'Single',
     maritalStatusAr: 'أعزب',
-    hasVideo: true,
-    videoUrl: '#',
+    hasVideo: false,
     photoUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face',
   },
   {
@@ -378,8 +374,7 @@ export const mockWorkers: WorkerCV[] = [
     religionAr: 'مسيحية',
     maritalStatus: 'Single',
     maritalStatusAr: 'عزباء',
-    hasVideo: true,
-    videoUrl: '#',
+    hasVideo: false,
     photoUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=300&h=300&fit=crop&crop=face',
   },
   {
@@ -463,8 +458,7 @@ export const mockWorkers: WorkerCV[] = [
     religionAr: 'مسيحية',
     maritalStatus: 'Married',
     maritalStatusAr: 'متزوجة',
-    hasVideo: true,
-    videoUrl: '#',
+    hasVideo: false,
     photoUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=300&fit=crop&crop=face',
   },
   {
@@ -576,8 +570,7 @@ export const mockWorkers: WorkerCV[] = [
     religionAr: 'بوذي',
     maritalStatus: 'Single',
     maritalStatusAr: 'أعزب',
-    hasVideo: true,
-    videoUrl: '#',
+    hasVideo: false,
     photoUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300&h=300&fit=crop&crop=face',
   },
   {
@@ -605,8 +598,7 @@ export const mockWorkers: WorkerCV[] = [
     religionAr: 'مسلمة',
     maritalStatus: 'Single',
     maritalStatusAr: 'عزباء',
-    hasVideo: true,
-    videoUrl: '#',
+    hasVideo: false,
     photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&h=300&fit=crop&crop=face',
   },
   {
@@ -662,8 +654,7 @@ export const mockWorkers: WorkerCV[] = [
     religionAr: 'مسيحية',
     maritalStatus: 'Married',
     maritalStatusAr: 'متزوجة',
-    hasVideo: true,
-    videoUrl: '#',
+    hasVideo: false,
     photoUrl: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=300&h=300&fit=crop&crop=face',
   },
   {

@@ -15,6 +15,16 @@ const slug = (s: string | null | undefined): string =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
 
+/** True only for a real uploaded video URL — not empty / placeholder / '#'. */
+export function isUsableWorkerVideoUrl(url: string | null | undefined): boolean {
+  const v = (url ?? '').trim();
+  if (!v) return false;
+  if (v === '#' || v === '/' || v.toLowerCase() === 'null' || v.toLowerCase() === 'undefined') {
+    return false;
+  }
+  return true;
+}
+
 /** Common label → ISO2 when ERP only sent a nationality name. */
 const NATIONALITY_ALIASES: Record<string, string> = {
   bangladeshi: 'bd',
@@ -44,6 +54,8 @@ const NATIONALITY_ALIASES: Record<string, string> = {
   ghana: 'gh',
   tanzanian: 'tz',
   tanzania: 'tz',
+  burundian: 'bi',
+  burundi: 'bi',
 };
 
 function resolveNationalityCode(w: ErpWorker): string {
@@ -139,8 +151,9 @@ export function mapApiWorkerToCV(w: ErpWorker): WorkerCV {
     maritalStatusAr: maritalStatus,
     educationHistory,
     workExperiences,
-    hasVideo: !!w.video_url,
-    videoUrl: w.video_url ?? undefined,
+    // Only advertise video when ERP returned a real signed media URL.
+    hasVideo: isUsableWorkerVideoUrl(w.video_url),
+    videoUrl: isUsableWorkerVideoUrl(w.video_url) ? String(w.video_url) : undefined,
     photoUrl: w.photo_url ?? '',
   };
 }

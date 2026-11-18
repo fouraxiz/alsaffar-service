@@ -11,6 +11,7 @@ import CVPrintTemplate from './CVPrintTemplate';
 import { usePortalUrl } from '@/components/site/PortalUrlProvider';
 import { usePortalSession } from '@/components/site/PortalSessionProvider';
 import { cleanBase, portalAuthUrl } from '@/lib/portalUrl';
+import { isUsableWorkerVideoUrl } from '@/lib/workerAdapter';
 
 type Props = {
   worker: WorkerCV;
@@ -109,8 +110,8 @@ export default function CVDetailModal({ worker, onClose, onProceed }: Props) {
             {/* Left Panel: Media */}
             <div className="w-full md:w-2/5 bg-gray-50 flex flex-col">
               <div className="relative aspect-[3/4] w-full bg-black">
-                {isPlayingVideo && worker.videoUrl ? (
-                  isVideoFile(worker.videoUrl) ? (
+                {isPlayingVideo && isUsableWorkerVideoUrl(worker.videoUrl) ? (
+                  isVideoFile(worker.videoUrl!) ? (
                     <video
                       className="h-full w-full object-contain bg-black"
                       src={worker.videoUrl}
@@ -120,7 +121,7 @@ export default function CVDetailModal({ worker, onClose, onProceed }: Props) {
                     />
                   ) : (
                     <WorkerPhoto
-                      src={worker.videoUrl}
+                      src={worker.videoUrl!}
                       alt={isAr ? worker.nameAr : worker.name}
                       className="object-contain bg-black"
                       iconSize={64}
@@ -135,8 +136,8 @@ export default function CVDetailModal({ worker, onClose, onProceed }: Props) {
                       iconSize={64}
                     />
 
-                    {/* Play uploaded introduction video / image when available */}
-                    {worker.hasVideo && worker.videoUrl && (
+                    {/* Play control only when an introduction video was uploaded */}
+                    {worker.hasVideo && isUsableWorkerVideoUrl(worker.videoUrl) ? (
                       <div
                         onClick={() => setIsPlayingVideo(true)}
                         className="absolute inset-0 bg-black/20 flex items-center justify-center group cursor-pointer hover:bg-black/40 transition-colors print:hidden"
@@ -148,7 +149,7 @@ export default function CVDetailModal({ worker, onClose, onProceed }: Props) {
                           </span>
                         </div>
                       </div>
-                    )}
+                    ) : null}
                   </>
                 )}
               </div>

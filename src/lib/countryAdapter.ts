@@ -14,6 +14,8 @@ export function mapLookupCountriesToNationalities(list: ErpLookupCountry[]): Nat
       .toLowerCase()
       .trim();
     if (code === 'bn') code = 'bd';
+    // Normalize common nationality labels / wrong codes to ISO2 for flagcdn.
+    if (code === 'burundi' || code === 'burundian') code = 'bi';
     if (!code || seen.has(code)) continue;
     seen.add(code);
 

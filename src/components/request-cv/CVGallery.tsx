@@ -61,13 +61,13 @@ export default function CVGallery({ workers, onSelect, viewMode = 'grid' }: Prop
                 </div>
               </div>
 
-              {/* Video Indicator */}
-              {worker.hasVideo && (
+              {/* Video Indicator — only when an introduction video was uploaded */}
+              {worker.hasVideo && worker.videoUrl ? (
                 <div className="absolute top-3 end-3 bg-brand-dark/80 backdrop-blur-sm text-white px-2 py-1 rounded flex items-center gap-1 text-[10px] font-bold shadow-sm">
                   <Play size={10} fill="currentColor" />
                   VIDEO
                 </div>
-              )}
+              ) : null}
             </div>
 
             {/* Info Section */}
@@ -143,13 +143,13 @@ export default function CVGallery({ workers, onSelect, viewMode = 'grid' }: Prop
               </div>
             </div>
 
-            {/* Video Indicator */}
-            {worker.hasVideo && (
+            {/* Video Indicator — only when an introduction video was uploaded */}
+            {worker.hasVideo && worker.videoUrl ? (
               <div className="absolute top-3 end-3 bg-brand-dark/80 backdrop-blur-sm text-white px-2 py-1 rounded flex items-center gap-1 text-[10px] font-bold shadow-sm">
                 <Play size={10} fill="currentColor" />
                 VIDEO
               </div>
-            )}
+            ) : null}
           </div>
 
           {/* Info Section */}

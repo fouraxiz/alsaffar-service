@@ -24,6 +24,7 @@ export const STATIC_NATIONALITIES: Nationality[] = [
   { code: 'ke', nameAr: 'كينية', nameEn: 'Kenyan', category: 'domestic', priceRange: '5,000–8,000 ريال' },
   { code: 'gh', nameAr: 'غانية', nameEn: 'Ghanaian', category: 'domestic', priceRange: '5,000–8,000 ريال' },
   { code: 'tz', nameAr: 'تنزانية', nameEn: 'Tanzanian', category: 'domestic', priceRange: '4,500–7,000 ريال' },
+  { code: 'bi', nameAr: 'البوروندية', nameEn: 'Burundian', category: 'domestic', priceRange: '4,500–7,000 ريال' },
 ];
 
 // ERP `website_country_pages` slug → the ISO2 code the site uses everywhere else.
@@ -40,4 +41,5 @@ export const SLUG_TO_ISO: Record<string, string> = {
   kenyan: 'ke',
   ghanaian: 'gh',
   tanzanian: 'tz',
+  burundian: 'bi',
 };
