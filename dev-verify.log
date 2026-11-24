@@ -1,0 +1,23 @@
+
+> alsaffar@0.1.0 dev
+> next dev --port 3100
+
+▲ Next.js 16.2.6 (Turbopack)
+- Local:         http://localhost:3100
+- Network:       http://192.168.68.66:3100
+✓ Ready in 4.6s
+⚠ Slow filesystem detected. The benchmark took 341ms. If D:\al_saffar\alsaffar-service\.next/dev is a network drive, consider moving it to a local folder.
+See more: https://nextjs.org/docs/app/guides/local-development
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+
+[getBanners] ERP unavailable, using static fallback: ERP GET /banners timed out after 8000ms
+[getSite] ERP unavailable, using static fallback: ERP GET /site timed out after 8000ms
+[getSite] ERP unavailable, using static fallback: ERP GET /site timed out after 8000ms
+[getSite] ERP unavailable, using static fallback: ERP GET /site timed out after 8000ms
+[getBanners] ERP unavailable, using static fallback: ERP GET /banners timed out after 8000ms
+[getServices] ERP unavailable, using static fallback: ERP GET /services timed out after 8000ms
+[getHomeHeroContent] ERP unavailable, using static fallback: ERP GET /content/home timed out after 8000ms
+[getSite] ERP unavailable, using static fallback: ERP GET /site timed out after 8000ms
+[getSite] ERP unavailable, using static fallback: ERP GET /site timed out after 8000ms
+ GET /en/about 200 in 19.9s (next.js: 7.2s, proxy.ts: 137ms, generate-params: 6.6s, application-code: 12.5s)
+ GET /en 200 in 19.8s (next.js: 8.4s, proxy.ts: 20ms, generate-params: 7.3s, application-code: 11.4s)

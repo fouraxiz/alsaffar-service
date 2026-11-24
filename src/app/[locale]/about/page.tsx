@@ -5,6 +5,7 @@ import Image from 'next/image';
 import type {Metadata} from 'next';
 import {buildAlternates} from '@/lib/seo';
 import PageBanner from '@/components/shared/PageBanner';
+import {getSite} from '@/lib/getSite';
 
 type Props = {params: Promise<{locale: string}>};
 
@@ -24,7 +25,7 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
   };
 }
 
-function AboutContent() {
+function AboutContent({officeAddress}: {officeAddress: string}) {
   const t = useTranslations('about');
   const locale = useLocale();
 
@@ -32,7 +33,7 @@ function AboutContent() {
     {icon: <FileText size={26} />, label: t('crNumber'), value: '2053034759'},
     {icon: <FileText size={26} />, label: t('licenseNumber'), value: '3704231'},
     {icon: <Award size={26} />, label: t('musanedId'), value: '3704231'},
-    {icon: <MapPin size={26} />, label: t('officeAddress'), value: locale === 'ar' ? 'الرياض، المملكة العربية السعودية' : 'Riyadh, Saudi Arabia'},
+    {icon: <MapPin size={26} />, label: t('officeAddress'), value: officeAddress},
     {icon: <Clock size={26} />, label: t('officeHours'), value: t('hoursValue')},
   ];
 
@@ -232,5 +233,7 @@ function AboutContent() {
 export default async function AboutPage({params}: Props) {
   const {locale} = await params;
   setRequestLocale(locale);
-  return <AboutContent />;
+  const {site} = await getSite();
+  const officeAddress = (locale === 'ar' ? site.address.ar : site.address.en) || '';
+  return <AboutContent officeAddress={officeAddress} />;
 }
