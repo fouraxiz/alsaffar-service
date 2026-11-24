@@ -10,6 +10,13 @@ interface ChatMessage {
   sender: 'bot' | 'user';
 }
 
+/** One row from the ERP thread (see GET /api/chat). */
+interface ServerMessage {
+  id: number;
+  direction: 'in' | 'out';
+  body: string;
+}
+
 interface CollectedData {
   name: string;
   country: string;
@@ -60,6 +67,12 @@ export default function LiveChatBar() {
   const [collectedData, setCollectedData] = useState<CollectedData>({
     name: '', country: '', service: '', phone: '', notes: '',
   });
+  // Live thread: the reply_token from /api/contact keeps this panel wired to the CRM.
+  const [replyToken, setReplyToken] = useState<string | null>(null);
+  const [serverLive, setServerLive] = useState(false);
+  const [waLink, setWaLink] = useState<string | null>(null);
+  const seenServerIds = useRef<Set<number>>(new Set());
+  const lastServerId = useRef(0);
   const chatBodyRef = useRef<HTMLDivElement>(null);
 
   // Initialise with welcome + first question whenever locale changes.
@@ -81,25 +94,115 @@ export default function LiveChatBar() {
     }
   }, [messages, isTyping]);
 
+  // Staff replies arrive here: SSE while it stays open, 4s polling as a fallback.
+  useEffect(() => {
+    if (!replyToken) return;
+
+    let cancelled = false;
+    let source: EventSource | null = null;
+    let poller: ReturnType<typeof setInterval> | null = null;
+    let failures = 0;
+
+    const ingest = (list: ServerMessage[]) => {
+      const fresh = list.filter(
+        (m) => m.direction === 'out' && !seenServerIds.current.has(m.id),
+      );
+      if (!fresh.length) return;
+
+      fresh.forEach((m) => seenServerIds.current.add(m.id));
+      lastServerId.current = Math.max(lastServerId.current, ...fresh.map((m) => m.id));
+      setMessages((prev) => [
+        ...prev,
+        ...fresh.map((m) => ({ id: `srv-${m.id}`, text: m.body, sender: 'bot' as const })),
+      ]);
+    };
+
+    const poll = async () => {
+      try {
+        const res = await fetch(
+          `/api/chat?reply_token=${encodeURIComponent(replyToken)}&after=${lastServerId.current}`,
+          { cache: 'no-store' },
+        );
+        const data = (await res.json()) as { messages?: ServerMessage[] };
+        if (!cancelled && Array.isArray(data?.messages)) ingest(data.messages);
+      } catch {
+        // Next tick retries.
+      }
+    };
+
+    const startPolling = () => {
+      if (poller) return;
+      void poll();
+      poller = setInterval(poll, 4000);
+    };
+
+    // Catch up on anything the agent sent before the stream opened.
+    void poll();
+
+    if (serverLive) {
+      source = new EventSource(
+        `/api/chat/stream?reply_token=${encodeURIComponent(replyToken)}&after=${lastServerId.current}`,
+      );
+      source.onopen = () => {
+        failures = 0;
+      };
+      source.onmessage = (event) => {
+        try {
+          const incoming = JSON.parse(event.data) as ServerMessage;
+          if (incoming?.id) ingest([incoming]);
+        } catch {
+          // Ignore a malformed frame; the next one still arrives.
+        }
+      };
+      source.onerror = () => {
+        failures += 1;
+        // SSE blocked by a proxy/extension: keep the conversation alive by polling.
+        if (failures >= 3) {
+          source?.close();
+          startPolling();
+        }
+      };
+    } else {
+      startPolling();
+    }
+
+    return () => {
+      cancelled = true;
+      source?.close();
+      if (poller) clearInterval(poller);
+    };
+  }, [replyToken, serverLive]);
+
   const addBotMessage = (text: string, delay = 1000) => {
     setIsTyping(true);
     setTimeout(() => {
       setMessages((prev) => [
         ...prev,
-        { id: String(Date.now()), text, sender: 'bot' },
+        { id: `bot-${Date.now()}`, text, sender: 'bot' },
       ]);
       setIsTyping(false);
     }, delay);
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     const text = message.trim();
-    if (!text || chatStep >= 5) return;
+    if (!text) return;
 
-    setMessages((prev) => [
-      ...prev,
-      { id: String(Date.now()), text, sender: 'user' },
-    ]);
+    // Connected to a staff thread: every further message goes to the agent inbox.
+    if (replyToken) {
+      setMessages((prev) => [...prev, { id: `user-${Date.now()}`, text, sender: 'user' }]);
+      setMessage('');
+      fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reply_token: replyToken, message: text }),
+      }).catch(() => {});
+      return;
+    }
+
+    if (chatStep >= 5) return;
+
+    setMessages((prev) => [...prev, { id: `user-${Date.now()}`, text, sender: 'user' }]);
     setMessage('');
 
     // Persist the answer for the current step.
@@ -111,22 +214,37 @@ export default function LiveChatBar() {
       const nextStep = chatStep + 1;
       addBotMessage(getQuestion(nextStep, text, isAr));
       setChatStep(nextStep);
-    } else {
-      // Phase 2: CRM lead + summary + WhatsApp confirmation.
-      setChatStep(5);
+      return;
+    }
 
-      const d = newData;
-      const notes = d.notes && !/^(none|لا|no)$/i.test(d.notes.trim()) ? d.notes.trim() : '';
-      const crmMessage = [
-        'Live chat consultation request',
-        `Country: ${d.country}`,
-        notes ? `Notes: ${notes}` : null,
-      ]
-        .filter(Boolean)
-        .join('\n');
+    // Phase 2: CRM lead + a live thread the visitor keeps using.
+    setChatStep(5);
 
-      // Capture in CRM Leads (same bridge as Contact Us). Do not block WhatsApp.
-      fetch('/api/contact', {
+    const d = newData;
+    const notes = d.notes && !/^(none|لا|no)$/i.test(d.notes.trim()) ? d.notes.trim() : '';
+    const crmMessage = [
+      'Live chat consultation request',
+      `Country: ${d.country}`,
+      notes ? `Notes: ${notes}` : null,
+    ]
+      .filter(Boolean)
+      .join('\n');
+
+    const summary = isAr
+      ? `✅ شكراً على معلوماتك! إليك ملخص طلبك:\n\n👤 الاسم: ${d.name}\n🌍 الدولة: ${d.country}\n🔧 الخدمة: ${d.service}\n📞 الهاتف: ${d.phone}\n📝 ملاحظات: ${d.notes}\n\nجارٍ ربطك بأحد موظفينا...`
+      : `✅ Thank you! Here is your consultation request:\n\n👤 Name: ${d.name}\n🌍 Country: ${d.country}\n🔧 Service: ${d.service}\n📞 Phone: ${d.phone}\n📝 Notes: ${d.notes}\n\nConnecting you to our service agent...`;
+
+    addBotMessage(summary);
+
+    const waText = isAr
+      ? `استشارة مجانية - الصفار للاستقدام\n\nالاسم: ${d.name}\nالدولة: ${d.country}\nالخدمة: ${d.service}\nالهاتف: ${d.phone}\nملاحظات: ${d.notes}`
+      : `Free Consultation - Alsaffar Recruitment\n\nName: ${d.name}\nCountry: ${d.country}\nService: ${d.service}\nPhone: ${d.phone}\nNotes: ${d.notes}`;
+    setWaLink(`https://wa.me/966920021201?text=${encodeURIComponent(waText)}`);
+
+    // Capture in CRM Leads (same bridge as Contact Us). The reply_token returned here
+    // is what turns this panel into the visitor's live chat with our team.
+    try {
+      const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -138,38 +256,29 @@ export default function LiveChatBar() {
           source: 'chatbot',
           landing_path: typeof window !== 'undefined' ? window.location.pathname : '/',
         }),
-      }).catch(() => {});
+      });
+      const data = (await res.json().catch(() => null)) as
+        | { reply_token?: unknown; live?: boolean }
+        | null;
 
-      const summary = isAr
-        ? `✅ شكراً على معلوماتك! إليك ملخص طلبك:\n\n👤 الاسم: ${d.name}\n🌍 الدولة: ${d.country}\n🔧 الخدمة: ${d.service}\n📞 الهاتف: ${d.phone}\n📝 ملاحظات: ${d.notes}\n\nجارٍ فتح واتساب لتأكيد طلبك...`
-        : `✅ Thank you! Here is your consultation request:\n\n👤 Name: ${d.name}\n🌍 Country: ${d.country}\n🔧 Service: ${d.service}\n📞 Phone: ${d.phone}\n📝 Notes: ${d.notes}\n\nOpening WhatsApp to confirm your request...`;
+      setServerLive(!!data?.live);
 
-      addBotMessage(summary);
-
-      const waText = isAr
-        ? `استشارة مجانية - الصفار للاستقدام\n\nالاسم: ${d.name}\nالدولة: ${d.country}\nالخدمة: ${d.service}\nالهاتف: ${d.phone}\nملاحظات: ${d.notes}`
-        : `Free Consultation - Alsaffar Recruitment\n\nName: ${d.name}\nCountry: ${d.country}\nService: ${d.service}\nPhone: ${d.phone}\nNotes: ${d.notes}`;
-
-      setTimeout(() => {
-        window.open(
-          `https://wa.me/966920021201?text=${encodeURIComponent(waText)}`,
-          '_blank'
+      if (typeof data?.reply_token === 'string' && data.reply_token !== '') {
+        setReplyToken(data.reply_token);
+        addBotMessage(
+          isAr
+            ? '✅ أنت الآن متصل بفريقنا. اكتب رسالتك هنا وسيصلك الرد في هذه المحادثة.'
+            : '✅ You are connected to our team. Type your message here and the reply will arrive in this chat.',
+          700,
         );
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: String(Date.now()) + '_final',
-            text: isAr
-              ? `🚀 تم فتح واتساب! سيتواصل معك فريقنا قريباً على الرقم ${d.phone}.`
-              : `🚀 WhatsApp opened! Our team will contact you shortly on ${d.phone}.`,
-            sender: 'bot',
-          },
-        ]);
-      }, 2500);
+      }
+    } catch {
+      // WhatsApp (button below) stays available if the CRM call failed.
     }
   };
 
   const isDone = chatStep >= 5;
+  const composerLocked = isDone && !replyToken;
 
   return (
     <>
@@ -270,26 +379,42 @@ export default function LiveChatBar() {
 
         {/* Input area */}
         <form
-          onSubmit={(e) => { e.preventDefault(); handleSend(); }}
+          onSubmit={(e) => { e.preventDefault(); void handleSend(); }}
           className="p-3.5 bg-[#111827] border-t border-gray-800"
         >
           <div className="flex gap-2">
             <input
               type="text"
-              placeholder={isDone ? (isAr ? 'تم إرسال طلبك ✓' : 'Request sent ✓') : t('placeholder')}
-              disabled={isDone}
+              placeholder={
+                replyToken
+                  ? t('placeholder')
+                  : composerLocked
+                    ? (isAr ? 'تم إرسال طلبك ✓' : 'Request sent ✓')
+                    : t('placeholder')
+              }
+              disabled={composerLocked}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               className="flex-1 bg-[#1f2937] text-white placeholder:text-gray-500 border border-gray-700 focus:border-[#0ea5e9] focus:ring-1 focus:ring-[#0ea5e9] rounded-lg px-4 py-2.5 text-[14px] outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             />
             <button
               type="submit"
-              disabled={!message.trim() || isDone}
+              disabled={!message.trim() || composerLocked}
               className="bg-[#0ea5e9] hover:bg-[#0284c7] disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-lg px-4 py-2.5 transition-colors font-medium text-sm flex-shrink-0"
             >
               {isAr ? 'إرسال' : 'Send'}
             </button>
           </div>
+          {waLink && (
+            <a
+              href={waLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 block text-center text-[12px] font-medium text-[#25D366] hover:underline"
+            >
+              {isAr ? 'أو تابع المحادثة على واتساب' : 'Or continue the conversation on WhatsApp'}
+            </a>
+          )}
         </form>
       </div>
     </>

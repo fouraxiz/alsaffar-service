@@ -344,9 +344,53 @@ export function fetchSitemap(): Promise<ErpSitemapResponse> {
   return erpFetch<ErpSitemapResponse>('/sitemap');
 }
 
-/** WRITE (public intake): contact / general lead. */
+/** WRITE (public intake): contact / general lead. Returns the submission's reply_token. */
 export function postLead(payload: Record<string, unknown>): Promise<unknown> {
   return erpFetch('/leads', { method: 'POST', body: payload, auth: false });
+}
+
+export type ErpChatMessage = {
+  id: number;
+  direction: 'in' | 'out';
+  body: string;
+  by: string | null;
+  is_system: boolean;
+  delivered_via: string | null;
+  at: string | null;
+};
+
+export type ErpConversation = {
+  success?: boolean;
+  lead_id?: number;
+  name?: string | null;
+  last_id?: number;
+  messages: ErpChatMessage[];
+};
+
+/** READ (public): the visitor's own chat thread, keyed by the intake reply_token. */
+export function fetchConversation(replyToken: string, after = 0): Promise<ErpConversation> {
+  return erpFetch<ErpConversation>('/leads/conversation', {
+    query: { reply_token: replyToken, after },
+    auth: false,
+    revalidate: 0,
+    timeoutMs: 15000,
+  });
+}
+
+/** WRITE (public): a message the visitor types after the lead was captured. */
+export function postConversationReply(
+  replyToken: string,
+  message: string,
+): Promise<unknown> {
+  return erpFetch('/leads/reply', {
+    method: 'POST',
+    body: { reply_token: replyToken, message },
+    auth: false,
+    // Storing + routing + notifying the assignees regularly passes the 8s default
+    // on a busy install; aborting then made the widget report a failed send for a
+    // message that had already been saved.
+    timeoutMs: 30000,
+  });
 }
 
 /** WRITE: a worker inquiry (interest in a specific CV). Accepts JSON or multipart FormData (docs). */

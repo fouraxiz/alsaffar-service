@@ -5,6 +5,9 @@ import { postLead, erpEnabled } from '@/lib/erpApi';
 /**
  * Mirror a public website message into the ERP CRM as a Lead.
  * Used by Contact Us, live chat, nationality requests, and similar forms.
+ *
+ * `replyToken` is the token the live chat widget uses to follow the thread in real
+ * time (GET /api/chat + /api/chat/stream); null when the ERP bridge was skipped.
  */
 async function mirrorLeadToCrm(payload: {
   name: string;
@@ -14,10 +17,10 @@ async function mirrorLeadToCrm(payload: {
   medium: string;
   source: string;
   landingPath: string;
-}): Promise<boolean> {
-  if (!erpEnabled()) return false;
+}): Promise<{ ok: boolean; replyToken: string | null }> {
+  if (!erpEnabled()) return { ok: false, replyToken: null };
   try {
-    await postLead({
+    const result = (await postLead({
       name: payload.name,
       phone: payload.phone,
       service_key: payload.service || null,
@@ -29,11 +32,15 @@ async function mirrorLeadToCrm(payload: {
         utm_medium: payload.medium,
         landing_path: payload.landingPath,
       },
-    });
-    return true;
+    })) as { reply_token?: unknown } | null;
+
+    return {
+      ok: true,
+      replyToken: typeof result?.reply_token === 'string' ? result.reply_token : null,
+    };
   } catch (err) {
     console.error('[contact] CRM lead mirror failed:', err);
-    return false;
+    return { ok: false, replyToken: null };
   }
 }
 
@@ -88,10 +95,9 @@ export async function POST(request: Request) {
   }
 
   let emailed = false;
-  let crm = false;
 
   // 1) Always try CRM first so leads appear even when email is misconfigured.
-  crm = await mirrorLeadToCrm({
+  const crm = await mirrorLeadToCrm({
     name,
     phone,
     service,
@@ -144,7 +150,7 @@ export async function POST(request: Request) {
     console.warn('[contact] RESEND_API_KEY is not set — skipping email; CRM path used if enabled.');
   }
 
-  if (!emailed && !crm) {
+  if (!emailed && !crm.ok) {
     if (!apiKey && !erpEnabled()) {
       console.warn('[contact] No email or CRM configured; accepting for local/demo.');
       return NextResponse.json({ ok: true });
@@ -152,5 +158,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Failed to send message.' }, { status: 502 });
   }
 
-  return NextResponse.json({ ok: true, crm, emailed });
+  return NextResponse.json({
+    ok: true,
+    crm: crm.ok,
+    emailed,
+    // The widget keeps chatting while the visitor is still on the site.
+    reply_token: crm.replyToken,
+    live: erpEnabled(),
+  });
 }
