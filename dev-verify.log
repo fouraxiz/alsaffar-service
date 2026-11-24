@@ -21,3 +21,33 @@ See more: https://nextjs.org/docs/app/guides/local-development
 [getSite] ERP unavailable, using static fallback: ERP GET /site timed out after 8000ms
  GET /en/about 200 in 19.9s (next.js: 7.2s, proxy.ts: 137ms, generate-params: 6.6s, application-code: 12.5s)
  GET /en 200 in 19.8s (next.js: 8.4s, proxy.ts: 20ms, generate-params: 7.3s, application-code: 11.4s)
+[getBanners] ERP unavailable, using static fallback: ERP GET /banners -> 401 {"success":false,"message":"Missing API token."}
+ GET /api/banners?placement=strip 200 in 2.7s (next.js: 149ms, application-code: 2.6s)
+[getCountries] ERP unavailable, using static fallback: ERP GET /lookups -> 401 {"success":false,"message":"Missing API token."}
+ GET /api/countries 200 in 2.8s (next.js: 218ms, application-code: 2.5s)
+[getServices] ERP unavailable, using static fallback: ERP GET /services -> 401 {"success":false,"message":"Missing API token."}
+ GET /api/services 200 in 2.9s (next.js: 98ms, application-code: 2.8s)
+[getBanners] ERP unavailable, using static fallback: ERP GET /banners -> 401 {"success":false,"message":"Missing API token."}
+ GET /api/banners?placement=home_hero 200 in 3.0s (next.js: 13ms, application-code: 3.0s)
+[getSite] ERP unavailable, using static fallback: ERP GET /site -> 401 {"success":false,"message":"Missing API token."}
+ GET /api/site 200 in 3.1s (next.js: 357ms, application-code: 2.8s)
+[getBanners] ERP unavailable, using static fallback: ERP GET /banners -> 401 {"success":false,"message":"Missing API token."}
+[getSite] ERP unavailable, using static fallback: ERP GET /site -> 401 {"success":false,"message":"Missing API token."}
+[getSite] ERP unavailable, using static fallback: ERP GET /site -> 401 {"success":false,"message":"Missing API token."}
+[getSite] ERP unavailable, using static fallback: ERP GET /site timed out after 8000ms
+ GET /en/about 200 in 8.3s (next.js: 49ms, proxy.ts: 11ms, generate-params: 12ms, application-code: 8.2s)
+ GET /en/about 200 in 2.6s (next.js: 86ms, proxy.ts: 10ms, generate-params: 26ms, application-code: 2.5s)
+[getBanners] ERP unavailable, using static fallback: ERP GET /banners timed out after 8000ms
+[getSite] ERP unavailable, using static fallback: ERP GET /site timed out after 8000ms
+[getSite] ERP unavailable, using static fallback: ERP GET /site timed out after 8000ms
+[getSite] ERP unavailable, using static fallback: ERP GET /site timed out after 8000ms
+[getBanners] ERP unavailable, using static fallback: ERP GET /banners -> 401 {"success":false,"message":"Missing API token."}
+[getSite] ERP unavailable, using static fallback: ERP GET /site -> 401 {"success":false,"message":"Missing API token."}
+[getSite] ERP unavailable, using static fallback: ERP GET /site -> 401 {"success":false,"message":"Missing API token."}
+[getSite] ERP unavailable, using static fallback: ERP GET /site -> 401 {"success":false,"message":"Missing API token."}
+ GET /en/about 200 in 7.0s (next.js: 20ms, proxy.ts: 14ms, generate-params: 97µs, application-code: 6.9s)
+ GET /en/about 200 in 2.5s (next.js: 33ms, proxy.ts: 15ms, generate-params: 14ms, application-code: 2.5s)
+[getSite] ERP unavailable, using static fallback: ERP GET /site -> 401 {"success":false,"message":"Missing API token."}
+[getBanners] ERP unavailable, using static fallback: ERP GET /banners -> 401 {"success":false,"message":"Missing API token."}
+[getSite] ERP unavailable, using static fallback: ERP GET /site -> 401 {"success":false,"message":"Missing API token."}
+[getSite] ERP unavailable, using static fallback: ERP GET /site -> 401 {"success":false,"message":"Missing API token."}
